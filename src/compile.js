@@ -93,7 +93,7 @@ module.exports = {
       frontMatterLines: [],
     };
     lines
-      .map((line) => line.trim())
+      //      .map((line) => line.trim())
       .forEach((line) => {
         if (line === "---" && !parsedFrontMatter) {
           parsedFrontMatter = true;
@@ -130,6 +130,20 @@ module.exports = {
       }
     });
 
+    const pyChunks = chunks
+      .filter((chunk) => chunk.type === "py")
+      .map((chunk) => {
+        const preamble = chunk.frontMatter.inputs.length
+          ? `from js import ${chunk.frontMatter.inputs.join(",")}\\n`
+          : "";
+        return {
+          ...chunk,
+          code: `return (await pyodide.runPythonAsync(\"${preamble}${chunk.lines.join(
+            "\\n"
+          )}\"))`,
+        };
+      });
+
     const jsChunks = chunks
       .filter((chunk) => chunk.type === "js")
       .map((chunk) => ({ ...chunk, code: chunk.lines.join("\n") }));
@@ -158,12 +172,11 @@ module.exports = {
           map: "",
         });
       });
-
     const svelteJs = await createSvelteBundle(svelteFiles);
     const template = fs.readFileSync(__dirname + "/template.html").toString();
     return mustache.render(template, {
       ...chunks[0].frontMatter,
-      jsChunks,
+      jsChunks: pyChunks.concat(jsChunks),
       svelteJs,
     });
   },

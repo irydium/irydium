@@ -1,6 +1,8 @@
 <html>
   <head>
     <title>{{ title }}</title>
+    <!-- FIXME: only load pyodide if we have python cells -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.15.0/full/pyodide.js"></script>
     {{#scripts}}
     <script src="{{{ . }}}"></script>
     {{/scripts}}
@@ -19,17 +21,16 @@
       Promise.all(__datumsToGet.map(async d=>{
           const r = await fetch(d.url);
           window[d.name] = await r.json();
-      })).then(() => {
+      })).then(async () => {
+        await languagePluginLoader;
         // execute any Javascript (FIXME: do this in a web worker)
         {{#jsChunks}}
         // FIXME: this won't work if there are no inputs (which is probably a
         // case we want to support)
-        window.{{frontMatter.output}} = (({{#frontMatter.inputs}}{{{.}}}{{/frontMatter.inputs}}) => {
+        window.{{frontMatter.output}} = await (async ({{#frontMatter.inputs}}{{{.}}}{{/frontMatter.inputs}}) => {
             {{{code}}}
         })({{#frontMatter.inputs}}{{{.}}}{{/frontMatter.inputs}});
-        console.log({{frontMatter.output}})
         {{/jsChunks}}
-        console.log({{frontMatter.output}});
         // extract out the compiled svelte application, and render it
         const blob = new Blob([document.getElementById("svelteapp").innerText], {
           type: "text/javascript",
