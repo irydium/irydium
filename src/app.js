@@ -4,7 +4,7 @@ const app = express();
 const port = 3000;
 
 app.get("/", async (req, res) => {
-  const compiled = await compiler.compile("document.irmd");
+  const compiled = await compiler.compile("document-pyodide.irmd");
   res.send(compiled);
 });
 

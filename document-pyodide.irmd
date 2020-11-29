@@ -50,38 +50,44 @@ The "notebook" below demonstrates the various features of an iridium notebook:
 For simplicity this prototype only covers part of the original source notebook (aiming
 to validate the basic idea)
 
-%% js
+%% py
 inputs = [ "data_migration_gcp_heka" ]
+output = "heka_burndown_raw"
+---
+
+import datetime
+from dateutil import parser as date_parser
+from pytz import UTC
+
+from js import data_migration_gcp_heka, window
+
+def get_grouped_bug_counts(bugs):
+	start = datetime.datetime(2019, 11, 5, tzinfo=UTC);
+	end = datetime.datetime.now(tz=UTC) + datetime.timedelta(days=1)
+
+	current_time = start;
+	open = { 'name': 'Unresolved', 'stackgroup': 'one', 'x': [], 'y': [] }
+	resolved = { 'name': 'Resolved', 'stackgroup': 'one', 'x': [], 'y': []}
+	while current_time <= end:
+		open_bugs = [bug for bug in bugs if date_parser.parse(bug['creation_time']) <= current_time];
+		resolved_bugs = [bug for bug in open_bugs if date_parser.parse(bug['last_change_time']) <= current_time and bug['status'] in ['RESOLVED', 'VERIFIED']]
+		open['x'].append(current_time.isoformat())
+		open['y'].append(len(open_bugs) - len(resolved_bugs))
+		resolved['x'].append(current_time.isoformat())
+		resolved['y'].append(len(resolved_bugs))
+		current_time += datetime.timedelta(days=1)
+	return [open, resolved]
+
+get_grouped_bug_counts(data_migration_gcp_heka.bugs)
+
+%% js
+inputs = [ "heka_burndown_raw" ]
 output = "heka_burndown"
 ---
 
-var getGroupedBugCounts = (bugs) => {
-	bugs = bugs
-    	.map(b=> ({...b, 
-                  creation_time: b.creation_time.slice(0, 10),
-                  last_change_time: b.last_change_time.slice(0,10)}))
-	let creationTimes = bugs.map(b => b.creation_time)
-	let lastChangeTimes = bugs.map(b => b.last_change_time)
-	let start = new Date('2019-11-05');
-	let end = moment(new Date()).add(1, 'days');
-
-	let currentTime = moment(start);
-	const open = { name: 'Unresolved', stackgroup: 'one', x: [], y: [] }
-	const resolved = { name: 'Resolved', stackgroup: 'one', x: [], y: []}
-  	while (currentTime <= end) {
-      let openBugs = bugs.filter(bug => moment(bug.creation_time) <= currentTime);
-	  let resolvedBugs = openBugs.filter(
-        bug => moment(bug.last_change_time) <= currentTime && (bug.status === 'RESOLVED' || bug.status === 'VERIFIED'))
-	  open.x.push(new Date(currentTime));
-	  open.y.push(openBugs.length  - resolvedBugs.length)
-	  resolved.x.push(new Date(currentTime));
-	  resolved.y.push(resolvedBugs.length);
-      currentTime = currentTime.add(1, 'days')
-    }
-  	return [open, resolved];
-}
-
-return getGroupedBugCounts(data_migration_gcp_heka.bugs)
+// wrangle the string dates generated above into real dates
+// FIXME: this is janky as hell
+return heka_burndown_raw.map(d=>({...d, x: d.x.map(v=>new Date(v))}))
 
 %% svelte
 filename = "PlotlyGraph.svelte"
