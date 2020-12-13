@@ -1,0 +1,20 @@
+{
+  "name": "@iridium-project/compiler",
+  "version": "0.0.1",
+  "description": "Iridium Compiler",
+  "main": "dist/main.cjs.js",
+  "module": "dist/main.es.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "author": "William Lachance <wlach@protonmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cross-fetch": "^3.0.6",
+    "mdsvex": "^0.8.9",
+    "mustache": "^4.0.1",
+    "rollup": "^2.33.3",
+    "svelte": "^3.30.0",
+    "toml": "^3.0.0"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "iridium-site",
+  "description": "Iridium Demo Site",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "sapper dev",
+    "build": "sapper build --legacy",
+    "export": "sapper export --legacy",
+    "start": "node __sapper__/build",
+    "validate": "svelte-check --ignore src/node_modules/@sapper"
+  },
+  "dependencies": {
+    "@iridium-project/compiler": "file:../compiler",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.1",
+    "polka": "next",
+    "sirv": "^1.0.0"
+  }
+}
