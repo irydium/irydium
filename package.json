@@ -1,0 +1,34 @@
+{
+  "name": "@iridium-project/project",
+  "version": "0.0.1",
+  "description": "Iridium project monorepo",
+  "main": "index.js",
+  "scripts": {
+    "format": "prettier --plugin-search-dir=. --write .",
+    "format:check": "prettier --plugin-search-dir=. --check ."
+  },
+  "devDependencies": {
+    "eslint": "^7.0.0",
+    "eslint-config-airbnb-base": "^14.1.0",
+    "eslint-config-import": "^0.13.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jest": "^23.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-svelte3": "^2.7.3",
+    "prettier": "^2.0.4",
+    "prettier-plugin-svelte": "^1.1.0",
+    "svelte": "^3.31.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wlach/iridium.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wlach/iridium/issues"
+  },
+  "homepage": "https://github.com/wlach/iridium#readme",
+  "dependencies": {}
+}

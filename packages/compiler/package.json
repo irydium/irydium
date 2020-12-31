@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "cross-fetch": "^3.0.6",
-    "mdsvex": "^0.8.8",
+    "mdsvex": "^0.8.9",
     "mustache": "^4.0.1",
     "rollup": "^2.33.3",
     "svelte": "^3.30.0",

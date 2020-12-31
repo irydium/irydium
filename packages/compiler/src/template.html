@@ -1,8 +1,9 @@
 <html>
   <head>
     <title>{{ title }}</title>
-    <!-- FIXME: only load pyodide if we have python cells -->
+    {{#hasPyChunks}}
     <script src="https://cdn.jsdelivr.net/pyodide/v0.15.0/full/pyodide.js"></script>
+    {{/hasPyChunks}}
     {{#scripts}}
     <script src="{{{ . }}}"></script>
     {{/scripts}}
@@ -22,7 +23,10 @@
           const r = await fetch(d.url);
           window[d.name] = await r.json();
       })).then(async () => {
+        {{#hasPyChunks}}
+        // wait for language plugin loader (if using pyodide)
         await languagePluginLoader;
+        {{/hasPyChunks}}
         // execute any Javascript (FIXME: do this in a web worker)
         {{#jsChunks}}
         // FIXME: this won't work if there are no inputs (which is probably a

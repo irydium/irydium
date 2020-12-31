@@ -2,12 +2,15 @@ import { parse as tomlParse } from "toml";
 import mustache from "mustache";
 import { compile as svelteCompile } from "svelte/compiler";
 import { compile as mdsvexCompile } from "mdsvex";
-import { rollup } from "rollup";
-import template from "./template.html";
 
-// need to use "require" to make this import the right things
-// for node.js builds
+// just requiring rollup and cross-fetch directly for now (this
+// means this code won't run in a browser environment, which is
+// fine since mdsvex doesn't support that either)
+//import * as rollup from "rollup/dist/es/rollup.browser.js";
+const rollup = require("rollup");
 const fetch = require("cross-fetch");
+
+import template from "./template.html";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
 
@@ -16,7 +19,7 @@ async function fetch_package(url) {
 }
 
 async function createSvelteBundle(svelteFiles) {
-  const bundle = await rollup({
+  const bundle = await rollup.rollup({
     input: "./index.svelte",
     plugins: [
       {
@@ -175,6 +178,7 @@ export async function compile(input) {
   const svelteJs = await createSvelteBundle(svelteFiles);
   return mustache.render(template, {
     ...chunks[0].frontMatter,
+    hasPyChunks: pyChunks.length > 0,
     jsChunks: pyChunks.concat(jsChunks),
     svelteJs,
   });

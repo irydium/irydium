@@ -1,0 +1,110 @@
+title = "Iridium prototype"
+scripts = ["https://cdn.plot.ly/plotly-latest.min.js", "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"]
+[vars] 
+daterange = 28
+[data]
+data_migration_gcp_heka = "https://bugzilla.mozilla.org/rest/bug?blocks=1579435&include_fields=id,last_change_time,status,creation_time"
+---
+%% md
+# Iridium prototype
+
+This is a quick prototype of an [iodide](https://alpha.iodide.io)-ish notebook, rewritten to use 
+[svelte](https://svelte.dev) and [mdsvex](https://mdsvex.com/) for rendering. 
+Currently using the semi-creative name "Iridium" (will probably be renamed in the
+future if project continues)
+
+If you are viewing the rendered copy, you can look at the source at this URL:
+
+[https://github.com/wlach/iridium/blob/main/document.irmd](https://github.com/wlach/iridium/blob/main/document.irmd)
+
+## Key advantages over iodide (some of these are theoretical right now)
+* Can build/run the "notebook" either online on-demand OR offline (via a script):
+  svelte transpilation (via rollup) works on both the client and the server
+* Corresponding to the above, can store notebooks inside GitHub-- render on-commit
+  into github pages or other static site 
+* More principled data model (based on a DAG) should facilitate both caching of any
+  intermediate data calculated inside notebook, as well as running computation on a web
+  worker (since inputs/outputs are well defined)
+
+## Parts of iodide that are maintained
+* Standard web visualization stuff (D3, etc.) should continue to work (to the extent that
+  they work inside Svelte)
+* In theory can still run pydata stuff via [Pyodide](https://github.com/iodide-project/pyodide) (presumably via a webworker)
+
+## Parts of iodide that are lost
+* Various bits of pyodide that interacted directly via the DOM (e.g. matplotlib support)
+
+## See also
+
+* [AWS -> GCP burndown charts](https://alpha.iodide.io/notebooks/3593/?viewMode=report) (original notebook on which this was based)
+* [my iodide retrospective](https://wlach.github.io/blog/2020/11/iodide-retrospective/) (the
+  last part hints at creating something like this)
+* [REPLicant](https://github.com/pngwn/REPLicant): a simple REPL built with svelte, some of the things in this repo based on that
+
+The "notebook" below demonstrates the various features of an iridium notebook:
+* Downloading data on demand
+* Running a transformation of the data via JavaScript
+* Creating a simple Svelte component to render data
+* Rendering the result inline in markdown via mdsvex
+
+For simplicity this prototype only covers part of the original source notebook (aiming
+to validate the basic idea)
+
+%% js
+inputs = [ "data_migration_gcp_heka" ]
+output = "heka_burndown"
+---
+
+var getGroupedBugCounts = (bugs) => {
+	bugs = bugs
+    	.map(b=> ({...b, 
+                  creation_time: b.creation_time.slice(0, 10),
+                  last_change_time: b.last_change_time.slice(0,10)}))
+	let creationTimes = bugs.map(b => b.creation_time)
+	let lastChangeTimes = bugs.map(b => b.last_change_time)
+	let start = new Date('2019-11-05');
+	let end = moment(new Date()).add(1, 'days');
+
+	let currentTime = moment(start);
+	const open = { name: 'Unresolved', stackgroup: 'one', x: [], y: [] }
+	const resolved = { name: 'Resolved', stackgroup: 'one', x: [], y: []}
+  	while (currentTime <= end) {
+      let openBugs = bugs.filter(bug => moment(bug.creation_time) <= currentTime);
+	  let resolvedBugs = openBugs.filter(
+        bug => moment(bug.last_change_time) <= currentTime && (bug.status === 'RESOLVED' || bug.status === 'VERIFIED'))
+	  open.x.push(new Date(currentTime));
+	  open.y.push(openBugs.length  - resolvedBugs.length)
+	  resolved.x.push(new Date(currentTime));
+	  resolved.y.push(resolvedBugs.length);
+      currentTime = currentTime.add(1, 'days')
+    }
+  	return [open, resolved];
+}
+
+return getGroupedBugCounts(data_migration_gcp_heka.bugs)
+
+%% svelte
+filename = "PlotlyGraph.svelte"
+---
+<script>
+  import { onMount } from 'svelte';
+
+  export let data = undefined;
+  let dom_node;
+
+  onMount(() => {
+    Plotly.newPlot(dom_node, data, {barmode: 'stack'});
+  });	
+</script>
+ 
+<div id="plotDiv" bind:this={dom_node}></div>
+
+%% md
+<script>
+  import PlotlyGraph from "./PlotlyGraph.svelte";
+</script>
+## Heka tasks
+
+<PlotlyGraph data={heka_burndown} />
+
+This covers tasks related to decomissioning the heka data lake ([metabug data-migration-gcp-data-lake](https://bugzilla.mozilla.org/show_bug.cgi?id=data-migration-gcp-data-lake))
