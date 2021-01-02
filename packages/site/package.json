@@ -1,7 +1,8 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "iridium-site",
+  "description": "Iridium Demo Site",
   "version": "0.0.1",
+  "private": true,
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
