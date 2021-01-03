@@ -1,3 +1,4 @@
 packages/*/node_modules/
 packages/*/__sapper__/
 packages/*/dist/
+packages/compiler/src/template.html

@@ -2,7 +2,8 @@
 // import { SapperRequest, SapperResponse } from '@sapper/server';
 import type { Request } from "polka";
 import type { ServerResponse } from "http";
-import { compile } from "@iridium-project/compiler";
+import { compile } from "../../../../compiler/src/compile.js";
+
 const fs = require("fs");
 
 export async function post(req, res: ServerResponse, next: () => void) {
