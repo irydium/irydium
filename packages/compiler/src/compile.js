@@ -1,7 +1,7 @@
-import { parse as tomlParse } from "toml";
 import mustache from "mustache";
 import { compile as svelteCompile } from "svelte/compiler";
 import { compile as mdsvexCompile } from "mdsvex";
+import { parseChunks } from "./parser.js";
 
 // just requiring rollup and cross-fetch directly for now (this
 // means this code won't run in a browser environment, which is
@@ -86,53 +86,13 @@ async function createSvelteBundle(svelteFiles) {
 }
 
 export async function compile(input) {
-  const lines = input.toString().split("\n");
-  const chunks = [];
+  const chunks = parseChunks(input);
 
-  let parsedFrontMatter = false;
-  let currentChunk = {
-    type: "header",
-    lines: [],
-    frontMatterLines: [],
-  };
-  lines
-    //      .map((line) => line.trim())
-    .forEach((line) => {
-      if (line === "---" && !parsedFrontMatter) {
-        parsedFrontMatter = true;
-        currentChunk.frontMatterLines = currentChunk.lines;
-        currentChunk.lines = [];
-      } else if (line.startsWith("%%")) {
-        chunks.push(currentChunk);
-        currentChunk = {
-          type: line.substr(2).trim(),
-          lines: [],
-          frontMatterLines: [],
-        };
-        parsedFrontMatter = false;
-      } else {
-        currentChunk.lines.push(line);
-      }
-    });
-  if (currentChunk.lines.length) {
-    chunks.push(currentChunk);
-  }
+  const jsChunks = chunks
+    .filter((chunk) => chunk.type === "js")
+    .map((chunk) => ({ ...chunk, code: chunk.content }));
 
-  chunks.forEach((chunk) => {
-    if (chunk.frontMatterLines.length) {
-      chunk.frontMatter = tomlParse(chunk.frontMatterLines.join("\n"));
-      // HACK: re-interpret frontmatter "data" in a way that mustache can render
-      if (chunk.frontMatter.data) {
-        chunk.frontMatter.data = Object.keys(chunk.frontMatter.data).map(
-          (k) => ({
-            name: k,
-            url: chunk.frontMatter.data[k],
-          })
-        );
-      }
-    }
-  });
-
+  // python chunks are actually just js chunks
   const pyChunks = chunks
     .filter((chunk) => chunk.type === "py")
     .map((chunk) => {
@@ -147,10 +107,6 @@ export async function compile(input) {
       };
     });
 
-  const jsChunks = chunks
-    .filter((chunk) => chunk.type === "js")
-    .map((chunk) => ({ ...chunk, code: chunk.lines.join("\n") }));
-
   // we convert all markdown chunks into one big document which we
   // compile with mdsvex
   // FIXME: this may not play nice with script directives, need to figure
@@ -159,7 +115,7 @@ export async function compile(input) {
   const mdSvelte = await mdsvexCompile(
     chunks
       .filter((chunk) => chunk.type === "md")
-      .map((chunk) => chunk.lines.join("\n"))
+      .map((chunk) => chunk.content)
       .join("\n"),
     {}
   );
@@ -171,7 +127,7 @@ export async function compile(input) {
     .forEach((chunk) => {
       // FIXME: need to verify that a filename is provided for these cells
       svelteFiles.set(`./${chunk.frontMatter.filename}`, {
-        code: chunk.lines.join("\n"),
+        code: chunk.content,
         map: "",
       });
     });
