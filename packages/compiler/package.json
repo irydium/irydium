@@ -4,6 +4,9 @@
   "description": "Iridium Compiler",
   "main": "dist/main.cjs.js",
   "module": "dist/main.es.js",
+  "bin": {
+    "irmd-compile": "bin/irmd-compile"
+  },
   "scripts": {
     "build": "rollup -c"
   },
