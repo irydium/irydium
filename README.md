@@ -5,6 +5,6 @@ it, see:
 
 https://wlach.github.io/blog/2020/11/iodide-retrospective/
 
-You can see Iridium in action on Glitch:
+You can see Iridium in action on Heroku:
 
-https://iridium-prototype.glitch.me/
+https://iridium-prototype.herokuapp.com/
