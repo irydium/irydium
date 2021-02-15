@@ -52,6 +52,7 @@ async function createSvelteBundle(svelteFiles) {
 
           // get the package.json and load it into memory
           const pkg_url = `${CDN_URL}/${importee}/package.json`;
+          console.log(pkg_url);
           const pkg = JSON.parse(await fetch_package(pkg_url));
 
           // get an entry point from the pkg.json - first try svelte, then modules, then main

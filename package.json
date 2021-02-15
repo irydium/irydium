@@ -6,7 +6,8 @@
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "dev": "lerna run --stream --scope iridium-site dev",
+    "dev": "lerna run --stream --scope @iridium-project/viewer dev --",
+    "dev-site": "lerna run --stream --scope iridium-site dev",
     "build": "lerna run build",
     "heroku-postbuild": "lerna bootstrap && lerna run build",
     "start": "cd packages/site && node __sapper__/build",
