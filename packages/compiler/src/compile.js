@@ -52,6 +52,7 @@ async function createSvelteBundle(svelteFiles) {
 
           // get the package.json and load it into memory
           const pkg_url = `${CDN_URL}/${importee}/package.json`;
+          console.log(pkg_url);
           const pkg = JSON.parse(await fetch_package(pkg_url));
 
           // get an entry point from the pkg.json - first try svelte, then modules, then main
@@ -85,7 +86,7 @@ async function createSvelteBundle(svelteFiles) {
   return (await bundle.generate({ format: "esm" })).output[0].code;
 }
 
-export async function compile(input) {
+export async function compile(input, options = {}) {
   const chunks = parseChunks(input);
 
   const jsChunks = chunks
@@ -133,6 +134,7 @@ export async function compile(input) {
     });
   const svelteJs = await createSvelteBundle(svelteFiles);
   return mustache.render(template, {
+    ...options,
     ...chunks[0].frontMatter,
     hasPyChunks: pyChunks.length > 0,
     jsChunks: pyChunks.concat(jsChunks),
