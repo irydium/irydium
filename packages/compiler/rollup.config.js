@@ -1,6 +1,6 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import html from "rollup-plugin-html";
+import { string } from "rollup-plugin-string";
 
 import pkg from "./package.json";
 
@@ -8,7 +8,7 @@ export default [
   {
     // libraries for use by other things
     plugins: [
-      html({
+      string({
         include: "**/*.html",
       }),
       resolve({ browser: true }),
@@ -32,7 +32,7 @@ export default [
   {
     // the iridium cli
     plugins: [
-      html({
+      string({
         include: "**/*.html",
       }),
       resolve({ preferBuiltins: true }),
