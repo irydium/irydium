@@ -1,9 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import html from "rollup-plugin-html";
+import { string } from "rollup-plugin-string";
 import { spawn } from "child_process";
-
-console.log(process.argv.slice(4));
 
 function serve() {
   let server;
@@ -43,8 +41,8 @@ export default [
   {
     // the iridium cli
     plugins: [
-      html({
-        include: "../compiler/**/*.html",
+      string({
+        include: ["../compiler/**/*.html"],
       }),
       resolve({ preferBuiltins: true }),
       commonjs(),
