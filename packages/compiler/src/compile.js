@@ -86,7 +86,7 @@ async function createSvelteBundle(svelteFiles) {
   return (await bundle.generate({ format: "esm" })).output[0].code;
 }
 
-export async function compile(input) {
+export async function compile(input, options = {}) {
   const chunks = parseChunks(input);
 
   const jsChunks = chunks
@@ -134,6 +134,7 @@ export async function compile(input) {
     });
   const svelteJs = await createSvelteBundle(svelteFiles);
   return mustache.render(template, {
+    ...options,
     ...chunks[0].frontMatter,
     hasPyChunks: pyChunks.length > 0,
     jsChunks: pyChunks.concat(jsChunks),

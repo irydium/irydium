@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@iridium-project/compiler": "file:../compiler",
+    "livereload": "^0.9.1",
     "polka": "next"
   }
 }
