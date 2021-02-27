@@ -1,9 +1,9 @@
 {
-  "name": "@iridium-project/viewer",
+  "name": "@irydium/viewer",
   "version": "0.0.3",
-  "description": "Live viewer for iridium files",
+  "description": "Live viewer for irydium files",
   "author": "William Lachance <wlach@protonmail.com>",
-  "homepage": "https://github.com/wlach/iridium/tree/master/packages/viewer#readme",
+  "homepage": "https://github.com/irydium/irydium/tree/master/packages/viewer#readme",
   "license": "MIT",
   "main": "src/viewer.js",
   "directories": {
@@ -18,17 +18,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wlach/iridium.git"
+    "url": "git+https://github.com/irydium/irydium.git"
   },
   "scripts": {
     "dev": "rollup --config --watch",
     "start": "bin/irmd-viewer"
   },
   "bugs": {
-    "url": "https://github.com/wlach/iridium/issues"
+    "url": "https://github.com/irydium/irydium/issues"
   },
   "dependencies": {
-    "@iridium-project/compiler": "file:../compiler",
+    "@irydium/compiler": "file:../compiler",
     "livereload": "^0.9.1",
     "polka": "next"
   }

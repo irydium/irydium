@@ -39,7 +39,7 @@ function serve() {
 
 export default [
   {
-    // the iridium cli
+    // the irydium cli
     plugins: [
       string({
         include: ["../compiler/**/*.html"],
