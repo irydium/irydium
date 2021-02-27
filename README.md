@@ -10,6 +10,8 @@ https://irydium-prototype.herokuapp.com/
 
 ## Getting Started
 
+(FIXME: this does not currently work)
+
 If you want to try creating irmd documents and compiling them to HTML, you can install [@irydium/compiler](https://www.npmjs.com/package/@irydium/compiler) from npm:
 
 ```bash
@@ -17,11 +19,31 @@ npm install -g @irydium/compiler
 irmd-compile document.irmd
 ```
 
-If you want to hack on the demo site, try this workflow:
+## Local development
+
+There are a few options for local development. But the first step is to bootstrap
+the local environment as follows:
 
 ```bash
 npm install
 npm run bootstrap
+```
+
+### Hacking on the irydium viewer
+
+You can hack on the irydium viewer as follows:
+
+```bash
+npm run dev -- <path to file>
+```
+
+This will auto-reload your site if either the irydium source files or your document changes, making it ideal for local development workflows.
+
+### Working on the site
+
+If you want to hack on the irydium site, try this workflow:
+
+```bash
 npm run site-dev
 ```
 
