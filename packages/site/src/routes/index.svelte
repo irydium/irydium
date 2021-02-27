@@ -27,11 +27,11 @@
   <title>Sapper project template</title>
 </svelte:head>
 
-<h1>Iridium</h1>
+<h1>Irydium</h1>
 
 <p>
   <strong>This is an early prototype of
-    <a href="https://github.com/wlach/iridium">Iridium Notebook</a>.</strong>
+    <a href="https://github.com/irydium/irydium">Irydium Notebook</a>.</strong>
   Have a look at the
   <a href="/repl">repl</a>!
 </p>

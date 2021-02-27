@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
-const viewer = require('..');
+const viewer = require("..");
 
-describe('@iridium-project/viewer', () => {
-    it('needs tests');
+describe("@irydium/viewer", () => {
+  it("needs tests");
 });

@@ -1,7 +1,7 @@
 {
-  "name": "@iridium-project/compiler",
+  "name": "@irydium/compiler",
   "version": "0.0.3",
-  "description": "Iridium Compiler",
+  "description": "Irydium Compiler",
   "main": "dist/main.cjs.js",
   "module": "dist/main.es.js",
   "bin": {

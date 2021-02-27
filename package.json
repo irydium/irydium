@@ -1,13 +1,13 @@
 {
-  "name": "@iridium-project/project",
+  "name": "@irydium/project",
   "version": "0.0.1",
-  "description": "Iridium project monorepo",
+  "description": "Irydium project monorepo",
   "main": "index.js",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",
-    "dev": "lerna run --stream --scope @iridium-project/viewer dev --",
-    "dev-site": "lerna run --stream --scope iridium-site dev",
+    "dev": "lerna run --stream --scope @irydium/viewer dev --",
+    "dev-site": "lerna run --stream --scope irydium-site dev",
     "build": "lerna run build",
     "heroku-postbuild": "lerna bootstrap && lerna run build",
     "start": "cd packages/site && node __sapper__/build",
@@ -61,16 +61,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wlach/iridium.git"
+    "url": "git+https://github.com/irydium/irydium.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/wlach/iridium/issues"
+    "url": "https://github.com/irydium/irydium/issues"
   },
-  "homepage": "https://github.com/wlach/iridium#readme",
+  "homepage": "https://github.com/irydium/irydium#readme",
   "dependencies": {
-    "@iridium-project/compiler": "file:packages/compiler",
-    "iridium-site": "file:packages/site"
+    "@irydium/compiler": "file:packages/compiler",
+    "irydium-site": "file:packages/site"
   }
 }

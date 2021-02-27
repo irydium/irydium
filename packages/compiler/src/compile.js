@@ -12,6 +12,10 @@ const fetch = require("cross-fetch");
 
 import template from "./template.html";
 
+// note this is loaded as a *string*-- we rely on the compiler to transform it into
+// JavaScript at build-time
+import defaultLayout from "./defaultLayout.html";
+
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
 
 async function fetch_package(url) {
@@ -120,8 +124,11 @@ export async function compile(input, options = {}) {
       .join("\n"),
     {}
   );
-  svelteFiles.set("./index.svelte", mdSvelte);
-
+  svelteFiles.set("./mdsvelte.svelte", mdSvelte);
+  svelteFiles.set("./index.svelte", {
+    code: defaultLayout,
+    map: "",
+  });
   // any remaining svelte cells are components we can import
   chunks
     .filter((chunk) => chunk.type === "svelte")

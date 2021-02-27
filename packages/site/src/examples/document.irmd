@@ -1,27 +1,27 @@
-title = "Iridium prototype"
+title = "Irydium prototype"
 scripts = ["https://cdn.plot.ly/plotly-latest.min.js", "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"]
-[vars] 
+[vars]
 daterange = 28
 [data]
 data_migration_gcp_heka = "https://bugzilla.mozilla.org/rest/bug?blocks=1579435&include_fields=id,last_change_time,status,creation_time"
 ---
 %% md
-# Iridium prototype
+# Irydium prototype
 
-This is a quick prototype of an [iodide](https://alpha.iodide.io)-ish notebook, rewritten to use 
-[svelte](https://svelte.dev) and [mdsvex](https://mdsvex.com/) for rendering. 
-Currently using the semi-creative name "Iridium" (will probably be renamed in the
+This is a quick prototype of an [iodide](https://alpha.iodide.io)-ish notebook, rewritten to use
+[svelte](https://svelte.dev) and [mdsvex](https://mdsvex.com/) for rendering.
+Currently using the semi-creative name "Irydium" (will probably be renamed in the
 future if project continues)
 
 If you are viewing the rendered copy, you can look at the source at this URL:
 
-[https://github.com/wlach/iridium/blob/main/document.irmd](https://github.com/wlach/iridium/blob/main/document.irmd)
+[https://github.com/irydium/irydium/blob/main/document.irmd](https://github.com/irydium/irydium/blob/main/document.irmd)
 
 ## Key advantages over iodide (some of these are theoretical right now)
 * Can build/run the "notebook" either online on-demand OR offline (via a script):
   svelte transpilation (via rollup) works on both the client and the server
 * Corresponding to the above, can store notebooks inside GitHub-- render on-commit
-  into github pages or other static site 
+  into github pages or other static site
 * More principled data model (based on a DAG) should facilitate both caching of any
   intermediate data calculated inside notebook, as well as running computation on a web
   worker (since inputs/outputs are well defined)
@@ -41,7 +41,7 @@ If you are viewing the rendered copy, you can look at the source at this URL:
   last part hints at creating something like this)
 * [REPLicant](https://github.com/pngwn/REPLicant): a simple REPL built with svelte, some of the things in this repo based on that
 
-The "notebook" below demonstrates the various features of an iridium notebook:
+The "notebook" below demonstrates the various features of an irydium notebook:
 * Downloading data on demand
 * Running a transformation of the data via JavaScript
 * Creating a simple Svelte component to render data
@@ -57,7 +57,7 @@ output = "heka_burndown"
 
 var getGroupedBugCounts = (bugs) => {
 	bugs = bugs
-    	.map(b=> ({...b, 
+    	.map(b=> ({...b,
                   creation_time: b.creation_time.slice(0, 10),
                   last_change_time: b.last_change_time.slice(0,10)}))
 	let creationTimes = bugs.map(b => b.creation_time)
@@ -94,9 +94,9 @@ filename = "PlotlyGraph.svelte"
 
   onMount(() => {
     Plotly.newPlot(dom_node, data, {barmode: 'stack'});
-  });	
+  });
 </script>
- 
+
 <div id="plotDiv" bind:this={dom_node}></div>
 
 %% md

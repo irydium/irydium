@@ -1,6 +1,6 @@
 {
-  "name": "iridium-site",
-  "description": "Iridium Demo Site",
+  "name": "irydium-site",
+  "description": "Irydium Demo Site",
   "version": "0.0.3",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "validate": "svelte-check --ignore src/node_modules/@sapper"
   },
   "dependencies": {
-    "@iridium-project/compiler": "file:../compiler",
+    "@irydium/compiler": "file:../compiler",
     "body-parser": "^1.19.0",
     "compression": "^1.7.1",
     "polka": "next",
