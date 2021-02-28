@@ -1,7 +1,12 @@
-import resolve from "@rollup/plugin-node-resolve";
+import css from "rollup-plugin-css-only";
 import commonjs from "@rollup/plugin-commonjs";
+import replace from "@rollup/plugin-replace";
+import resolve from "@rollup/plugin-node-resolve";
+import svelte from "rollup-plugin-svelte";
 import { string } from "rollup-plugin-string";
 import { spawn } from "child_process";
+
+const production = !process.env.ROLLUP_WATCH;
 
 function serve() {
   let server;
@@ -24,29 +29,53 @@ function serve() {
       }
 
       // if server has already started, kill it and wait a short while
-      if (server) {
-        server.kill();
-        setTimeout(startServer, 250);
-      } else {
+      if (!server) {
         startServer();
-      }
 
-      process.on("SIGTERM", toExit);
-      process.on("exit", toExit);
+        process.on("SIGTERM", toExit);
+        process.on("exit", toExit);
+      }
     },
   };
 }
 
 export default [
+  // viewer components
   {
-    // the irydium cli
+    input: "src/app.js",
+    output: {
+      sourcemap: true,
+      format: "iife",
+      name: "app",
+      file: "build/bundle.js",
+    },
+    plugins: [
+      svelte(),
+      css({ output: "bundle.css" }),
+      resolve({
+        browser: true,
+        dedupe: ["svelte"],
+      }),
+      commonjs(),
+    ],
+  },
+  // the irydium cli
+  {
     plugins: [
       string({
-        include: ["../compiler/**/*.html"],
+        include: [
+          "../compiler/**/*.html",
+          "build/bundle.*",
+          "./src/index.html",
+        ],
       }),
+      replace({
+        __PRODUCTION__: production,
+      }),
+      svelte(),
       resolve({ preferBuiltins: true }),
       commonjs(),
-      serve(),
+      !production && serve(),
     ],
     input: "src/cli.js",
     external: [
