@@ -1,5 +1,7 @@
 # Irydium
 
+[![Build Status](https://github.com/irydium/irydium/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/irydium/irydium/actions?query=workflow%3Abuild-and-test)
+
 This is a _very_ early prototype of a successor to [Iodide](https://alpha.iodide.io), trying to workaround some of its limitations while also experimenting with other new ideas (e.g. extreme reactivity, extensibility, etc.). For more information on what inspired it, see:
 
 https://wlach.github.io/blog/2020/11/iodide-retrospective/
