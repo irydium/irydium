@@ -9,7 +9,11 @@ export default [
     // libraries for use by other things
     plugins: [
       string({
-        include: "**/*.html",
+        include: [
+          "src/templates/App.svelte",
+          "src/templates/index.html",
+          "../taskrunner/src/main.js",
+        ],
       }),
       resolve({ browser: true }),
       commonjs(),
@@ -33,7 +37,11 @@ export default [
     // the irydium cli
     plugins: [
       string({
-        include: "**/*.html",
+        include: [
+          "src/templates/App.svelte",
+          "src/templates/index.html",
+          "../taskrunner/src/main.js",
+        ],
       }),
       resolve({ preferBuiltins: true }),
       commonjs(),

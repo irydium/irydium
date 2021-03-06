@@ -3,8 +3,8 @@ import { parseChunks } from "../src/parser.js";
 describe("chunk tests", () => {
   it("works with markdown, no header", () => {
     expect(parseChunks(`%% md\nHello world`)).toEqual([
-      { content: "", frontMatter: {}, type: "header" },
-      { content: "Hello world", frontMatter: {}, type: "md" },
+      { content: "", type: "header" },
+      { content: "Hello world", type: "md" },
     ]);
   });
 
@@ -14,10 +14,10 @@ describe("chunk tests", () => {
     ).toEqual([
       {
         content: "",
-        frontMatter: { title: "My beautiful notebook" },
+        title: "My beautiful notebook",
         type: "header",
       },
-      { content: "Hello world", frontMatter: {}, type: "md" },
+      { content: "Hello world", type: "md" },
     ]);
   });
 });

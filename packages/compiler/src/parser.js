@@ -40,6 +40,10 @@ export function parseChunks(input) {
         url: frontMatter.data[k],
       }));
     }
-    return { frontMatter, content: chunk.lines.join("\n"), type: chunk.type };
+    return {
+      ...frontMatter,
+      content: chunk.lines.join("\n"),
+      type: chunk.type,
+    };
   });
 }

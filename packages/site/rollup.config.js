@@ -29,7 +29,11 @@ export default {
     output: config.client.output(),
     plugins: [
       string({
-        include: ["../compiler/src/*.html", "**/*.irmd"],
+        include: [
+          "../compiler/src/templates/*",
+          "../taskrunner/src/main.js",
+          "**/*.irmd",
+        ],
       }),
       replace({
         "process.browser": true,
@@ -37,6 +41,7 @@ export default {
       }),
       svelte({
         preprocess: sveltePreprocess(),
+        exclude: ["../compiler/src/templates/*"],
         compilerOptions: {
           dev,
           hydratable: true,
@@ -92,7 +97,7 @@ export default {
     output: config.server.output(),
     plugins: [
       string({
-        include: "../compiler/src/*.html",
+        include: ["../compiler/src/templates/*", "../taskrunner/src/main.js"],
       }),
       string({
         include: "**/*.irmd",
@@ -103,6 +108,7 @@ export default {
       }),
       svelte({
         preprocess: sveltePreprocess(),
+        exclude: ["../compiler/src/templates/*"],
         compilerOptions: {
           dev,
           generate: "ssr",

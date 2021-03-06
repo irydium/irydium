@@ -1,0 +1,12 @@
+{
+  "name": "@irydium/taskrunner",
+  "version": "0.0.0",
+  "description": "Task runner for irydium",
+  "main": "dist/main.cjs.js",
+  "module": "dist/main.es.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "author": "",
+  "license": "MIT"
+}

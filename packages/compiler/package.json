@@ -14,6 +14,7 @@
   "author": "William Lachance <wlach@protonmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@irydium/taskrunner": "file:../taskrunner",
     "cross-fetch": "^3.0.6",
     "mdsvex": "^0.8.9",
     "mustache": "^4.0.1",
