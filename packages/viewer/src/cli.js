@@ -29,7 +29,13 @@ if (!__PRODUCTION__) {
   buildReloadServer = livereload.createServer({
     port: BUILD_LIVERELOAD_PORT,
   });
-  buildReloadServer.watch([BUILD_DIR]);
+
+  //
+  buildReloadServer.server.once("connection", () => {
+    setTimeout(() => {
+      buildReloadServer.refresh("/");
+    }, 100);
+  });
 }
 
 function getFileContents(filename) {

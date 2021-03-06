@@ -29,12 +29,15 @@ function serve() {
       }
 
       // if server has already started, kill it and wait a short while
-      if (!server) {
+      if (server) {
+        server.on("exit", startServer);
+        server.kill();
+      } else {
         startServer();
-
-        process.on("SIGTERM", toExit);
-        process.on("exit", toExit);
       }
+
+      process.on("SIGTERM", toExit);
+      process.on("exit", toExit);
     },
   };
 }
