@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Irydium project monorepo",
   "main": "index.js",
+  "browserslist": "> 0.25%, not dead",
   "private": true,
   "scripts": {
     "bootstrap": "lerna bootstrap",

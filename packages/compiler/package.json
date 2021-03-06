@@ -8,7 +8,8 @@
     "irmd-compile": "bin/irmd-compile"
   },
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "test": "jest"
   },
   "author": "William Lachance <wlach@protonmail.com>",
   "license": "MIT",
