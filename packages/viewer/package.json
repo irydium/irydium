@@ -13,6 +13,9 @@
   "files": [
     "lib"
   ],
+  "bin": {
+    "irmd-viewer": "bin/irmd-compile"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -21,6 +24,7 @@
     "url": "git+https://github.com/irydium/irydium.git"
   },
   "scripts": {
+    "build": "rollup -c",
     "dev": "rollup --config --watch",
     "start": "bin/irmd-viewer"
   },
