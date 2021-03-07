@@ -24,42 +24,27 @@
       {{{ svelteJs }}}
     </script>
     <script>
-        const __datumsToGet = [
-          {{#data}}
-          { name: "{{{name}}}", url: "{{{url}}}" }
-          {{/data}}
-      ];
+        const __tasks = [
+          {{#tasks}}
+          {
+            type: {{type}},
+            payload: {{{payload}}},
+            state: {{state}},
+            id: {{{id}}},
+            inputs: {{{inputs}}}
+          },
+          {{/tasks}}
+        ];
 
-      // wait for all data to load before executing any JavaScript or rendering
-      // any UI
-      Promise.all(__datumsToGet.map(async d=>{
-          const r = await fetch(d.url);
-          window[d.name] = await r.json();
-      })).then(async () => {
-        {{#hasPyChunks}}
-        // wait for language plugin loader (if using pyodide)
-        await languagePluginLoader;
-        {{/hasPyChunks}}
-        // execute any Javascript (FIXME: do this in a web worker)
-        {{#jsChunks}}
-        // FIXME: this won't work if there are no inputs (which is probably a
-        // case we want to support)
-        window.{{frontMatter.output}} = await (async ({{#frontMatter.inputs}}{{{.}}}{{/frontMatter.inputs}}) => {
-            {{{code}}}
-        })({{#frontMatter.inputs}}{{{.}}}{{/frontMatter.inputs}});
-        {{/jsChunks}}
         // extract out the compiled svelte application, and render it
         const blob = new Blob([document.getElementById("svelteapp").innerText], {
           type: "text/javascript",
         });
         const url = URL.createObjectURL(blob);
-
         import(url).then(({ default: App }) => {
             document.body.innerHTML = '';
-            c = new App({ target: document.body })
+            c = new App({ target: document.body, props: { tasks: __tasks } })
         });
-
-      });
     </script>
   </head>
   <body></body>

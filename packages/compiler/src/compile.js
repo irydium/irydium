@@ -2,6 +2,7 @@ import mustache from "mustache";
 import { compile as svelteCompile } from "svelte/compiler";
 import { compile as mdsvexCompile } from "mdsvex";
 import { parseChunks } from "./parser.js";
+import { TASK_TYPE, TASK_STATE } from "@irydium/taskrunner";
 
 // just requiring rollup and cross-fetch directly for now (this
 // means this code won't run in a browser environment, which is
@@ -10,11 +11,11 @@ import { parseChunks } from "./parser.js";
 const rollup = require("rollup");
 const fetch = require("cross-fetch");
 
-import template from "./template.html";
-
 // note this is loaded as a *string*-- we rely on the compiler to transform it into
 // JavaScript at build-time
-import defaultLayout from "./defaultLayout.html";
+import index from "./templates/index.html";
+import appSource from "./templates/App.svelte";
+import taskRunnerSource from "../../taskrunner/src/main.js";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
 
@@ -22,9 +23,9 @@ async function fetch_package(url) {
   return (await fetch(url)).text();
 }
 
-async function createSvelteBundle(svelteFiles) {
+async function createSvelteBundle(files) {
   const bundle = await rollup.rollup({
-    input: "./index.svelte",
+    input: "./App.svelte",
     plugins: [
       {
         name: "repl-plugin",
@@ -47,7 +48,7 @@ async function createSvelteBundle(svelteFiles) {
           }
 
           // local repl components
-          if (svelteFiles.has(importee)) return importee;
+          if (files.has(importee)) return importee;
 
           // relative imports from a remote package
           if (importee.startsWith(".")) return new URL(importee, importer).href;
@@ -56,7 +57,6 @@ async function createSvelteBundle(svelteFiles) {
 
           // get the package.json and load it into memory
           const pkg_url = `${CDN_URL}/${importee}/package.json`;
-          console.log(pkg_url);
           const pkg = JSON.parse(await fetch_package(pkg_url));
 
           // get an entry point from the pkg.json - first try svelte, then modules, then main
@@ -73,7 +73,7 @@ async function createSvelteBundle(svelteFiles) {
         load: async (id) => {
           // local repl components are stored in memory
           // this is our virtual filesystem
-          if (svelteFiles.has(id)) return svelteFiles.get(id).code;
+          if (files.has(id)) return files.get(id).code;
 
           // everything else comes from a cdn
           return await fetch_package(id);
@@ -93,16 +93,12 @@ async function createSvelteBundle(svelteFiles) {
 export async function compile(input, options = {}) {
   const chunks = parseChunks(input);
 
-  const jsChunks = chunks
-    .filter((chunk) => chunk.type === "js")
-    .map((chunk) => ({ ...chunk, code: chunk.content }));
-
   // python chunks are actually just js chunks
   const pyChunks = chunks
     .filter((chunk) => chunk.type === "py")
     .map((chunk) => {
-      const preamble = chunk.frontMatter.inputs.length
-        ? `from js import ${chunk.frontMatter.inputs.join(",")}\\n`
+      const preamble = chunk.inputs.length
+        ? `from js import ${chunk.inputs.join(",")}\\n`
         : "";
       return {
         ...chunk,
@@ -116,7 +112,7 @@ export async function compile(input, options = {}) {
   // compile with mdsvex
   // FIXME: this may not play nice with script directives, need to figure
   // out how to handle this
-  const svelteFiles = new Map();
+  const files = new Map();
   const mdSvelte = await mdsvexCompile(
     chunks
       .filter((chunk) => chunk.type === "md")
@@ -124,9 +120,14 @@ export async function compile(input, options = {}) {
       .join("\n"),
     {}
   );
-  svelteFiles.set("./mdsvelte.svelte", mdSvelte);
-  svelteFiles.set("./index.svelte", {
-    code: defaultLayout,
+  files.set("./mdsvelte.svelte", mdSvelte);
+  // scaffolding code of varying kinds
+  files.set("./taskrunner", {
+    code: taskRunnerSource,
+    map: "",
+  });
+  files.set("./App.svelte", {
+    code: appSource,
     map: "",
   });
   // any remaining svelte cells are components we can import
@@ -134,17 +135,39 @@ export async function compile(input, options = {}) {
     .filter((chunk) => chunk.type === "svelte")
     .forEach((chunk) => {
       // FIXME: need to verify that a filename is provided for these cells
-      svelteFiles.set(`./${chunk.frontMatter.filename}`, {
+      files.set(`./${chunk.filename}`, {
         code: chunk.content,
         map: "",
       });
     });
-  const svelteJs = await createSvelteBundle(svelteFiles);
-  return mustache.render(template, {
+  const svelteJs = await createSvelteBundle(files);
+
+  let tasks = [
+    ...chunks[0].data.map((d) => {
+      return {
+        type: TASK_TYPE.DOWNLOAD,
+        state: TASK_STATE.PENDING,
+        payload: JSON.stringify(d.url),
+        id: JSON.stringify(d.name),
+        inputs: JSON.stringify([]),
+      };
+    }),
+    ...chunks
+      .filter((chunk) => chunk.type === "js")
+      .concat(pyChunks)
+      .map((chunk) => ({
+        id: JSON.stringify(chunk.output),
+        type: TASK_TYPE.JS,
+        state: TASK_STATE.PENDING,
+        payload: `(${chunk.inputs.join(",")}) => { ${chunk.content} }`,
+        inputs: JSON.stringify(chunk.inputs || []),
+      })),
+  ];
+  return mustache.render(index, {
     ...options,
-    ...chunks[0].frontMatter,
+    ...chunks[0],
+    tasks: tasks,
     hasPyChunks: pyChunks.length > 0,
-    jsChunks: pyChunks.concat(jsChunks),
     svelteJs,
   });
 }

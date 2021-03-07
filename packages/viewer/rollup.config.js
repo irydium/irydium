@@ -67,15 +67,16 @@ export default [
     plugins: [
       string({
         include: [
-          "../compiler/**/*.html",
+          "../compiler/src/templates/*",
           "build/bundle.*",
           "./src/index.html",
+          "../taskrunner/src/main.js",
         ],
       }),
       replace({
         __PRODUCTION__: production,
       }),
-      svelte(),
+      svelte({ exclude: "../compiler/src/templates/*" }),
       resolve({ preferBuiltins: true }),
       commonjs(),
       !production && serve(),
