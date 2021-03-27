@@ -25,10 +25,15 @@ async function runTask(tasks, task) {
       task.value = await (await fetch(task.payload)).json();
       break;
     case TASK_TYPE.JS:
-      const inputValues = getDependencies(task, tasks).map(
-        (task) => task.value
+      // create a map of task ids->input values to preserve expected ordering
+      const inputValues = getDependencies(task, tasks).reduce((acc, task) => {
+        acc[task.id] = task.value;
+        return acc;
+      }, {});
+      task.value = await task.payload.apply(
+        null,
+        task.inputs.map((inputId) => inputValues[inputId])
       );
-      task.value = await task.payload.apply(null, inputValues);
       break;
   }
 
