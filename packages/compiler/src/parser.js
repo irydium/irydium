@@ -1,5 +1,14 @@
 import { parse as tomlParse } from "toml";
 
+export class ParseError extends Error {
+  constructor(message, type, lineNumber) {
+    super(message);
+    this.message = message;
+    this.type = type;
+    this.lineNumber = lineNumber;
+  }
+}
+
 export function parseChunks(input) {
   const lines = input.toString().split("\n");
   const chunks = [];
@@ -9,8 +18,9 @@ export function parseChunks(input) {
     type: "header",
     lines: [],
     frontMatterLines: [],
+    lineNumber: 0,
   };
-  lines.forEach((line) => {
+  lines.forEach((line, lineNumber) => {
     if (line === "---" && !parsedFrontMatter) {
       parsedFrontMatter = true;
       currentChunk.frontMatterLines = currentChunk.lines;
@@ -21,6 +31,7 @@ export function parseChunks(input) {
         type: line.substr(2).trim(),
         lines: [],
         frontMatterLines: [],
+        lineNumber,
       };
       parsedFrontMatter = false;
     } else {
@@ -32,18 +43,27 @@ export function parseChunks(input) {
   }
 
   return chunks.map((chunk) => {
-    let frontMatter = tomlParse(chunk.frontMatterLines.join("\n"));
-    // HACK: re-interpret frontmatter "data" in a way that mustache can render
-    if (frontMatter.data) {
-      frontMatter.data = Object.keys(frontMatter.data).map((k) => ({
-        name: k,
-        url: frontMatter.data[k],
-      }));
+    const frontMatterContent = chunk.frontMatterLines.join("\n");
+    try {
+      const frontMatter = tomlParse(frontMatterContent);
+      // HACK: re-interpret frontmatter "data" in a way that mustache can render
+      if (frontMatter.data) {
+        frontMatter.data = Object.keys(frontMatter.data).map((k) => ({
+          name: k,
+          url: frontMatter.data[k],
+        }));
+      }
+      return {
+        ...frontMatter,
+        content: chunk.lines.join("\n"),
+        type: chunk.type,
+      };
+    } catch (err) {
+      throw new ParseError(
+        err.message,
+        "TomlParseError",
+        chunk.lineNumber + err.line
+      );
     }
-    return {
-      ...frontMatter,
-      content: chunk.lines.join("\n"),
-      type: chunk.type,
-    };
   });
 }
