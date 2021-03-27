@@ -68,10 +68,15 @@ polka()
   })
   .get("/iridium", async (_, res) => {
     const input = getFileContents(args[0]);
-    const output = await compile(input, { liveReload: true });
-
-    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-    res.end(output);
+    try {
+      const output = await compile(input, { liveReload: true });
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(output);
+    } catch (err) {
+      console.log(err);
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(`${err.type} on line ${err.lineNumber}: ${err.message}`);
+    }
   })
   .listen(3000, (err) => {
     if (err) throw err;
