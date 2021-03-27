@@ -1,4 +1,4 @@
-import { compile } from "@irydium/compiler";
+import { compile } from "../../compiler/src/compile.js";
 
 // the following two files are imported as strings, this lets us
 // return them literally
