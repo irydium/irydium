@@ -159,7 +159,7 @@ export async function compile(input, options = {}) {
         id: JSON.stringify(chunk.output),
         type: TASK_TYPE.JS,
         state: TASK_STATE.PENDING,
-        payload: `(${chunk.inputs.join(",")}) => { ${chunk.content} }`,
+        payload: `(${(chunk.inputs || []).join(",")}) => { ${chunk.content} }`,
         inputs: JSON.stringify(chunk.inputs || []),
       })),
   ];
