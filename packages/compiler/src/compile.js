@@ -1,6 +1,6 @@
-import mustache from "mustache";
 import { compile as svelteCompile } from "svelte/compiler";
 import { compile as mdsvexCompile } from "mdsvex";
+import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
 import { parseChunks } from "./parser.js";
 import { TASK_TYPE, TASK_STATE } from "@irydium/taskrunner";
 
@@ -91,23 +91,16 @@ async function createSvelteBundle(files) {
 }
 
 export async function compile(input, options = {}) {
-  const chunks = parseChunks(input);
-
-  // python chunks are actually just js chunks
-  const pyChunks = chunks
-    .filter((chunk) => chunk.type === "py")
-    .map((chunk) => {
-      const preamble = chunk.inputs.length
-        ? `from js import ${chunk.inputs.join(",")}\\n`
-        : "";
-      return {
-        ...chunk,
-        code: `return (await pyodide.runPythonAsync(\"${preamble}${chunk.lines.join(
-          "\\n"
-        )}\"))`,
-      };
-    });
-
+  const codeNodes = [];
+  const frontMatter;
+  const mdSvelte = await mdsvexCompile(input, {
+    remarkPlugins: [codeExtractor(codeNodes)],
+    rehypePlugins: [codeInserter(codeNodes)],
+    frontmatter: { parse: frontMatterExtractor(frontMatter) },
+  });
+  console.log(frontMatter);
+  return mdSvelte.code;
+  /*
   // we convert all markdown chunks into one big document which we
   // compile with mdsvex
   // FIXME: this may not play nice with script directives, need to figure
@@ -155,13 +148,7 @@ export async function compile(input, options = {}) {
     ...chunks
       .filter((chunk) => chunk.type === "js")
       .concat(pyChunks)
-      .map((chunk) => ({
-        id: JSON.stringify(chunk.output),
-        type: TASK_TYPE.JS,
-        state: TASK_STATE.PENDING,
-        payload: `(${(chunk.inputs || []).join(",")}) => { ${chunk.content} }`,
-        inputs: JSON.stringify(chunk.inputs || []),
-      })),
+      .map((chunk) => ({)),
   ];
   return mustache.render(index, {
     ...options,
@@ -170,4 +157,5 @@ export async function compile(input, options = {}) {
     hasPyChunks: pyChunks.length > 0,
     svelteJs,
   });
+  */
 }

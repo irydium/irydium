@@ -10,6 +10,7 @@ export default [
     plugins: [
       string({
         include: [
+          "src/templates/tasks.js",
           "src/templates/App.svelte",
           "src/templates/index.html",
           "../taskrunner/src/main.js",
@@ -20,13 +21,15 @@ export default [
     ],
     input: "src/main.js",
     external: [
+      "front-matter",
       "svelte/compiler",
       "rollup",
       "cross-fetch",
       "cross-fetch/polyfill",
+      "js-yaml",
       "mustache",
       "mdsvex",
-      "toml",
+      "unist-util-visit",
     ],
     output: [
       { file: pkg.module, format: "es", sourcemap: false },
@@ -38,6 +41,7 @@ export default [
     plugins: [
       string({
         include: [
+          "src/templates/tasks.js",
           "src/templates/App.svelte",
           "src/templates/index.html",
           "../taskrunner/src/main.js",
@@ -48,16 +52,18 @@ export default [
     ],
     input: "src/cli.js",
     external: [
+      "front-matter",
       "svelte/compiler",
       "rollup",
       "cross-fetch",
       "cross-fetch/polyfill",
+      "js-yaml",
       "mustache",
       "mdsvex",
-      "toml",
       "fs",
       "fsevents",
       "crypto",
+      "unist-util-visit",
     ],
     output: [
       { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },
