@@ -1,6 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import { string } from "rollup-plugin-string";
+import { spawn } from "child_process";
 
 import pkg from "./package.json";
 
@@ -30,6 +31,7 @@ export default [
       "mustache",
       "mdsvex",
       "unist-util-visit",
+      "vfile-message",
     ],
     output: [
       { file: pkg.module, format: "es", sourcemap: false },
@@ -64,6 +66,7 @@ export default [
       "fsevents",
       "crypto",
       "unist-util-visit",
+      "vfile-message",
     ],
     output: [
       { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },

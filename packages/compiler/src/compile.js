@@ -1,7 +1,8 @@
 import { compile as svelteCompile } from "svelte/compiler";
+import fm from "front-matter";
 import { compile as mdsvexCompile } from "mdsvex";
 import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
-import { parseChunks } from "./parser.js";
+//import { parseChunks } from "./parser.js";
 import { TASK_TYPE, TASK_STATE } from "@irydium/taskrunner";
 
 // just requiring rollup and cross-fetch directly for now (this
@@ -91,71 +92,57 @@ async function createSvelteBundle(files) {
 }
 
 export async function compile(input, options = {}) {
-  const codeNodes = [];
-  const frontMatter;
+  let state = {
+    codeNodes: [],
+  };
   const mdSvelte = await mdsvexCompile(input, {
-    remarkPlugins: [codeExtractor(codeNodes)],
-    rehypePlugins: [codeInserter(codeNodes)],
-    frontmatter: { parse: frontMatterExtractor(frontMatter) },
+    remarkPlugins: [codeExtractor(state)],
+    rehypePlugins: [codeInserter(state)],
+    frontmatter: {
+      parse: frontMatterExtractor(state),
+      marker: "-",
+      type: "yaml",
+    },
   });
-  console.log(frontMatter);
-  return mdSvelte.code;
-  /*
-  // we convert all markdown chunks into one big document which we
-  // compile with mdsvex
-  // FIXME: this may not play nice with script directives, need to figure
-  // out how to handle this
-  const files = new Map();
-  const mdSvelte = await mdsvexCompile(
-    chunks
-      .filter((chunk) => chunk.type === "md")
-      .map((chunk) => chunk.content)
-      .join("\n"),
-    {}
-  );
-  files.set("./mdsvelte.svelte", mdSvelte);
-  // scaffolding code of varying kinds
-  files.set("./taskrunner", {
-    code: taskRunnerSource,
-    map: "",
-  });
-  files.set("./App.svelte", {
-    code: appSource,
-    map: "",
-  });
-  // any remaining svelte cells are components we can import
-  chunks
-    .filter((chunk) => chunk.type === "svelte")
-    .forEach((chunk) => {
-      // FIXME: need to verify that a filename is provided for these cells
-      files.set(`./${chunk.filename}`, {
-        code: chunk.content,
-        map: "",
-      });
+
+  // we allow defining svelte files inside the the markdown as "code cells":
+  // extract and use them here
+  const svelteFiles = state.codeNodes
+    .filter((cn) => cn.meta === "svelte")
+    .map((cn) => {
+      const parsed = fm(cn.value);
+      if (!parsed.attributes.name) {
+        throw new Error(
+          `Svelte component defined in markup without name (line: ${cn.position.start.line})`
+        );
+      }
+      if (parsed.attributes.name === "mdsvelte") {
+        throw new Error(
+          `The mdsvelte name is reserved (line: ${cn.position.start.line})`
+        );
+      }
+
+      // FIXME: should probably parse out the svelte files to make sure they compile at this stage
+
+      return [`./${parsed.attributes.name}.svelte`, parsed.body];
     });
+
+  const files = new Map([
+    ["./mdsvelte.svelte", mdSvelte],
+    [
+      "./taskrunner",
+      {
+        code: taskRunnerSource,
+        map: "",
+      },
+    ],
+    ...svelteFiles,
+  ]);
+
   const svelteJs = await createSvelteBundle(files);
 
-  let tasks = [
-    ...chunks[0].data.map((d) => {
-      return {
-        type: TASK_TYPE.DOWNLOAD,
-        state: TASK_STATE.PENDING,
-        payload: JSON.stringify(d.url),
-        id: JSON.stringify(d.name),
-        inputs: JSON.stringify([]),
-      };
-    }),
-    ...chunks
-      .filter((chunk) => chunk.type === "js")
-      .concat(pyChunks)
-      .map((chunk) => ({)),
-  ];
   return mustache.render(index, {
     ...options,
-    ...chunks[0],
-    tasks: tasks,
-    hasPyChunks: pyChunks.length > 0,
     svelteJs,
   });
-  */
 }
