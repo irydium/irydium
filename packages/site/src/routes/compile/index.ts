@@ -9,5 +9,5 @@ const fs = require("fs");
 export async function post(req, res: ServerResponse, next: () => void) {
   res.setHeader("Content-Type", "text/html");
   const data = req.body;
-  res.end(await compile(data.irmd));
+  res.end(await compile(data.md));
 }

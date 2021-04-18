@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let irmd = "";
+  export let md = "";
   let srcdoc = "Loading...";
 
   async function compileIrmd(irmd: string) {
@@ -7,7 +7,7 @@
       srcdoc = await (
         await fetch("/compile/", {
           method: "POST",
-          body: JSON.stringify({ irmd }),
+          body: JSON.stringify({ md }),
           headers: {
             "Content-Type": "application/json",
           },
@@ -16,7 +16,7 @@
     }
   }
 
-  $: irmd && compileIrmd(irmd);
+  $: md && compileIrmd(md);
 </script>
 
 <style>
