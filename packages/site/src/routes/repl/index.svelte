@@ -1,9 +1,9 @@
 <script>
   import Editor from "../../components/Editor.svelte";
   import Output from "../../components/Output.svelte";
-  import example from "../../examples/document.irmd";
+  import intro from "../../examples/intro.md";
 
-  let irmd = example;
+  let md = intro;
 </script>
 
 <style>
@@ -23,9 +23,9 @@
 
 <div class="body">
   <section>
-    <Editor bind:irmd />
+    <Editor bind:md />
   </section>
   <section>
-    <Output {irmd} />
+    <Output {md} />
   </section>
 </div>

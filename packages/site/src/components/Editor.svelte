@@ -1,5 +1,5 @@
 <script>
-  export let irmd = "";
+  export let md = "";
 </script>
 
 <style>
@@ -10,4 +10,4 @@
   }
 </style>
 
-<textarea bind:value={irmd} />
+<textarea bind:value={md} />

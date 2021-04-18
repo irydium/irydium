@@ -36,7 +36,7 @@ function getDependencies(task, tasks) {
 
 async function runTask(tasks, task) {
   task.state = TASK_STATE.EXECUTING;
-  console.log(task.id);
+  console.log(`Running: ${task.id}`);
   switch (task.type) {
     case TASK_TYPE.LOAD_SCRIPTS:
       await Promise.all(

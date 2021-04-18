@@ -18,7 +18,7 @@ data:
 
 <PlotlyGraph data={allBugs} />
 
-This tracks the total number of outstanding bugs under the categories below: it is meant to track our overall progress. See also the [AWS inventory spreadsheet](https://docs.google.com/spreadsheets/d/1f6fVsEp8FaX6ri98benHexzsHWYU9HMEbNW1poJQd1w/edit#gid=0) which we are using to
+This track the total number of outstanding bugs under the categories below: it is meant to track our overall progress. See also the [AWS inventory spreadsheet](https://docs.google.com/spreadsheets/d/1f6fVsEp8FaX6ri98benHexzsHWYU9HMEbNW1poJQd1w/edit#gid=0) which we are using to
 track due dates.
 
 ## Heka tasks

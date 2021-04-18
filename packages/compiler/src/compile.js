@@ -92,6 +92,7 @@ async function createSvelteBundle(files) {
 export async function compile(input, options = {}) {
   let state = {
     codeNodes: [],
+    frontMatter: {},
   };
   const mdSvelte = await mdsvexCompile(input, {
     remarkPlugins: [codeExtractor(state)],
