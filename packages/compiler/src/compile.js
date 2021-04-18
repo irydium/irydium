@@ -1,8 +1,8 @@
-import mustache from "mustache";
 import { compile as svelteCompile } from "svelte/compiler";
+import fm from "front-matter";
 import { compile as mdsvexCompile } from "mdsvex";
-import { parseChunks } from "./parser.js";
-import { TASK_TYPE, TASK_STATE } from "@irydium/taskrunner";
+import mustache from "mustache";
+import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
 
 // just requiring rollup and cross-fetch directly for now (this
 // means this code won't run in a browser environment, which is
@@ -14,7 +14,6 @@ const fetch = require("cross-fetch");
 // note this is loaded as a *string*-- we rely on the compiler to transform it into
 // JavaScript at build-time
 import index from "./templates/index.html";
-import appSource from "./templates/App.svelte";
 import taskRunnerSource from "../../taskrunner/src/main.js";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
@@ -25,7 +24,7 @@ async function fetch_package(url) {
 
 async function createSvelteBundle(files) {
   const bundle = await rollup.rollup({
-    input: "./App.svelte",
+    input: "./mdsvelte.svelte",
     plugins: [
       {
         name: "repl-plugin",
@@ -91,83 +90,37 @@ async function createSvelteBundle(files) {
 }
 
 export async function compile(input, options = {}) {
-  const chunks = parseChunks(input);
-
-  // python chunks are actually just js chunks
-  const pyChunks = chunks
-    .filter((chunk) => chunk.type === "py")
-    .map((chunk) => {
-      const preamble = chunk.inputs.length
-        ? `from js import ${chunk.inputs.join(",")}\\n`
-        : "";
-      return {
-        ...chunk,
-        code: `return (await pyodide.runPythonAsync(\"${preamble}${chunk.lines.join(
-          "\\n"
-        )}\"))`,
-      };
-    });
-
-  // we convert all markdown chunks into one big document which we
-  // compile with mdsvex
-  // FIXME: this may not play nice with script directives, need to figure
-  // out how to handle this
-  const files = new Map();
-  const mdSvelte = await mdsvexCompile(
-    chunks
-      .filter((chunk) => chunk.type === "md")
-      .map((chunk) => chunk.content)
-      .join("\n"),
-    {}
-  );
-  files.set("./mdsvelte.svelte", mdSvelte);
-  // scaffolding code of varying kinds
-  files.set("./taskrunner", {
-    code: taskRunnerSource,
-    map: "",
+  let state = {
+    codeNodes: [],
+    frontMatter: {},
+  };
+  const mdSvelte = await mdsvexCompile(input, {
+    remarkPlugins: [codeExtractor(state)],
+    rehypePlugins: [codeInserter(state)],
+    frontmatter: {
+      parse: frontMatterExtractor(state),
+      marker: "-",
+      type: "yaml",
+    },
   });
-  files.set("./App.svelte", {
-    code: appSource,
-    map: "",
-  });
-  // any remaining svelte cells are components we can import
-  chunks
-    .filter((chunk) => chunk.type === "svelte")
-    .forEach((chunk) => {
-      // FIXME: need to verify that a filename is provided for these cells
-      files.set(`./${chunk.filename}`, {
-        code: chunk.content,
+  const files = new Map([
+    ["./mdsvelte.svelte", mdSvelte],
+    [
+      "./taskrunner",
+      {
+        code: taskRunnerSource,
         map: "",
-      });
-    });
+      },
+    ],
+    ...state.svelteCells.map((sc) => [
+      `./${sc.name}.svelte`,
+      { code: sc.body, map: "" },
+    ]),
+  ]);
   const svelteJs = await createSvelteBundle(files);
 
-  let tasks = [
-    ...chunks[0].data.map((d) => {
-      return {
-        type: TASK_TYPE.DOWNLOAD,
-        state: TASK_STATE.PENDING,
-        payload: JSON.stringify(d.url),
-        id: JSON.stringify(d.name),
-        inputs: JSON.stringify([]),
-      };
-    }),
-    ...chunks
-      .filter((chunk) => chunk.type === "js")
-      .concat(pyChunks)
-      .map((chunk) => ({
-        id: JSON.stringify(chunk.output),
-        type: TASK_TYPE.JS,
-        state: TASK_STATE.PENDING,
-        payload: `(${(chunk.inputs || []).join(",")}) => { ${chunk.content} }`,
-        inputs: JSON.stringify(chunk.inputs || []),
-      })),
-  ];
   return mustache.render(index, {
     ...options,
-    ...chunks[0],
-    tasks: tasks,
-    hasPyChunks: pyChunks.length > 0,
     svelteJs,
   });
 }

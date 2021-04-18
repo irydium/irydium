@@ -1,50 +1,42 @@
 <html>
   <head>
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.5/dist/base.min.css" />
-    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.5/dist/components.min.css" />
-    <link
-    rel="stylesheet"
-    href="https://unpkg.com/@tailwindcss/typography@0.2.x/dist/typography.min.css"
-  />
-    <link rel="stylesheet" href="https://unpkg.com/tailwindcss@^1.5/dist/utilities.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.css" />
+    <style>
+      .markdown-body {
+        box-sizing: border-box;
+        min-width: 200px;
+        max-width: 980px;
+        margin: 0 auto;
+        padding: 45px;
+      }
+
+      @media (max-width: 767px) {
+        .markdown-body {
+          padding: 15px;
+        }
+      }
+    </style>
     {{#liveReload}}
     <script>
       document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] +
       ':35729/livereload.js?snipver=1"></' + 'script>')
     </script>
     {{/liveReload}}
-    {{#hasPyChunks}}
-    <script src="https://cdn.jsdelivr.net/pyodide/v0.15.0/full/pyodide.js"></script>
-    {{/hasPyChunks}}
-    {{#scripts}}
-    <script src="{{{ . }}}"></script>
-    {{/scripts}}
     <script id="svelteapp" type="text/plain">
       {{{ svelteJs }}}
     </script>
     <script>
-        const __tasks = [
-          {{#tasks}}
-          {
-            type: {{type}},
-            payload: {{{payload}}},
-            state: {{state}},
-            id: {{{id}}},
-            inputs: {{{inputs}}}
-          },
-          {{/tasks}}
-        ];
         // extract out the compiled svelte application, and render it
         const blob = new Blob([document.getElementById("svelteapp").innerText], {
           type: "text/javascript",
         });
         const url = URL.createObjectURL(blob);
-        import(url).then(({ default: App }) => {
+        import(url).then(({ default: mdsvelte }) => {
             document.body.innerHTML = '';
-            c = new App({ target: document.body, props: { tasks: __tasks } })
+            c = new mdsvelte({ target: document.body })
         });
     </script>
   </head>
-  <body></body>
+  <body class="markdown-body"></body>
 </html>

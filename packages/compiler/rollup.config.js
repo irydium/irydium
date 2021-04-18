@@ -1,6 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import { string } from "rollup-plugin-string";
+import { spawn } from "child_process";
 
 import pkg from "./package.json";
 
@@ -10,6 +11,7 @@ export default [
     plugins: [
       string({
         include: [
+          "src/templates/tasks.js",
           "src/templates/App.svelte",
           "src/templates/index.html",
           "../taskrunner/src/main.js",
@@ -20,13 +22,16 @@ export default [
     ],
     input: "src/main.js",
     external: [
+      "front-matter",
       "svelte/compiler",
       "rollup",
       "cross-fetch",
       "cross-fetch/polyfill",
+      "js-yaml",
       "mustache",
       "mdsvex",
-      "toml",
+      "unist-util-visit",
+      "vfile-message",
     ],
     output: [
       { file: pkg.module, format: "es", sourcemap: false },
@@ -38,6 +43,7 @@ export default [
     plugins: [
       string({
         include: [
+          "src/templates/tasks.js",
           "src/templates/App.svelte",
           "src/templates/index.html",
           "../taskrunner/src/main.js",
@@ -48,16 +54,19 @@ export default [
     ],
     input: "src/cli.js",
     external: [
+      "front-matter",
       "svelte/compiler",
       "rollup",
       "cross-fetch",
       "cross-fetch/polyfill",
+      "js-yaml",
       "mustache",
       "mdsvex",
-      "toml",
       "fs",
       "fsevents",
       "crypto",
+      "unist-util-visit",
+      "vfile-message",
     ],
     output: [
       { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },

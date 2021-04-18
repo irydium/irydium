@@ -18,7 +18,7 @@ if (args.length !== 1) {
   process.exit(1);
 }
 
-const irmdReloadServer = livereload.createServer({ extraExts: ["irmd"] });
+const irmdReloadServer = livereload.createServer({ extraExts: ["md"] });
 irmdReloadServer.watch([path.dirname(args[0])]);
 
 // only add logic to reload the dev server for non-production cases

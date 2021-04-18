@@ -4,8 +4,9 @@
 // ]
 
 export const TASK_TYPE = {
-  DOWNLOAD: 0,
-  JS: 1,
+  LOAD_SCRIPTS: 0,
+  DOWNLOAD: 1,
+  JS: 2,
 };
 
 export const TASK_STATE = {
@@ -14,13 +15,37 @@ export const TASK_STATE = {
   COMPLETE: 2,
 };
 
+// shamelessly stolen from iodide (technically MPL)
+function loadScriptFromBlob(blob) {
+  // for async script loading from blobs, see:
+  // https://developer.mozilla.org/en-US/docs/Games/Techniques/Async_scripts
+  return new Promise((resolve, reject) => {
+    const script = document.createElement("script");
+    const url = URL.createObjectURL(blob);
+    script.src = url;
+    document.head.appendChild(script);
+
+    script.onload = () => resolve(`scripted loaded`);
+    script.onerror = (err) => reject(new Error(err));
+  });
+}
+
 function getDependencies(task, tasks) {
   return tasks.filter((task2) => task.inputs.includes(task2.id));
 }
 
 async function runTask(tasks, task) {
   task.state = TASK_STATE.EXECUTING;
+  console.log(`Running: ${task.id}`);
   switch (task.type) {
+    case TASK_TYPE.LOAD_SCRIPTS:
+      await Promise.all(
+        task.payload.map(async (script) => {
+          const scriptBlob = await (await fetch(script)).blob();
+          await loadScriptFromBlob(scriptBlob);
+        })
+      );
+      break;
     case TASK_TYPE.DOWNLOAD:
       task.value = await (await fetch(task.payload)).json();
       break;
@@ -36,6 +61,7 @@ async function runTask(tasks, task) {
       );
       break;
   }
+  console.log(`Done: ${task.id}`);
 
   task.state = TASK_STATE.COMPLETE;
   await Promise.all(
@@ -50,17 +76,15 @@ async function runTask(tasks, task) {
         await runTask(tasks, task);
       })
   );
-
   return task;
 }
 
 export async function runTasks(tasks) {
-  await Promise.all(
+  return await Promise.all(
     tasks
       .filter((task) => !task.inputs || !task.inputs.length)
       .map(async (task) => {
         await runTask(tasks, task);
       })
   );
-  return tasks;
 }

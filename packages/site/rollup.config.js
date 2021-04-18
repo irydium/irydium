@@ -32,7 +32,7 @@ export default {
         include: [
           "../compiler/src/templates/*",
           "../taskrunner/src/main.js",
-          "**/*.irmd",
+          "**/*.md",
         ],
       }),
       replace({
@@ -100,7 +100,7 @@ export default {
         include: ["../compiler/src/templates/*", "../taskrunner/src/main.js"],
       }),
       string({
-        include: "**/*.irmd",
+        include: "**/*.md",
       }),
       replace({
         "process.browser": false,
