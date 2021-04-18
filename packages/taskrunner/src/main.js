@@ -36,12 +36,15 @@ function getDependencies(task, tasks) {
 
 async function runTask(tasks, task) {
   task.state = TASK_STATE.EXECUTING;
+  console.log(task.id);
   switch (task.type) {
     case TASK_TYPE.LOAD_SCRIPTS:
-      task.payload.forEach(async (script) => {
-        const scriptBlob = await (await fetch(script)).blob();
-        await loadScriptFromBlob(scriptBlob);
-      });
+      await Promise.all(
+        task.payload.map(async (script) => {
+          const scriptBlob = await (await fetch(script)).blob();
+          await loadScriptFromBlob(scriptBlob);
+        })
+      );
       break;
     case TASK_TYPE.DOWNLOAD:
       task.value = await (await fetch(task.payload)).json();
@@ -58,6 +61,7 @@ async function runTask(tasks, task) {
       );
       break;
   }
+  console.log(`Done: ${task.id}`);
 
   task.state = TASK_STATE.COMPLETE;
   await Promise.all(
@@ -72,17 +76,15 @@ async function runTask(tasks, task) {
         await runTask(tasks, task);
       })
   );
-
   return task;
 }
 
 export async function runTasks(tasks) {
-  await Promise.all(
+  return await Promise.all(
     tasks
       .filter((task) => !task.inputs || !task.inputs.length)
       .map(async (task) => {
         await runTask(tasks, task);
       })
   );
-  return tasks;
 }

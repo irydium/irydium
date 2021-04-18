@@ -1,9 +1,8 @@
 import { compile as svelteCompile } from "svelte/compiler";
 import fm from "front-matter";
 import { compile as mdsvexCompile } from "mdsvex";
+import mustache from "mustache";
 import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
-//import { parseChunks } from "./parser.js";
-import { TASK_TYPE, TASK_STATE } from "@irydium/taskrunner";
 
 // just requiring rollup and cross-fetch directly for now (this
 // means this code won't run in a browser environment, which is
@@ -15,7 +14,6 @@ const fetch = require("cross-fetch");
 // note this is loaded as a *string*-- we rely on the compiler to transform it into
 // JavaScript at build-time
 import index from "./templates/index.html";
-import appSource from "./templates/App.svelte";
 import taskRunnerSource from "../../taskrunner/src/main.js";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
@@ -26,7 +24,7 @@ async function fetch_package(url) {
 
 async function createSvelteBundle(files) {
   const bundle = await rollup.rollup({
-    input: "./App.svelte",
+    input: "./mdsvelte.svelte",
     plugins: [
       {
         name: "repl-plugin",
@@ -104,29 +102,6 @@ export async function compile(input, options = {}) {
       type: "yaml",
     },
   });
-
-  // we allow defining svelte files inside the the markdown as "code cells":
-  // extract and use them here
-  const svelteFiles = state.codeNodes
-    .filter((cn) => cn.meta === "svelte")
-    .map((cn) => {
-      const parsed = fm(cn.value);
-      if (!parsed.attributes.name) {
-        throw new Error(
-          `Svelte component defined in markup without name (line: ${cn.position.start.line})`
-        );
-      }
-      if (parsed.attributes.name === "mdsvelte") {
-        throw new Error(
-          `The mdsvelte name is reserved (line: ${cn.position.start.line})`
-        );
-      }
-
-      // FIXME: should probably parse out the svelte files to make sure they compile at this stage
-
-      return [`./${parsed.attributes.name}.svelte`, parsed.body];
-    });
-
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     [
@@ -136,9 +111,11 @@ export async function compile(input, options = {}) {
         map: "",
       },
     ],
-    ...svelteFiles,
+    ...state.svelteCells.map((sc) => [
+      `./${sc.name}.svelte`,
+      { code: sc.body, map: "" },
+    ]),
   ]);
-
   const svelteJs = await createSvelteBundle(files);
 
   return mustache.render(index, {

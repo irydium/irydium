@@ -12,6 +12,5 @@ compile(input)
   .then((output) => console.log(output))
   .catch((err) => {
     console.log(err);
-    console.log("LOL");
-    process.exit(0);
+    process.exit(1);
   });
