@@ -1,5 +1,4 @@
 import { compile as svelteCompile } from "svelte/compiler";
-import fm from "front-matter";
 import { compile as mdsvexCompile } from "mdsvex";
 import mustache from "mustache";
 import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
@@ -14,7 +13,7 @@ const fetch = require("cross-fetch");
 // note this is loaded as a *string*-- we rely on the compiler to transform it into
 // JavaScript at build-time
 import index from "./templates/index.html";
-import taskRunnerSource from "../../taskrunner/src/main.js";
+import taskRunnerSource from "./templates/taskrunner.js";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
 

@@ -1,6 +1,6 @@
 import fm from "front-matter";
 import mustache from "mustache";
-import { TASK_TYPE, TASK_STATE } from "@irydium/taskrunner";
+import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import visit from "unist-util-visit";
 import Message from "vfile-message";
 import { parse as svelteParse } from "svelte/compiler";

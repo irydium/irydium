@@ -1,22 +1,14 @@
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import { string } from "rollup-plugin-string";
-import { spawn } from "child_process";
 
+import { getBaseCompilerPlugins } from "./compiler-plugins";
 import pkg from "./package.json";
 
 export default [
   {
     // libraries for use by other things
     plugins: [
-      string({
-        include: [
-          "src/templates/tasks.js",
-          "src/templates/App.svelte",
-          "src/templates/index.html",
-          "../taskrunner/src/main.js",
-        ],
-      }),
+      ...getBaseCompilerPlugins(),
       resolve({ browser: true }),
       commonjs(),
     ],
@@ -41,14 +33,7 @@ export default [
   {
     // the irydium cli
     plugins: [
-      string({
-        include: [
-          "src/templates/tasks.js",
-          "src/templates/App.svelte",
-          "src/templates/index.html",
-          "../taskrunner/src/main.js",
-        ],
-      }),
+      ...getBaseCompilerPlugins(),
       resolve({ preferBuiltins: true }),
       commonjs(),
     ],

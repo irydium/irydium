@@ -11,6 +11,7 @@ import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import config from "sapper/config/rollup.js";
 import pkg from "./package.json";
+import { getBaseCompilerPlugins } from "../compiler/compiler-plugins";
 
 const mode = process.env.NODE_ENV;
 const dev = mode === "development";
@@ -28,12 +29,9 @@ export default {
     input: config.client.input().replace(/\.js$/, ".ts"),
     output: config.client.output(),
     plugins: [
+      ...getBaseCompilerPlugins("../compiler"),
       string({
-        include: [
-          "../compiler/src/templates/*",
-          "../taskrunner/src/main.js",
-          "**/*.md",
-        ],
+        include: ["**/*.md"],
       }),
       replace({
         "process.browser": true,
@@ -41,7 +39,6 @@ export default {
       }),
       svelte({
         preprocess: sveltePreprocess(),
-        exclude: ["../compiler/src/templates/*"],
         compilerOptions: {
           dev,
           hydratable: true,
@@ -96,9 +93,7 @@ export default {
     input: { server: config.server.input().server.replace(/\.js$/, ".ts") },
     output: config.server.output(),
     plugins: [
-      string({
-        include: ["../compiler/src/templates/*", "../taskrunner/src/main.js"],
-      }),
+      ...getBaseCompilerPlugins("../compiler"),
       string({
         include: "**/*.md",
       }),

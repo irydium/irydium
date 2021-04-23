@@ -1,4 +1,4 @@
-import { TASK_TYPE, TASK_STATE, runTasks } from "../src/main";
+import { TASK_TYPE, TASK_STATE, runTasks } from "../src/taskrunner";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
