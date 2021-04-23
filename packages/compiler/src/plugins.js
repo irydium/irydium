@@ -18,8 +18,8 @@ export const codeExtractor = (state) => {
         if (node.lang === "{code-cell}") {
           state.codeNodes.push(node);
           parent.children.splice(index, 1);
+          return index;
         }
-        return index;
       });
 
       // we allow defining svelte files inside the the markdown as "code cells":
