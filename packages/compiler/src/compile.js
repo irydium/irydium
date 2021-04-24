@@ -92,6 +92,7 @@ export async function compile(input, options = {}) {
   let state = {
     codeNodes: [],
     frontMatter: {},
+    svelteCells: [],
   };
   const mdSvelte = await mdsvexCompile(input, {
     remarkPlugins: [codeExtractor(state)],
@@ -102,6 +103,7 @@ export async function compile(input, options = {}) {
       type: "yaml",
     },
   });
+  console.log(mdSvelte);
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     [
