@@ -2,6 +2,7 @@ import { TASK_TYPE, TASK_STATE, runTasks } from "../src/taskrunner";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
+    headers: { get: () => "application/json" },
     json: () => Promise.resolve(42),
   })
 );
