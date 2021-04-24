@@ -15,17 +15,15 @@ export const TASK_STATE = {
   COMPLETE: 2,
 };
 
-// shamelessly stolen from iodide (technically MPL)
-function loadScriptFromBlob(blob) {
-  // for async script loading from blobs, see:
-  // https://developer.mozilla.org/en-US/docs/Games/Techniques/Async_scripts
+function loadScript(url) {
   return new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    const url = URL.createObjectURL(blob);
+    let script = document.createElement("script");
     script.src = url;
-    document.head.appendChild(script);
-
-    script.onload = () => resolve(`scripted loaded`);
+    document.head.append(script);
+    script.onload = () => {
+      console.log(`Loaded ${url}`);
+      resolve(`scripted loaded`);
+    };
     script.onerror = (err) => reject(new Error(err));
   });
 }
@@ -39,15 +37,20 @@ async function runTask(tasks, task) {
   console.log(`Running: ${task.id}`);
   switch (task.type) {
     case TASK_TYPE.LOAD_SCRIPTS:
-      await Promise.all(
-        task.payload.map(async (script) => {
-          const scriptBlob = await (await fetch(script)).blob();
-          await loadScriptFromBlob(scriptBlob);
-        })
-      );
+      for (const script of task.payload) {
+        // FIXME: we should load them in parallel, but evaluate them synchronously
+        console.log(`Loading ${script}`);
+        await loadScript(script);
+      }
       break;
     case TASK_TYPE.DOWNLOAD:
-      task.value = await (await fetch(task.payload)).json();
+      task.value = await fetch(task.payload).then((r) => {
+        const mimeType = r.headers.get("Content-Type").split(";")[0];
+        // FIXME: should probably also allow to specify that something is json in header
+        // and use that here as a hint
+        if (mimeType === "application/json") return r.json();
+        return r.blob();
+      });
       break;
     case TASK_TYPE.JS:
       // create a map of task ids->input values to preserve expected ordering

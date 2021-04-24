@@ -100,9 +100,9 @@ export const codeInserter = (state) => {
               id: parsed.attributes.output,
               type: TASK_TYPE.JS,
               state: TASK_STATE.PENDING,
-              payload: `(${(parsed.attributes.inputs || []).join(",")}) => { ${
-                parsed.body
-              } }`,
+              payload: `async (${(parsed.attributes.inputs || []).join(
+                ","
+              )}) => { ${parsed.body}\n }`,
               inputs: JSON.stringify(inputs),
             };
           })
