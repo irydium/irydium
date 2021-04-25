@@ -103,7 +103,6 @@ export async function compile(input, options = {}) {
       type: "yaml",
     },
   });
-  console.log(mdSvelte);
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     [
