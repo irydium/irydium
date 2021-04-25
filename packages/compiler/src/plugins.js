@@ -16,33 +16,47 @@ export const codeExtractor = (state) => {
     return function transformer(tree, _) {
       visit(tree, ["code"], (node, index, parent) => {
         if (node.lang === "{code-cell}") {
-          state.codeNodes.push(node);
-          parent.children.splice(index, 1);
-          return index;
+          // FIXME: assumption that language is the only metadata
+          // (should also validate)
+          const lang = node.meta;
+
+          const nodeContent = fm(node.value);
+
+          // svelte cells are parsed kind of specially
+          if (lang === "svelte") {
+            if (!nodeContent.attributes.name) {
+              throw new Error(
+                `Svelte component defined in markup without name (line: ${cn.position.start.line})`
+              );
+            }
+            if (nodeContent.attributes.name === "mdsvelte") {
+              throw new Error(
+                `The mdsvelte name is reserved (line: ${cn.position.start.line})`
+              );
+            }
+
+            // FIXME: should probably parse out the svelte files to make sure they compile at this stage
+            state.svelteCells.push({
+              name: nodeContent.attributes.name,
+              body: nodeContent.body,
+            });
+          } else {
+            state.codeNodes.push({ lang, ...nodeContent });
+          }
+
+          if (nodeContent && nodeContent.attributes.inline) {
+            // inline node: take out the code cell parts, make them a
+            // standard ""```foo" code chunk
+            node.lang = lang;
+            node.meta = undefined;
+          } else {
+            // non-inline node, take it out, we only want to execute it,
+            // not see it
+            parent.children.splice(index, 1);
+            return index;
+          }
         }
       });
-
-      // we allow defining svelte files inside the the markdown as "code cells":
-      // extract them
-      state.svelteCells = state.codeNodes
-        .filter((cn) => cn.meta === "svelte")
-        .map((cn) => {
-          const parsed = fm(cn.value);
-          if (!parsed.attributes.name) {
-            throw new Error(
-              `Svelte component defined in markup without name (line: ${cn.position.start.line})`
-            );
-          }
-          if (parsed.attributes.name === "mdsvelte") {
-            throw new Error(
-              `The mdsvelte name is reserved (line: ${cn.position.start.line})`
-            );
-          }
-
-          // FIXME: should probably parse out the svelte files to make sure they compile at this stage
-
-          return { name: parsed.attributes.name, body: parsed.body };
-        });
     };
   };
 };
@@ -87,22 +101,21 @@ export const codeInserter = (state) => {
       // turn js code cells into async tasks
       tasks = tasks.concat(
         state.codeNodes
-          .filter((cn) => cn.meta === "js")
+          .filter((cn) => cn.lang === "js")
           .map((cn) => {
-            const parsed = fm(cn.value);
-            let inputs = parsed.attributes.inputs || [];
+            let inputs = cn.attributes.inputs || [];
             // if there are any scripts, we want to load them
             // before running any code cells
             if (hasScripts) {
               inputs.push("scripts");
             }
             return {
-              id: parsed.attributes.output,
+              id: cn.attributes.output,
               type: TASK_TYPE.JS,
               state: TASK_STATE.PENDING,
-              payload: `async (${(parsed.attributes.inputs || []).join(
+              payload: `async (${(cn.attributes.inputs || []).join(
                 ","
-              )}) => { ${parsed.body}\n }`,
+              )}) => { ${cn.body}\n }`,
               inputs: JSON.stringify(inputs),
             };
           })
