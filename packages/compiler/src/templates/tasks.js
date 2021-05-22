@@ -1,5 +1,5 @@
 // This should get inserted into the mdsvex component's script chunk at compile time
-import { runTasks } from "./taskrunner";
+import { TASK_STATE, runTasks, updateTask } from "./taskrunner";
 
 {{#taskVariables}}
 let {{.}};
@@ -30,12 +30,40 @@ function notifyUpdateTasks(tasks) {
 }
 
 notifyUpdateTasks(__tasks);
-let __taskPromise = runTasks(__tasks).then(() => {
-  let outputs = {};
-  __tasks.forEach((task) => {
-    outputs[task.id] = task.value;
+let settled = false;
+
+function runDag() {
+  return runTasks(__tasks).then(() => {
+    let outputs = {};
+    __tasks.forEach((task) => {
+      outputs[task.id] = task.value;
+    });
+    {{#taskVariables}}
+    {{.}} = outputs['{{.}}'];
+    {{/taskVariables}}
+    settled = true;
   });
-  {{#taskVariables}}
-  {{.}} = outputs['{{.}}'];
-  {{/taskVariables}}
-});
+}
+
+let __taskPromise = runDag();
+
+$: {
+  let needsRefresh = false;
+  if (settled) {
+    // synchronize the taskgraph with any variables
+    const __taskMap = __tasks.reduce((acc, cur) => Object.assign(acc, {[cur.id]: cur}), {});
+    {{#taskVariables}}
+    if (__taskMap['{{.}}'].state === TASK_STATE.COMPLETE && __taskMap['{{.}}'].value !== {{.}}) {
+      // need to refresh the task graph
+      updateTask(__tasks, '{{.}}', {{.}});
+      needsRefresh = true;
+    }
+    {{/taskVariables}}
+
+    // re-run dag
+    if (needsRefresh) {
+      runDag();
+    }
+  }
+
+}

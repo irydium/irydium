@@ -103,6 +103,11 @@ export async function compile(input, options = {}) {
       type: "yaml",
     },
   });
+
+  if (options.mode === "mdsvex") {
+    return mdSvelte.code;
+  }
+
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     [

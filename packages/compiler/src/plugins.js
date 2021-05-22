@@ -98,6 +98,25 @@ export const codeInserter = (state) => {
           })
           .flat()
       );
+
+      // variables should likewise get processed as their own type of "task"
+      // (FIXME: duplication with ^^^)
+      tasks = tasks.concat(
+        (state.frontMatter.variables || [])
+          .map((datum) => {
+            return Object.entries(datum).map(([id, value]) => {
+              return {
+                id,
+                type: TASK_TYPE.VARIABLE,
+                state: TASK_STATE.PENDING,
+                payload: JSON.stringify(value),
+                inputs: JSON.stringify([]),
+              };
+            });
+          })
+          .flat()
+      );
+
       // turn js code cells into async tasks
       tasks = tasks.concat(
         state.codeNodes
@@ -120,6 +139,7 @@ export const codeInserter = (state) => {
             };
           })
       );
+
       const extraScript =
         state.svelteCells
           .map(
@@ -136,39 +156,59 @@ export const codeInserter = (state) => {
             ),
           tasks,
         });
-
       visit(tree, "root", (node) => {
-        let moduleIndex = node.children
+        const moduleIndex = node.children
           .filter((n) => n.type === "raw")
           .findIndex((n) => {
             return svelteParse(n.value).module;
           });
-        if (moduleIndex >= 0) {
-          const module = node.children[moduleIndex];
+        let scriptIndex = node.children
+          .filter((n) => n.type === "raw")
+          .findIndex((n) => {
+            const parsed = svelteParse(n.value);
+            return parsed.instance && parsed.instance.type === "Script";
+          });
+
+        let scriptNodes, remainderNodes;
+        if (scriptIndex >= 0) {
+          const script = node.children[scriptIndex];
           // if we have a script tag already, append our stuff to the end
-          module.value = module.value.replace(
+          script.value = script.value.replace(
             new RegExp("(</script>)$"),
             `\n${extraScript}$1`
           );
+          scriptNodes = node.children.slice(0, scriptIndex + 1);
+          remainderNodes = node.children.slice(scriptIndex + 1);
         } else {
-          node.children = [
-            {
-              type: "raw",
-              value: `<script context="module">\n${extraScript}\n</script>`,
-            },
-          ].concat(node.children);
-          moduleIndex = 0;
+          // we need a new script block, but it must come after the module
+          // if it exists
+          if (moduleIndex >= 0) {
+            scriptNodes = node.children.slice(0, moduleIndex + 1).concat([
+              {
+                type: "raw",
+                value: `<script>\n${extraScript}\n</script>`,
+              },
+            ]);
+            remainderNodes = node.children.slice(moduleIndex + 1);
+          } else {
+            // neither a script nor a module block
+            scriptNodes = [
+              {
+                type: "raw",
+                value: `<script>\n${extraScript}\n</script>`,
+              },
+            ];
+            remainderNodes = node.children;
+          }
         }
         // we want to wait for everything to resolve before rendering anything
         // inside the component
-        node.children = node.children
-          .slice(0, moduleIndex + 1)
+        node.children = scriptNodes
           .concat([{ type: "raw", value: "\n{#await __taskPromise}" }])
           .concat([{ type: "raw", value: "\n<p>Loading...</p>\n" }])
           .concat([{ type: "raw", value: "{:then}\n" }])
-          .concat(node.children.slice(moduleIndex + 1))
+          .concat(remainderNodes)
           .concat([{ type: "raw", value: "{/await}" }]);
-        // FIXME: insert top-level await for code cells to finish *here*
       });
     };
   };
