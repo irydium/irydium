@@ -3,8 +3,21 @@
   import GraphView from "./GraphView.svelte";
   const { open } = getContext("simple-modal");
 
+  let rawMode;
+
+  let iframe;
+
+  let mdChangeSocket = new WebSocket("ws://localhost:35731");
+  mdChangeSocket.onmessage = function (event) {
+    iframe.contentWindow.location.reload();
+  };
+
   const openGraph = () => {
     open(GraphView);
+  };
+
+  const toggleRaw = () => {
+    rawMode = !rawMode;
   };
 </script>
 
@@ -34,7 +47,10 @@
 <div class="header">
   <div class="buttons">
     <button on:click={openGraph}>Graph</button>
-    <button>Debug</button>
+    <button on:click={toggleRaw}>{rawMode ? 'Normal' : 'Raw'}</button>
   </div>
 </div>
-<iframe title="irydium" src="/iridium" />
+<iframe
+  bind:this={iframe}
+  title="irydium"
+  src={`/iridium${rawMode ? '?raw=1' : ''}`} />

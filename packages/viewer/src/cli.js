@@ -7,6 +7,8 @@ import bundlejs from "../build/bundle.js";
 import index from "./index.html";
 
 const livereload = require("livereload");
+const ws = require("ws");
+const chokidar = require("chokidar");
 const mustache = require("mustache");
 const polka = require("polka");
 const fs = require("fs");
@@ -18,8 +20,16 @@ if (args.length !== 1) {
   process.exit(1);
 }
 
-const irmdReloadServer = livereload.createServer({ extraExts: ["md"] });
-irmdReloadServer.watch([path.dirname(args[0])]);
+// we can't use livereload for the document itself, because it might not be rendered as HTML
+// FIXME: assuming we can create a server on port 35731 is probably dumb
+const mdReloadServer = new ws.Server({ port: 35731 });
+chokidar.watch(args[0]).on("change", () => {
+  mdReloadServer.clients.forEach(function each(client) {
+    if (client.readyState === ws.OPEN) {
+      client.send("1");
+    }
+  });
+});
 
 // only add logic to reload the dev server for non-production cases
 const BUILD_DIR = __dirname + "/../build";
@@ -66,11 +76,15 @@ polka()
       res.end(getFileContents(`${BUILD_DIR}/bundle.js`));
     }
   })
-  .get("/iridium", async (_, res) => {
+  .get("/iridium", async (req, res) => {
     const input = getFileContents(args[0]);
     try {
-      const output = await compile(input, { liveReload: true });
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      const output = await compile(input);
+      res.writeHead(200, {
+        "Content-Type": `${
+          req.query.raw ? "text/plain" : "text/html"
+        }; charset=utf-8`,
+      });
       res.end(output);
     } catch (err) {
       console.log(err);
