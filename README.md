@@ -22,12 +22,12 @@ presentation_.
   the browser and the full ecosystem of web visualization libraries is available and
   usable, with no plugins required.
 - Irydium is agnostic about how you produce your document: its input is a plain markdown document, its output is
-  a self-contained HTML bundle that can be loaded anywhere. There is currently a viewer application ("irmd-viewer")
-  with minimal debugging affordances which you can use to interactively create a document. When you're happy with
-  it, you can produce a final bundle using `irmd-compile`. An online interactive editing environment is planned
+  a self-contained HTML bundle that can be served by any static webserver. There is a viewer application ("irmd-viewer")
+  with some debugging affordances which you can use to interactively create a document. When you're happy with
+  it, you can produce a final bundle using `irmd-compile`. An online interactive editing and collaboration environment is planned
   (you can see an early prototype of this below).
 
-To make all of this work, Irydium is built on top of some of great building blocks:
+To make this work, Irydium uses some of great building blocks:
 
 - [Svelte](https://svelte.dev): A next-generation JavaScript-based web framework
 - [mdsvex](https://mdsvex.com): An efficient means of transforming a markdown document into a Svelte component
