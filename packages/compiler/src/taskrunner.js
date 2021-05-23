@@ -7,6 +7,7 @@ export const TASK_TYPE = {
   LOAD_SCRIPTS: 0,
   DOWNLOAD: 1,
   JS: 2,
+  VARIABLE: 3,
 };
 
 export const TASK_STATE = {
@@ -63,6 +64,11 @@ async function runTask(tasks, task) {
         task.inputs.map((inputId) => inputValues[inputId])
       );
       break;
+    case TASK_TYPE.VARIABLE:
+      // variables don't actually do anything, they're just there to indicate
+      // that dependencies should be re-evaluated
+      task.value = task.payload;
+      break;
   }
   console.log(`Done: ${task.id}`);
 
@@ -82,12 +88,38 @@ async function runTask(tasks, task) {
   return task;
 }
 
+function taskReady(task) {}
+
 export async function runTasks(tasks) {
   return await Promise.all(
     tasks
-      .filter((task) => !task.inputs || !task.inputs.length)
+      .filter((task) => task.state === TASK_STATE.PENDING)
+      .filter(
+        (task) =>
+          !task.inputs ||
+          !task.inputs.length ||
+          getDependencies(task, tasks).every(
+            (task) => task.state === TASK_STATE.COMPLETE
+          )
+      )
       .map(async (task) => {
         await runTask(tasks, task);
       })
   );
+}
+
+export function updateTask(tasks, taskId, payload = undefined) {
+  console.log(`Updating ${taskId}`);
+  let task = tasks.filter((t) => t.id === taskId).shift();
+  if (task) {
+    if (payload) {
+      task.payload = payload;
+    }
+    delete task.value;
+    task.state = TASK_STATE.PENDING;
+    // also need to invalidate any downstream tasks that they are no longer valid
+    tasks
+      .filter((t) => t.inputs && t.inputs.includes(task.id))
+      .forEach((t) => updateTask(tasks, t.id));
+  }
 }

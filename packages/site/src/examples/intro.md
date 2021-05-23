@@ -8,6 +8,8 @@ scripts:
   ]
 data:
   - eviction_notice_csv: https://data.sfgov.org/api/views/5cei-gny5/rows.csv?accessType=DOWNLOAD
+variables:
+  - chart_display: "bar"
 ---
 
 # Irydium prototype
@@ -71,7 +73,8 @@ A couple of things to note about this:
   document (by default, it hides code chunk -- in line with the philosophy that a rendered irydium document
   should be optimized for reading).
 - You can see a call to `console.log` in the output above. This will appear in your browser's developer
-  console and can be handy when debugging (using a debugger should also work fine).
+  console and can be handy when trying to figure out what your notebook is doing (using a debugger should
+  also work fine).
 
 Now that we have some prepared data, we can try to do something with it. Let's do a count of eviction
 notices by year. We'll write up some basic JavaScript to do some map-reduce operations here to get this
@@ -92,7 +95,7 @@ console.log(yearArray);
 return yearArray;
 ```
 
-Finally, we'll want to display the results. Soon we may allow a JavaScript code cell in Irydium to return an
+Of course, we also want to display the results. Soon we may allow a JavaScript code cell in Irydium to return an
 SVG or HTML element which means we could call Vega-Embed directly, however for now the best way of doing
 this is by creating a Svelte component and calling the visualization library inside there. If you're not
 familiar with Svelte, it's a fantastic library for quickly building interactive web sites using a syntax
@@ -116,6 +119,10 @@ inline: true
       .then(result => console.log(result))
       .catch(console.warn);
   });
+
+  $: {
+    vegaEmbed(dom_node, spec)
+  }
 </script>
 
 <!-- Weird CSS issue with vegaEmbed, it seems to want height to be 100% -->
@@ -128,11 +135,10 @@ We'll need to create a vegalite spec to define how the graph should be represent
 
 ```{code-cell} js
 ---
-inputs: [eviction_notices_per_year]
+inputs: [eviction_notices_per_year, chart_display]
 output: vegaspec
 inline: true
 ---
-
 return {
   "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
   "description": "A simple bar chart with embedded data.",
@@ -140,7 +146,7 @@ return {
   "data": {
     "values": eviction_notices_per_year
   },
-  "mark": "bar",
+  "mark": chart_display,
   "encoding": {
     "x": {"field": "year", "type": "ordinal"},
     "y": {"field": "count", "type": "quantitative"},
@@ -149,9 +155,35 @@ return {
 }
 ```
 
-Finally, let's insert this into the document by inserting a `&lt;VegaEmbed /&gt;` element:
+You'll note that it pulls in a variable called `chart_display`, which we also defined in the header.
+We can bind to this variable via a select node to make it reactive by adding this to the source: see
+[the svelte documentation](https://svelte.dev/tutorial/component-bindings) for more on this concept,
+this will let us toggle between "line" and "bar" charts. Since this is a reactive declaration, everything depending on it (up to and including the chart itself) will be updated when you switch
+the toggle: no custom JavaScript event handlers required:
+
+```html
+<select bind:value={chart_display}>
+  <option value={"line"}>
+    Line
+  </option>
+  <option value={"bar"}>
+    Bar
+  </option>
+</select>
+```
+
+Let's insert that into the document along with a `<VegaEmbed />` element:
 
 ## Eviction counts in San Francisco by Year
+
+<select bind:value={chart_display}>
+  <option value={"line"}>
+    Line
+  </option>
+  <option value={"bar"}>
+    Bar
+  </option>
+</select>
 
 <VegaEmbed spec={vegaspec} />
 

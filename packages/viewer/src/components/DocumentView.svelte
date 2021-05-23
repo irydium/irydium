@@ -3,7 +3,7 @@
   import GraphView from "./GraphView.svelte";
   const { open } = getContext("simple-modal");
 
-  let rawMode;
+  let mode = "html";
 
   let iframe;
 
@@ -14,10 +14,6 @@
 
   const openGraph = () => {
     open(GraphView);
-  };
-
-  const toggleRaw = () => {
-    rawMode = !rawMode;
   };
 </script>
 
@@ -47,10 +43,11 @@
 <div class="header">
   <div class="buttons">
     <button on:click={openGraph}>Graph</button>
-    <button on:click={toggleRaw}>{rawMode ? 'Normal' : 'Raw'}</button>
+    <select bind:value={mode}>
+      <option value="html">Rendered</option>
+      <option value="rawhtml">Raw HTML</option>
+      <option value="mdsvex">mdsvex output</option>
+    </select>
   </div>
 </div>
-<iframe
-  bind:this={iframe}
-  title="irydium"
-  src={`/iridium${rawMode ? '?raw=1' : ''}`} />
+<iframe bind:this={iframe} title="irydium" src={`/iridium?mode=${mode}`} />
