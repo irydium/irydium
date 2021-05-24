@@ -16,7 +16,7 @@ variables:
 
 This is a basic Irydium document, designed to demonstrate some of the concepts of this
 project. In some ways Irydium will feel familiar to those coming from environments
-like [Jupyter](https://jupyter.org/), but it is more focused on _reproducible
+like [Jupyter], but it is more focused on _reproducible
 presentation_. For more information, see the [project README].
 
 This introduction is best viewed side-by-side with its markdown representation,
@@ -61,7 +61,6 @@ output: "eviction_notices"
 inline: true
 ---
 let eviction_notice_text = await eviction_notice_csv.text();
-console.log(eviction_notice_text.slice(0, 1024));
 let parsed = d3.csvParse(eviction_notice_text);
 return parsed;
 ```
@@ -90,9 +89,7 @@ const years = eviction_notices.map(n=> {
   return n["File Date"].split("/")[2];
 });
 const yearCounts = years.reduce((acc, y) => { return acc[y] === undefined ? {...acc, [y]: 1} : {...acc, [y]: acc[y]+1} }, {})
-const yearArray = Object.keys(yearCounts).map(year => ({year, count: yearCounts[year]}));
-console.log(yearArray);
-return yearArray;
+return Object.keys(yearCounts).map(year => ({year, count: yearCounts[year]}));
 ```
 
 Of course, we also want to display the results. Soon we may allow a JavaScript code cell in Irydium to return an
@@ -114,7 +111,6 @@ inline: true
   let dom_node;
 
   onMount(() => {
-    console.log(dom_node);
     vegaEmbed(dom_node, spec)    	// result.view provides access to the Vega View API
       .then(result => console.log(result))
       .catch(console.warn);
@@ -189,6 +185,8 @@ Let's insert that into the document along with a `<VegaEmbed />` element:
 
 🎉 You now understand the basics of creating a visualization with explanatory text using irydium.
 
+[jupyter]: https://jupyter.org/
+[svelte]: https://svelte.dev/
 [project readme]: https://github.com/irydium/irydium/blob/main/README.md
 [vega-embed]: https://github.com/vega/vega-embed
 [d3-dsv]: https://github.com/d3/d3-dsv
