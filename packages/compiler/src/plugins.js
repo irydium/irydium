@@ -61,6 +61,17 @@ export const codeExtractor = (state) => {
   };
 };
 
+function createJSTask(id, code, inputs) {
+  return {
+    id,
+    output: id,
+    type: TASK_TYPE.JS,
+    state: TASK_STATE.PENDING,
+    payload: `async (${(inputs || []).join(",")}) => { ${code}\n }`,
+    inputs: JSON.stringify(inputs),
+  };
+}
+
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
 // the script block that mdsvex generates (or creating one, in the case
 // of a document without one)
@@ -128,18 +139,32 @@ export const codeInserter = (state) => {
             if (hasScripts) {
               inputs.push("scripts");
             }
-            return {
-              id: cn.attributes.output,
-              type: TASK_TYPE.JS,
-              state: TASK_STATE.PENDING,
-              payload: `async (${(cn.attributes.inputs || []).join(
-                ","
-              )}) => { ${cn.body}\n }`,
-              inputs: JSON.stringify(inputs),
-            };
+            return createJSTask(cn.attributes.output, cn.body, inputs);
           })
       );
 
+      const pyNodes = state.codeNodes.filter((cn) => cn.lang === "python");
+      if (pyNodes.length) {
+        tasks = tasks.concat([
+          {
+            id: "pyodide",
+            payload: JSON.stringify(""),
+            type: TASK_TYPE.LOAD_PYODIDE,
+            state: TASK_STATE.PENDING,
+            inputs: JSON.stringify([]),
+          },
+          ...pyNodes.map((pn) => {
+            const preamble = (pn.inputs || [])
+              .map((i) => `from js import ${i}`)
+              .join("\n");
+            return createJSTask(
+              pn.attributes.output,
+              `return (await pyodide.runPythonAsync(\`${preamble}${pn.body}\`)).toJs()`,
+              ["pyodide"].concat(pn.inputs || [])
+            );
+          }),
+        ]);
+      }
       const extraScript =
         state.svelteCells
           .map(
