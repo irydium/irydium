@@ -90,7 +90,7 @@ polka()
     } catch (err) {
       console.log(err);
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(`${err.type} on line ${err.lineNumber}: ${err.message}`);
+      res.end(err.message);
     }
   })
   .listen(3000, (err) => {
