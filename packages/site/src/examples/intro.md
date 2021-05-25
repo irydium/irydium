@@ -38,6 +38,8 @@ scripts:
   ]
 data:
   - eviction_notice_csv: https://data.sfgov.org/api/views/5cei-gny5/rows.csv?accessType=DOWNLOAD
+variables:
+  - chart_display: "bar"
 ```
 
 The first is a set of scripts to load. In this case, we're loading a [d3-dsv], to load a CSV file
@@ -56,8 +58,8 @@ The eviction notice dataset is in CSV format which irydium doesn't natively unde
 
 ```{code-cell} js
 ---
+id: "eviction_notices"
 inputs: [ "eviction_notice_csv" ]
-output: "eviction_notices"
 inline: true
 ---
 let eviction_notice_text = await eviction_notice_csv.text();
@@ -81,8 +83,8 @@ output:
 
 ```{code-cell} js
 ---
+id: eviction_notices_per_year
 inputs: [eviction_notices]
-output: eviction_notices_per_year
 inline: true
 ---
 const years = eviction_notices.map(n=> {
@@ -101,7 +103,7 @@ the [mdsvex] library to allow freely mixing Svelte syntax with markdown. Let's g
 
 ```{code-cell} svelte
 ---
-name: VegaEmbed
+id: VegaEmbed
 inline: true
 ---
 <script>
@@ -117,7 +119,7 @@ inline: true
   });
 
   $: {
-    vegaEmbed(dom_node, spec)
+    dom_node && vegaEmbed(dom_node, spec)
   }
 </script>
 
@@ -131,8 +133,8 @@ We'll need to create a vegalite spec to define how the graph should be represent
 
 ```{code-cell} js
 ---
+id: vegaspec
 inputs: [eviction_notices_per_year, chart_display]
-output: vegaspec
 inline: true
 ---
 return {

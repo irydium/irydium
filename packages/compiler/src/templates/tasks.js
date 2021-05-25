@@ -8,10 +8,10 @@ let {{.}};
 const __tasks = [
   {{#tasks}}
   {
+    id: "{{{id}}}",
     type: {{type}},
     payload: {{{payload}}},
     state: {{state}},
-    id: "{{{id}}}",
     inputs: {{{inputs}}}
   },
   {{/tasks}}
@@ -21,9 +21,9 @@ function notifyUpdateTasks(tasks) {
   // send task state to parent
   window.parent.postMessage({
     tasks: __tasks.map((t) => ({
+      id: t.id,
       type: t.type,
       state: t.state,
-      id: t.id,
       inputs: t.inputs,
     })),
   });

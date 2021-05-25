@@ -22,22 +22,24 @@ export const codeExtractor = (state) => {
 
           const nodeContent = fm(node.value);
 
+          if (!nodeContent.attributes.id) {
+            console.log(node);
+            throw new Error(
+              `Code chunk defined without id (line: ${node.position.start.line})`
+            );
+          }
+
           // svelte cells are parsed kind of specially
           if (lang === "svelte") {
-            if (!nodeContent.attributes.name) {
-              throw new Error(
-                `Svelte component defined in markup without name (line: ${cn.position.start.line})`
-              );
-            }
             if (nodeContent.attributes.name === "mdsvelte") {
               throw new Error(
-                `The mdsvelte name is reserved (line: ${cn.position.start.line})`
+                `The mdsvelte name is reserved (line: ${node.position.start.line})`
               );
             }
 
             // FIXME: should probably parse out the svelte files to make sure they compile at this stage
             state.svelteCells.push({
-              name: nodeContent.attributes.name,
+              id: nodeContent.attributes.id,
               body: nodeContent.body,
             });
           } else {
@@ -64,7 +66,6 @@ export const codeExtractor = (state) => {
 function createJSTask(id, code, inputs) {
   return {
     id,
-    output: id,
     type: TASK_TYPE.JS,
     state: TASK_STATE.PENDING,
     payload: `async (${(inputs || []).join(",")}) => { ${code}\n }`,
@@ -99,10 +100,10 @@ export const codeInserter = (state) => {
           .map((datum) => {
             return Object.entries(datum).map(([id, url]) => {
               return {
+                id: id,
                 type: TASK_TYPE.DOWNLOAD,
                 state: TASK_STATE.PENDING,
                 payload: JSON.stringify(url),
-                id: id,
                 inputs: JSON.stringify([]),
               };
             });
@@ -139,7 +140,7 @@ export const codeInserter = (state) => {
             if (hasScripts) {
               inputs.push("scripts");
             }
-            return createJSTask(cn.attributes.output, cn.body, inputs);
+            return createJSTask(cn.attributes.id, cn.body, inputs);
           })
       );
 
@@ -158,7 +159,7 @@ export const codeInserter = (state) => {
               .map((i) => `from js import ${i}`)
               .join("\n");
             return createJSTask(
-              pn.attributes.output,
+              pn.attributes.id,
               `return (await pyodide.runPythonAsync(\`${preamble}${pn.body}\`)).toJs()`,
               ["pyodide"].concat(pn.inputs || [])
             );
@@ -169,7 +170,7 @@ export const codeInserter = (state) => {
         state.svelteCells
           .map(
             (svelteCell) =>
-              `import ${svelteCell.name} from "./${svelteCell.name}.svelte";`
+              `import ${svelteCell.id} from "./${svelteCell.id}.svelte";`
           )
           .join("\n") +
         mustache.render(taskScript, {

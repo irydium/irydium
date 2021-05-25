@@ -118,7 +118,7 @@ export async function compile(input, options = {}) {
       },
     ],
     ...state.svelteCells.map((sc) => [
-      `./${sc.name}.svelte`,
+      `./${sc.id}.svelte`,
       { code: sc.body, map: "" },
     ]),
   ]);

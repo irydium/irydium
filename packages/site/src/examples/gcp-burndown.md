@@ -47,7 +47,7 @@ This covers tasks outside that don't fall into any of the other tracks ([metabug
 
 ```{code-cell} svelte
 ---
-name: PlotlyGraph
+id: PlotlyGraph
 ---
 <script>
   import { onMount } from 'svelte';
@@ -65,7 +65,7 @@ name: PlotlyGraph
 
 ```{code-cell} js
 ---
-output: getGroupedBugCounts
+id: getGroupedBugCounts
 ---
 
 var getGroupedBugCounts = (bugs) => {
@@ -99,8 +99,8 @@ return getGroupedBugCounts;
 
 ```{code-cell} js
 ---
+id: "hekaCounts"
 inputs: ["getGroupedBugCounts", "data_migration_gcp_heka"]
-output: "hekaCounts"
 ---
 
 return getGroupedBugCounts(data_migration_gcp_heka.bugs)
@@ -108,8 +108,8 @@ return getGroupedBugCounts(data_migration_gcp_heka.bugs)
 
 ```{code-cell} js
 ---
+id: "queryCounts"
 inputs: ["getGroupedBugCounts", "data_migration_gcp_query"]
-output: "queryCounts"
 ---
 
 return getGroupedBugCounts(data_migration_gcp_query.bugs)
@@ -117,8 +117,8 @@ return getGroupedBugCounts(data_migration_gcp_query.bugs)
 
 ```{code-cell} js
 ---
+id: "miscCounts"
 inputs: ["getGroupedBugCounts", "data_migration_gcp_misc"]
-output: "miscCounts"
 ---
 
 return getGroupedBugCounts(data_migration_gcp_misc.bugs)
@@ -126,8 +126,8 @@ return getGroupedBugCounts(data_migration_gcp_misc.bugs)
 
 ```{code-cell} js
 ---
+id: "sparkCounts"
 inputs: ["getGroupedBugCounts", "data_migration_gcp_spark"]
-output: "sparkCounts"
 ---
 
 return getGroupedBugCounts(data_migration_gcp_spark.bugs)
@@ -135,8 +135,8 @@ return getGroupedBugCounts(data_migration_gcp_spark.bugs)
 
 ```{code-cell} js
 ---
+id: "allBugs"
 inputs: ["sparkCounts", "miscCounts", "queryCounts", "hekaCounts"]
-output: "allBugs"
 ---
 
 return [
