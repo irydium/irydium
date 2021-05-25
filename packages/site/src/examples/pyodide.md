@@ -16,7 +16,7 @@ original [A Brief Tour through Pyodide](https://alpha.iodide.io/notebooks/300/))
 
 ```{code-cell} python
 ---
-output: sinwave
+id: sinwave
 inline: true
 ---
 
@@ -32,7 +32,7 @@ And here's its output in a Plotly graph:
 
 ```{code-cell} svelte
 ---
-name: PlotlyGraph
+id: PlotlyGraph
 ---
 <script>
   import { onMount } from 'svelte';
