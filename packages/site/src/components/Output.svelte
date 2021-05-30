@@ -1,28 +1,18 @@
 <script lang="ts">
+  import { compile } from "../../../compiler/src/compile.js";
   export let md = "";
   let srcdoc = "Loading...";
 
-  async function compileIrmd(irmd: string) {
-    if (process.browser) {
-      srcdoc = await (
-        await fetch("/compile/", {
-          method: "POST",
-          body: JSON.stringify({ md }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-      ).text();
-    }
-  }
-
-  $: md && compileIrmd(md);
+  // FIXME: need to compile and then set here
+  $: compile(md).then((html) => (srcdoc = html));
 </script>
 
 <style>
   iframe {
     width: 100%;
     height: 100%;
+    border: 0;
+    border-left: 1px #000;
   }
 </style>
 
