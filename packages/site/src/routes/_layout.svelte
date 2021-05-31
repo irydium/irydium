@@ -8,7 +8,7 @@
   main {
     position: relative;
     background-color: white;
-    padding: 2em;
+    padding: 0;
     margin: 0;
     box-sizing: border-box;
     align-items: stretch;

@@ -1,3 +1,12 @@
+/*      base reset ----------------------------- */
+html {
+  font-size: 62.5%;
+  -webkit-text-size-adjust: 100%;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  box-sizing: border-box;
+  border-collapse: collapse;
+}
+
 html {
   height: 100%;
 }
@@ -9,8 +18,42 @@ body {
   font-size: 14px;
   line-height: 1.5;
   color: #333;
-  height: 100%;
-  min-height: 100%;
+
+  --font-mono: "Fira Mono", monospace;
+  --nav-h: 56px;
+}
+
+/*      theme vars */
+.theme-default {
+  --back: #ffffff;
+  --back-light: #f6fafd;
+  --back-api: #eff8ff;
+  --prime: #ff3e00;
+  --second: #676778;
+  --flash: #40b3ff;
+  --heading: var(--second);
+  --text: #444;
+  --sidebar-text: rgba(255, 255, 255, 0.75);
+  --border-w: 0.3rem; /* border-width  */
+  --border-r: 0.4rem; /* border-radius */
+}
+
+/*      typo vars */
+.typo-default {
+  --code-fs: 1.3rem;
+  --h6: 1.4rem;
+  --h5: 1.6rem;
+  --h4: 1.8rem; /* default font-size */
+  --h3: 2.6rem;
+  --h2: 3rem;
+  --h1: 3.2rem;
+  --linemax: 42em; /* max line-length */
+  --lh: 1.5; /* base line-height */
+}
+
+/* sync CodeMirror with prism  */
+.CodeMirror {
+  font-size: var(--code-fs) !important;
 }
 
 #sapper {

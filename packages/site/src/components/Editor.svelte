@@ -1,13 +1,18 @@
 <script>
+  import { onMount } from "svelte";
+  import CodeMirror from "./codemirror/CodeMirror.svelte";
+
+  onMount(() => {
+    editor.set(md, "yaml-frontmatter");
+  });
+
   export let md = "";
+
+  let editor;
 </script>
 
-<style>
-  textarea {
-    width: 100%;
-    height: 100%;
-    resize: none;
-  }
-</style>
-
-<textarea bind:value={md} />
+<CodeMirror
+  bind:this={editor}
+  on:change={(event) => {
+    md = event.detail.value;
+  }} />
