@@ -1,7 +1,10 @@
 <html>
   <head>
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.css"
+    />
     <style>
       .markdown-body {
         box-sizing: border-box;
@@ -15,15 +18,15 @@
       {{{ svelteJs }}}
     </script>
     <script>
-        // extract out the compiled svelte application, and render it
-        const blob = new Blob([document.getElementById("svelteapp").innerText], {
-          type: "text/javascript",
-        });
-        const url = URL.createObjectURL(blob);
-        import(url).then(({ default: mdsvelte }) => {
-            document.body.innerHTML = '';
-            c = new mdsvelte({ target: document.body })
-        });
+      // extract out the compiled svelte application, and render it
+      const blob = new Blob([document.getElementById("svelteapp").innerText], {
+        type: "text/javascript",
+      });
+      const url = URL.createObjectURL(blob);
+      import(url).then(({ default: mdsvelte }) => {
+        document.body.innerHTML = "";
+        c = new mdsvelte({ target: document.body });
+      });
     </script>
   </head>
   <body class="markdown-body"></body>
