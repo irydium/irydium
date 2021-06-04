@@ -4,6 +4,9 @@
   "description": "Irydium Compiler",
   "main": "dist/main.cjs.js",
   "module": "dist/main.es.js",
+  "engines": {
+    "node": ">=14"
+  },
   "bin": {
     "irmd-compile": "bin/irmd-compile"
   },

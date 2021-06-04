@@ -2,6 +2,9 @@
   "name": "irydium-site",
   "description": "Irydium Demo Site",
   "version": "0.0.3",
+  "engines": {
+    "node": ">=14"
+  },
   "private": true,
   "scripts": {
     "dev": "sapper dev",
