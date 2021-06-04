@@ -3,10 +3,19 @@
 </script>
 
 <style>
+  .title {
+    font-size: 2.5rem;
+    padding: 0.25em;
+    display: block;
+    font-weight: bold;
+  }
   nav {
     border-bottom: 1px solid rgba(255, 62, 0, 0.1);
     font-weight: 300;
-    padding: 0 1em;
+    padding: 0 2em 0 2em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     height: var(--nav-h);
   }
 
@@ -47,9 +56,14 @@
     padding: 1em 0.5em;
     display: block;
   }
+
+  ul {
+    float: right;
+  }
 </style>
 
 <nav>
+  <div class="title">Irydium</div>
   <ul>
     <li>
       <a
