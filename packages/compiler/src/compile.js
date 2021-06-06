@@ -1,14 +1,10 @@
 import { compile as svelteCompile } from "svelte/compiler";
-import { compile as mdsvexCompile } from "mdsvex";
+import { compile as mdsvexCompile } from "mdsvex/dist/browser-es.js";
 import mustache from "mustache";
 import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
 
-// just requiring rollup and cross-fetch directly for now (this
-// means this code won't run in a browser environment, which is
-// fine since mdsvex doesn't support that either)
-//import * as rollup from "rollup/dist/es/rollup.browser.js";
-const rollup = require("rollup");
-const fetch = require("cross-fetch");
+import * as rollup from "rollup/dist/es/rollup.browser.js";
+import fetch from "cross-fetch";
 
 // note this is loaded as a *string*-- we rely on the compiler to transform it into
 // JavaScript at build-time
@@ -122,8 +118,8 @@ export async function compile(input, options = {}) {
       { code: sc.body, map: "" },
     ]),
   ]);
-  const svelteJs = await createSvelteBundle(files);
 
+  const svelteJs = await createSvelteBundle(files);
   return mustache.render(index, {
     ...options,
     svelteJs,

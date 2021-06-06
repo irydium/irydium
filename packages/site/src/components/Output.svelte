@@ -1,21 +1,10 @@
 <script lang="ts">
+  import { compile } from "../../../compiler/src/compile.js";
+
   export let md = "";
   let srcdoc = "Loading...";
 
-  async function compileIrmd(irmd: string) {
-    if (process.browser) {
-      srcdoc = await (
-        await fetch("/compile/", {
-          method: "POST",
-          body: JSON.stringify({ md }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
-      ).text();
-    }
-  }
-  $: md && compileIrmd(md);
+  $: compile(md).then((html) => (srcdoc = html));
 </script>
 
 <style>
