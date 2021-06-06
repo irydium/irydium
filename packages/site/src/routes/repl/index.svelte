@@ -1,7 +1,7 @@
 <script>
   import Editor from "../../components/Editor.svelte";
   import Output from "../../components/Output.svelte";
-  import intro from "../../examples/intro.md";
+  import intro from "../../examples/repl.md";
 
   let md = intro;
   let isBrowser = typeof window !== "undefined";

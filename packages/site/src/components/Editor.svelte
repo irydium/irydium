@@ -8,11 +8,17 @@
 
   export let md = "";
 
+  let code;
+  $: {
+    code = md;
+    editor && editor.update(md);
+  }
+
   let editor;
 </script>
 
 <CodeMirror
   bind:this={editor}
   on:change={(event) => {
-    md = event.detail.value;
+    code = event.detail.value;
   }} />
