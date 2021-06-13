@@ -5,8 +5,6 @@
   import gcpBurndown from "../../examples/gcp-burndown.md";
   import pyodide from "../../examples/pyodide.md";
 
-  let isBrowser = typeof window !== "undefined";
-
   let examples = [
     { content: intro, title: "Introduction" },
     { content: pyodide, title: "Using Python" },
@@ -78,12 +76,10 @@
       {/each}
     </ul>
   </section>
-  {#if isBrowser}
-    <section>
-      <Editor bind:this={editor} bind:md />
-    </section>
-    <section>
-      <Output {md} />
-    </section>
-  {/if}
+  <section>
+    <Editor bind:this={editor} bind:md />
+  </section>
+  <section>
+    <Output {md} />
+  </section>
 </div>

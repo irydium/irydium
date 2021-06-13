@@ -4,7 +4,6 @@
   import intro from "../../examples/repl.md";
 
   let md = intro;
-  let isBrowser = typeof window !== "undefined";
 </script>
 
 <style>
@@ -24,12 +23,10 @@
 </style>
 
 <div class="body">
-  {#if isBrowser}
-    <section>
-      <Editor bind:md />
-    </section>
-    <section>
-      <Output {md} />
-    </section>
-  {/if}
+  <section>
+    <Editor bind:md />
+  </section>
+  <section>
+    <Output {md} />
+  </section>
 </div>
