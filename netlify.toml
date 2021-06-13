@@ -1,0 +1,6 @@
+[build]
+command = """
+    set -e
+    npx lerna run --scope irydium-site export
+"""
+publish = "packages/site/__sapper__/export"
