@@ -14,9 +14,13 @@
   ];
 
   let selectedExample = examples[0];
-  let md;
-  $: {
-    md = selectedExample.content;
+  let md = selectedExample.content;
+  let editor;
+
+  function updateSelected(newSelected) {
+    selectedExample = newSelected;
+    md = newSelected.content;
+    editor.updateMd(md); // pass through updated state to codemirror
   }
 </script>
 
@@ -69,17 +73,17 @@
         <li>
           <span
             aria-current={example.title === selectedExample.title ? 'example' : undefined}
-            on:click={() => (selectedExample = example)}>{example.title}</span>
+            on:click={() => updateSelected(example)}>{example.title}</span>
         </li>
       {/each}
     </ul>
   </section>
-  <section>
-    {#if isBrowser}
-      <Editor bind:md />
-    {/if}
-  </section>
-  <section>
-    <Output bind:md />
-  </section>
+  {#if isBrowser}
+    <section>
+      <Editor bind:this={editor} bind:md />
+    </section>
+    <section>
+      <Output {md} />
+    </section>
+  {/if}
 </div>

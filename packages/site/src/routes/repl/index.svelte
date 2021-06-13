@@ -24,12 +24,12 @@
 </style>
 
 <div class="body">
-  <section>
-    {#if isBrowser}
+  {#if isBrowser}
+    <section>
       <Editor bind:md />
-    {/if}
-  </section>
-  <section>
-    <Output {md} />
-  </section>
+    </section>
+    <section>
+      <Output {md} />
+    </section>
+  {/if}
 </div>

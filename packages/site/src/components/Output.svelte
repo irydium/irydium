@@ -4,7 +4,9 @@
   export let md = "";
   let srcdoc = "Loading...";
 
-  $: compile(md).then((html) => (srcdoc = html));
+  $: {
+    compile(md).then((html) => (srcdoc = html));
+  }
 </script>
 
 <style>
