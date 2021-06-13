@@ -64,6 +64,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>Examples</title>
+</svelte:head>
+
 <div class="body">
   <section class="example-list">
     <ul>

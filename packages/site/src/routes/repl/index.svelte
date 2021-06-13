@@ -22,6 +22,10 @@
   }
 </style>
 
+<svelte:head>
+  <title>Repl</title>
+</svelte:head>
+
 <div class="body">
   <section>
     <Editor bind:md />

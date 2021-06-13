@@ -9,7 +9,7 @@
 </style>
 
 <svelte:head>
-  <title>Sapper project template</title>
+  <title>Irydium</title>
 </svelte:head>
 
 <div class="body">
