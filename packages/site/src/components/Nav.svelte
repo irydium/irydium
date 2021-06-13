@@ -68,16 +68,19 @@
     <li>
       <a
         aria-current={segment === undefined ? 'page' : undefined}
+        sapper:prefetch
         href=".">home</a>
     </li>
     <li>
       <a
         aria-current={segment === 'examples' ? 'page' : undefined}
+        sapper:prefetch
         href="examples">examples</a>
     </li>
     <li>
       <a
         aria-current={segment === 'repl' ? 'page' : undefined}
+        sapper:prefetch
         href="repl">repl</a>
     </li>
   </ul>
