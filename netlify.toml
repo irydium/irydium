@@ -1,6 +1,12 @@
 [build]
 command = """
     set -e
+    rm -rf sapper
+    git clone https://github.com/wlach/sapper.git
+    pushd sapper
+    npm install && npm run build && npm link
+    popd
+    npm link sapper
     npx lerna run --scope irydium-site export
 """
 publish = "packages/site/__sapper__/export"
