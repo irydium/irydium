@@ -5,12 +5,12 @@
     logout,
     getDocument,
     saveDocument,
-  } from "../../state/serverActions";
-  import { user } from "../../state/sessionStore";
-  import intro from "../../examples/repl.md";
+  } from "../state/serverActions";
+  import { user } from "../state/sessionStore";
+  import intro from "../examples/repl.md";
 
-  import Editor from "../../components/Editor.svelte";
-  import Output from "../../components/Output.svelte";
+  import Editor from "../components/Editor.svelte";
+  import Output from "../components/Output.svelte";
 
   function getDocumentId() {
     return new URLSearchParams(window.location.search).get("id");

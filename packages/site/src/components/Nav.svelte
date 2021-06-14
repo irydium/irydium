@@ -1,5 +1,14 @@
 <script lang="ts">
+  import { writable } from "svelte/store";
+  import { setContext } from "svelte";
+
   export let segment: string;
+
+  const current = writable(null);
+  setContext("current", current);
+  $: {
+    $current = segment;
+  }
 </script>
 
 <style>
@@ -8,6 +17,10 @@
     padding: 0.25em;
     display: block;
     font-weight: bold;
+  }
+
+  .title a {
+    text-decoration: none;
   }
   nav {
     border-bottom: 1px solid rgba(255, 62, 0, 0.1);
@@ -31,57 +44,14 @@
     clear: both;
   }
 
-  li {
-    display: block;
-    float: left;
-  }
-
-  [aria-current] {
-    position: relative;
-    display: inline-block;
-  }
-
-  [aria-current]::after {
-    position: absolute;
-    content: "";
-    width: calc(100% - 1em);
-    height: 2px;
-    background-color: rgb(255, 62, 0);
-    display: block;
-    bottom: -1px;
-  }
-
-  a {
-    text-decoration: none;
-    padding: 1em 0.5em;
-    display: block;
-  }
-
   ul {
     float: right;
   }
 </style>
 
 <nav>
-  <div class="title">Irydium</div>
+  <div class="title"><a href="/">Irydium</a></div>
   <ul>
-    <li>
-      <a
-        aria-current={segment === undefined ? 'page' : undefined}
-        sapper:prefetch
-        href=".">home</a>
-    </li>
-    <li>
-      <a
-        aria-current={segment === 'examples' ? 'page' : undefined}
-        sapper:prefetch
-        href="examples">examples</a>
-    </li>
-    <li>
-      <a
-        aria-current={segment === 'repl' ? 'page' : undefined}
-        sapper:prefetch
-        href="repl">repl</a>
-    </li>
+    <slot />
   </ul>
 </nav>
