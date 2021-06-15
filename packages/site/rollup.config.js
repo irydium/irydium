@@ -92,7 +92,6 @@ export default {
   server: {
     input: { server: config.server.input().server.replace(/\.js$/, ".ts") },
     output: config.server.output(),
-    external: ["mdsvex"],
     plugins: [
       ...getBaseCompilerPlugins("../compiler"),
       string({
@@ -134,7 +133,6 @@ export default {
   serviceworker: {
     input: config.serviceworker.input().replace(/\.js$/, ".ts"),
     output: config.serviceworker.output(),
-    external: ["mdsvex"],
     plugins: [
       resolve(),
       replace({
