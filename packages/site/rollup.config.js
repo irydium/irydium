@@ -9,7 +9,7 @@ import { string } from "rollup-plugin-string";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
-import config from "sapper/config/rollup.js";
+import config from "@wlach/sapper/config/rollup.js";
 import pkg from "./package.json";
 import { getBaseCompilerPlugins } from "../compiler/compiler-plugins";
 
