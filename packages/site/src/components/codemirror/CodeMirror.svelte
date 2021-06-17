@@ -32,6 +32,7 @@
   // because it's difficult to update an editor
   // without resetting scroll otherwise
   export async function set(new_code, new_mode) {
+    console.log("set");
     if (new_mode !== mode) {
       await createEditor((mode = new_mode));
     }
@@ -138,8 +139,11 @@
   onMount(() => {
     (async () => {
       if (!_CodeMirror) {
+        console.log("Loading codemirror");
+        console.log(codemirror_promise);
         let mod = await codemirror_promise;
         CodeMirror = mod.default;
+        console.log("Done loading codemirror");
       } else {
         CodeMirror = _CodeMirror;
       }
