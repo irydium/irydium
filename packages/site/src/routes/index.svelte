@@ -19,17 +19,17 @@
     explorations and data visualizations using a combination of
     <a href="https://daringfireball.net/projects/markdown/">Markdown</a>,
     JavaScript, HTML, and CSS. It takes inspiration from
-    <a href="https://alpha.iodide.io">Iodide</a>,
-    <a href="https://jupyter.org/">Jupyter Notebooks</a>
+    <a href="https://alpha.iodide.io/">Iodide</a>,
+    <a href="https://jupyterbook.org/">Jupyter Book</a>
     and
     <a href="https://rmarkdown.rstudio.com/">Rmarkdown</a>.
   </p>
   <p>Key features:</p>
   <ul>
     <li>
-      Use technologies you already know! An Irydium notebook is just Markdown,
-      an easy-to-understand plaintext format, used and loved across the world
-      wide web and beyond.
+      Shallow learning curve. An Irydium notebook is just Markdown, an
+      easy-to-understand plaintext format, used and loved across the world wide
+      web and beyond. Write data munging code inline using JavaScript or Python.
     </li>
     <li>
       Easy to reason about! An Irydium notebook implicitly executes the set of
@@ -48,12 +48,18 @@
       plugins required.
     </li>
   </ul>
-  <p>Have a look at the <a href="/repl">repl</a>!</p>
+  <p>
+    For more information, see the
+    <a href="https://github.com/irydium/irydium">Irydium project</a>
+    on GitHub. Or check out the
+    <a href="/examples">examples</a>!
+  </p>
 
   <p>
     Irydium is built using
-    <a href="https://svelte.dev">Svelte</a>
+    <a href="https://svelte.dev">Svelte</a>,
+    <a href="https://mdsvex.com">mdsvex</a>
     and
-    <a href="https://mdsvex.com">mdsvex</a>.
+    <a href="https://pyodide.org/en/stable/">Pyodide</a>.
   </p>
 </div>
