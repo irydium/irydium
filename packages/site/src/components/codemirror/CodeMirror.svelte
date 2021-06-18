@@ -3,6 +3,7 @@
   let _CodeMirror;
 
   if (typeof window !== "undefined") {
+    console.log("Loading codemirror module");
     codemirror_promise = import("./codemirror.js");
 
     codemirror_promise.then((mod) => {
@@ -32,7 +33,14 @@
   // because it's difficult to update an editor
   // without resetting scroll otherwise
   export async function set(new_code, new_mode) {
-    console.log("set");
+    console.log("set codemirror");
+    if (!CodeMirror) {
+      console.log("No codemirror yet");
+      code = new_code;
+      mode = new_mode;
+      return;
+    }
+
     if (new_mode !== mode) {
       await createEditor((mode = new_mode));
     }
@@ -44,7 +52,11 @@
   }
 
   export function update(new_code) {
+    console.log("update codemirror");
     code = new_code;
+    if (!_CodeMirror) {
+      return;
+    }
 
     if (editor) {
       const { left, top } = editor.getScrollInfo();
