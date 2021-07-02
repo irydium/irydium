@@ -73,7 +73,7 @@ This will auto-reload your site if either the irydium source files or your docum
 If you want to hack on the irydium site, try this workflow:
 
 ```bash
-npm run site-dev
+npm run dev-site
 ```
 
 A local copy of the site above should be accessible via http://localhost:3000/
