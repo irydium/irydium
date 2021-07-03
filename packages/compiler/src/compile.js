@@ -120,8 +120,11 @@ export async function compile(input, options = {}) {
   ]);
 
   const svelteJs = await createSvelteBundle(files);
-  return mustache.render(index, {
-    ...options,
-    svelteJs,
-  });
+  return {
+    html: mustache.render(index, {
+      ...options,
+      svelteJs,
+    }),
+    frontMatter: state.frontMatter,
+  };
 }

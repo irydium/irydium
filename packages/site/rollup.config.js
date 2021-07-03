@@ -1,3 +1,4 @@
+import { config as dotenvConfig } from "dotenv";
 import path from "path";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
@@ -5,6 +6,7 @@ import commonjs from "@rollup/plugin-commonjs";
 import url from "@rollup/plugin-url";
 import svelte from "rollup-plugin-svelte";
 import babel from "@rollup/plugin-babel";
+import json from "@rollup/plugin-json";
 import { string } from "rollup-plugin-string";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
@@ -16,6 +18,10 @@ import { getBaseCompilerPlugins } from "../compiler/compiler-plugins";
 const mode = process.env.NODE_ENV;
 const dev = mode === "development";
 const legacy = !!process.env.SAPPER_LEGACY_BUILD;
+
+// process our dotenv file, if present
+const dotenvFilename = "../../.env";
+dotenvConfig({ path: dotenvFilename });
 
 const onwarn = (warning, onwarn) =>
   (warning.code === "MISSING_EXPORT" && /'preload'/.test(warning.message)) ||
@@ -36,7 +42,12 @@ export default {
       replace({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
+        __api: JSON.stringify({
+          SUPABASE_URL: process.env.SUPABASE_URL,
+          SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+        }),
       }),
+      json(),
       svelte({
         preprocess: sveltePreprocess(),
         compilerOptions: {
@@ -100,7 +111,12 @@ export default {
       replace({
         "process.browser": false,
         "process.env.NODE_ENV": JSON.stringify(mode),
+        __api: JSON.stringify({
+          SUPABASE_URL: process.env.SUPABASE_URL,
+          SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+        }),
       }),
+      json(),
       svelte({
         preprocess: sveltePreprocess(),
         exclude: ["../compiler/src/templates/*"],

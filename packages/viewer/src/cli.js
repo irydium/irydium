@@ -86,7 +86,7 @@ polka()
           req.query.mode !== "html" ? "text/plain" : "text/html"
         }; charset=utf-8`,
       });
-      res.end(output);
+      res.end(output.html);
     } catch (err) {
       console.log(err);
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
