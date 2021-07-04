@@ -1,7 +1,10 @@
 <script lang="ts">
   import Nav from "../components/Nav.svelte";
+  import { setupStore } from "../state/sessionStore";
 
   export let segment: string;
+
+  setupStore();
 </script>
 
 <style>

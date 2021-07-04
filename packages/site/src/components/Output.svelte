@@ -2,10 +2,14 @@
   import { compile } from "../../../compiler/src/compile.js";
 
   export let md = "";
+  export let title = "Untitled Document";
   let srcdoc = "Loading...";
 
   $: {
-    compile(md).then((html) => (srcdoc = html));
+    compile(md).then((output) => {
+      srcdoc = output.html;
+      title = output.frontMatter.title || "Untitled Document";
+    });
   }
 </script>
 

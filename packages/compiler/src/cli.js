@@ -9,7 +9,7 @@ if (args.length !== 1) {
 }
 const input = fs.readFileSync(args[0]);
 compile(input)
-  .then((output) => console.log(output))
+  .then((output) => console.log(output.html))
   .catch((err) => {
     console.log(err);
     process.exit(1);

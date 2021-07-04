@@ -77,3 +77,49 @@ npm run dev-site
 ```
 
 A local copy of the site above should be accessible via http://localhost:3000/
+
+To test saving/loading documents, you will need a [supabase] account and set up a GitHub OAuth.
+
+Roughly:
+
+1. Create a new supabase project in your organization
+2. Create a new OAuth application under your individual or organization's "OAuth Apps" (under "Developer Settings"),
+   take note of the client id and secret.
+3. Set up supabase authentication to allow GitHub, and paste in the client information you took note of above.
+4. Create a `.env` file in the root of the irydium folder, with the following contents copied over from "Settings / API" in Supabase:
+
+```
+SUPABASE_URL=<url>
+SUPABASE_ANON_KEY=<key>
+```
+
+5. Update the callback URL for your OAuth application on GitHub to: `https://<SUPABASE_URL>/auth/v1/callback`(substituting the value you pasted in above for `<SUPABASE_URL>`)
+6. Run the following command to set up a database table to support saving irydium documents:
+
+```sql
+create table documents (
+  id uuid DEFAULT uuid_generate_v1(),
+  user_id uuid references auth.users not null,
+  updated_at timestamp with time zone not null DEFAULT now(),
+  content varchar not null,
+  title text not null,
+
+  primary key (id)
+);
+
+alter table documents enable row level security;
+
+create policy "Documents are viewable by everyone."
+  on documents for select
+  using ( true );
+
+create policy "Users can insert their own documents."
+  on documents for insert
+  with check ( auth.uid() = user_id );
+
+create policy "Users can update their own documents."
+  on documents for update
+  using ( auth.uid() = user_id );
+```
+
+[supabase]: https://supabase.io
