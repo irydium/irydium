@@ -1,10 +1,26 @@
-import { supabase } from "./supabaseClient";
-import { user } from "./sessionStore";
+import { supabase, recreateClient } from "./supabaseClient";
+import { setupStore, user } from "./sessionStore";
 import { get } from 'svelte/store';
 
-export async function login() {
-  const { error } = await supabase.auth.signIn({ provider: "github" });
+export async function login(redirectTo: string) {
+  const { error } = await supabase.auth.signIn({ provider: "github" }, {redirectTo: `${process.env.BASE_URL}${redirectTo}`});
   if (error) throw error;
+}
+
+export function createLoginWindow() {
+  // set up a callback on the window object that the
+  // child window can call
+  window['loginSuccess'] = userData => {
+    // need to recreate the client based on our new credentials
+    recreateClient();
+    setupStore();
+  };
+
+  const url = `${process.env.BASE_URL}/login/`;
+  const name = "login";
+  const specs = "width=500,height=600";
+  const authWindow = window.open(url, name, specs);
+  authWindow.focus();
 }
 
 export async function logout() {
