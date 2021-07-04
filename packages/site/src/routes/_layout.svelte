@@ -19,8 +19,12 @@
   }
 </style>
 
-<Nav {segment} />
+{#if segment !== 'login'}
+  <Nav {segment} />
 
-<main>
+  <main>
+    <slot />
+  </main>
+{:else}
   <slot />
-</main>
+{/if}

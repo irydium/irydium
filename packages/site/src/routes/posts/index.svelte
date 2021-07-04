@@ -1,6 +1,6 @@
 <script lang="ts">
   import {
-    login,
+    createLoginWindow,
     logout,
     getDocumentSummariesForUser,
   } from "../../state/serverActions";
@@ -9,11 +9,7 @@
   let posts = [];
 
   async function _login() {
-    try {
-      await login();
-    } catch (error) {
-      alert(error.error_description || error.message);
-    }
+    createLoginWindow();
   }
 
   async function _logout() {

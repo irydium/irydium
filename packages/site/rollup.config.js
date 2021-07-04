@@ -18,6 +18,7 @@ import { getBaseCompilerPlugins } from "../compiler/compiler-plugins";
 const mode = process.env.NODE_ENV;
 const dev = mode === "development";
 const legacy = !!process.env.SAPPER_LEGACY_BUILD;
+const baseUrl = process.env.BASE_URL || "http://localhost:3000";
 
 // process our dotenv file, if present
 const dotenvFilename = "../../.env";
@@ -42,6 +43,7 @@ export default {
       replace({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
+        "process.env.BASE_URL": JSON.stringify(baseUrl),
         __api: JSON.stringify({
           SUPABASE_URL: process.env.SUPABASE_URL,
           SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
@@ -111,6 +113,7 @@ export default {
       replace({
         "process.browser": false,
         "process.env.NODE_ENV": JSON.stringify(mode),
+        "process.env.BASE_URL": JSON.stringify(baseUrl),
         __api: JSON.stringify({
           SUPABASE_URL: process.env.SUPABASE_URL,
           SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
