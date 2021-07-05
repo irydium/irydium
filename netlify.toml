@@ -4,3 +4,6 @@ command = """
     npx lerna run --scope irydium-site export
 """
 publish = "packages/site/__sapper__/export"
+
+[functions]
+directory = "packages/site/netlify_functions"
