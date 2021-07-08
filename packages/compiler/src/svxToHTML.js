@@ -70,7 +70,16 @@ async function createSvelteBundle(files) {
         transform: async (code, id) => {
           // our only transform is to compile svelte components
           //@ts-ignore
-          if (/.*\.svelte/.test(id)) return svelteCompile(code).js.code;
+          if (/.*\.svelte/.test(id)) {
+            const compiled = svelteCompile(code);
+            if (compiled.warnings.length) {
+              throw new Error(
+                "Error processing svelte component:\n" +
+                  compiled.warnings.map((w) => w.message).join("\n")
+              );
+            }
+            return compiled.js.code;
+          }
         },
       },
     ],
