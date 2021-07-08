@@ -24,6 +24,11 @@ async function createSvelteBundle(files) {
           // import x from 'svelte'
           if (importee === "svelte") return `${CDN_URL}/svelte/index.mjs`;
 
+          // FIXME: horrible hack to allow us to import Y.js
+          if (importee.startsWith("lib0/")) {
+            return `${CDN_URL}/${importee}.js`;
+          }
+
           // import x from 'svelte/somewhere'
           if (importee.startsWith("svelte/")) {
             return `${CDN_URL}/svelte/${importee.slice(7)}/index.mjs`;
@@ -46,14 +51,18 @@ async function createSvelteBundle(files) {
 
           // get the package.json and load it into memory
           const pkg_url = `${CDN_URL}/${importee}/package.json`;
-          const pkg = JSON.parse(await fetch_package(pkg_url));
-
-          // get an entry point from the pkg.json - first try svelte, then modules, then main
-          if (pkg.svelte || pkg.module || pkg.main) {
-            // use the aobove url minus `/package.json` to resolve the URL
-            const url = pkg_url.replace(/\/package\.json$/, "");
-            return new URL(pkg.svelte || pkg.module || pkg.main, `${url}/`)
-              .href;
+          try {
+            const pkg = JSON.parse(await fetch_package(pkg_url));
+            // get an entry point from the pkg.json - first try svelte, then modules, then main
+            if (pkg.svelte || pkg.module || pkg.main) {
+              // use the above url minus `/package.json` to resolve the URL
+              const url = pkg_url.replace(/\/package\.json$/, "");
+              console.log([importee, url]);
+              return new URL(pkg.svelte || pkg.module || pkg.main, `${url}/`)
+                .href;
+            }
+          } catch (e) {
+            // ignore: not great but we can't really do anything about it
           }
 
           // we probably missed stuff, pass it along as is
