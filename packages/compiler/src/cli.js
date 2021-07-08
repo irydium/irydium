@@ -1,4 +1,5 @@
-import { compile } from "./compile";
+import { mdToSvx } from "./mdToSvx";
+import { svxToHTML } from "./svxToHTML";
 
 const fs = require("fs");
 
@@ -7,8 +8,10 @@ if (args.length !== 1) {
   console.error(`Usage: ${process.argv[1]} <md file>`);
   process.exit(1);
 }
+
 const input = fs.readFileSync(args[0]);
-compile(input)
+mdToSvx(input)
+  .then((svx) => svxToHTML(svx))
   .then((output) => console.log(output.html))
   .catch((err) => {
     console.log(err);

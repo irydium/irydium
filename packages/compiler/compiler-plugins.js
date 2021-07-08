@@ -1,19 +1,26 @@
-import virtual from "@rollup/plugin-virtual";
-import { string } from "rollup-plugin-string";
+import replace from "@rollup/plugin-replace";
 
-const fs = require("fs");
+export function createTemplates(baseDir) {
+  const dirname = baseDir || __dirname;
 
-export const getBaseCompilerPlugins = (baseDir = ".") => [
-  virtual({
-    [`${baseDir}/src/templates/taskrunner.js`]: `export default ${JSON.stringify(
-      fs.readFileSync(`${baseDir}/src/taskrunner.js`, "utf8")
-    )}`,
-  }),
-  string({
-    include: [
-      `${baseDir}/src/templates/tasks.js`,
-      `${baseDir}/src/templates/App.svelte`,
-      `${baseDir}/src/templates/index.html`,
-    ],
-  }),
-];
+  const fs = require("fs");
+  return ["templates/index.html", "templates/tasks.js", "taskrunner.js"].reduce(
+    (acc, filename) => {
+      return {
+        ...acc,
+        [filename]: fs.readFileSync(`${dirname}/src/${filename}`, "utf8"),
+      };
+    },
+    {}
+  );
+}
+
+export const getBaseCompilerPlugins = (baseDir = ".") => {
+  return [
+    replace({
+      "__TEMPLATES = {}":
+        "__TEMPLATES = " + JSON.stringify(createTemplates(baseDir)),
+      delimiters: ["", ""],
+    }),
+  ];
+};
