@@ -6,11 +6,14 @@
   export let title = "Untitled Document";
   let srcdoc = "Loading...";
 
-  const updateDoc = throttle((md) => {
-    compile(md).then((output) => {
+  const updateDoc = throttle(async (md) => {
+    try {
+      const output = await compile(md);
       srcdoc = output.html;
       title = output.frontMatter.title || "Untitled Document";
-    });
+    } catch (exception) {
+      srcdoc = exception.message;
+    }
   }, 500);
 
   $: {
