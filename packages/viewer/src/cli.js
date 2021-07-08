@@ -89,8 +89,8 @@ polka()
       res.end(output.html);
     } catch (err) {
       console.log(err);
-      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-      res.end(err.message);
+      res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end(err.stack);
     }
   })
   .listen(3000, (err) => {
