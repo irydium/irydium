@@ -6,8 +6,7 @@ import Message from "vfile-message";
 import { parse as svelteParse } from "svelte/compiler";
 import yaml from "js-yaml";
 
-// this is a template
-import taskScript from "./templates/tasks.js";
+import { taskScriptSource } from "./templates";
 
 // remark plugin: extracts `{code-cell}` chunks, removing them from the
 // markdown (the plugin below will re-insert them)
@@ -166,6 +165,7 @@ export const codeInserter = (state) => {
           }),
         ]);
       }
+
       const extraScript =
         state.svelteCells
           .map(
@@ -173,7 +173,7 @@ export const codeInserter = (state) => {
               `import ${svelteCell.id} from "./${svelteCell.id}.svelte";`
           )
           .join("\n") +
-        mustache.render(taskScript, {
+        mustache.render(taskScriptSource, {
           taskVariables: tasks
             .map((task) => task.id)
             .filter(
