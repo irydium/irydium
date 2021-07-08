@@ -14,47 +14,56 @@ export const codeExtractor = (state) => {
   return () => {
     return function transformer(tree, _) {
       visit(tree, ["code"], (node, index, parent) => {
-        if (node.lang === "{code-cell}") {
-          // FIXME: assumption that language is the only metadata
-          // (should also validate)
-          const lang = node.meta;
+        if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
+          if (node.lang === "{code-cell}") {
+            // FIXME: assumption that language is the only metadata
+            // (should also validate)
+            const lang = node.meta;
 
-          const nodeContent = fm(node.value);
+            const nodeContent = fm(node.value);
 
-          if (!nodeContent.attributes.id) {
-            console.log(node);
-            throw new Error(
-              `Code chunk defined without id (line: ${node.position.start.line})`
-            );
-          }
-
-          // svelte cells are parsed kind of specially
-          if (lang === "svelte") {
-            if (nodeContent.attributes.name === "mdsvelte") {
+            if (!nodeContent.attributes.id) {
+              console.log(node);
               throw new Error(
-                `The mdsvelte name is reserved (line: ${node.position.start.line})`
+                `Code chunk defined without id (line: ${node.position.start.line})`
               );
             }
 
-            // FIXME: should probably parse out the svelte files to make sure they compile at this stage
-            state.svelteCells.push({
-              id: nodeContent.attributes.id,
-              body: nodeContent.body,
-            });
-          } else {
-            state.codeNodes.push({ lang, ...nodeContent });
-          }
+            // svelte cells are parsed kind of specially
+            if (lang === "svelte") {
+              if (nodeContent.attributes.name === "mdsvelte") {
+                throw new Error(
+                  `The mdsvelte name is reserved (line: ${node.position.start.line})`
+                );
+              }
 
-          if (nodeContent && nodeContent.attributes.inline) {
-            // inline node: take out the code cell parts, make them a
-            // standard ""```foo" code chunk
-            node.lang = lang;
-            node.meta = undefined;
+              // FIXME: should probably parse out the svelte files to make sure they compile at this stage
+              state.svelteCells.push({
+                id: nodeContent.attributes.id,
+                body: nodeContent.body,
+              });
+            } else {
+              state.codeNodes.push({ lang, ...nodeContent });
+            }
+
+            if (nodeContent && nodeContent.attributes.inline) {
+              // inline node: take out the code cell parts, make them a
+              // standard ""```foo" code chunk
+              node.lang = lang;
+              node.meta = undefined;
+            } else {
+              // non-inline node, take it out, we only want to execute it,
+              // not see it
+              parent.children.splice(index, 1);
+              return index;
+            }
           } else {
-            // non-inline node, take it out, we only want to execute it,
-            // not see it
-            parent.children.splice(index, 1);
-            return index;
+            // the "language" of this code cell is something we don't yet support
+            // (e.g. one of the many things in MyST that we don't handle) -- convert
+            // it to a normal code cell with no language, at least that way we won't
+            // confuse svelte downstream (since tokens with curly braces have special
+            // meaning)
+            node.lang = undefined;
           }
         }
       });

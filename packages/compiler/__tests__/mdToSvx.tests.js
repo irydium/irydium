@@ -33,3 +33,18 @@ describe("mdToSvx tests", () => {
     ]);
   });
 });
+
+describe("edge cases for input", () => {
+  it("empty code chunk permutations", async () => {
+    // both empty code chunks and code chunks with curly braces
+    // (e.g. ````{code-cell}`) evaluate to empty code cells
+    ["```", "```{code}"].forEach(async (codeChunk) => {
+      const output = await mdToSvx(codeChunk);
+      expect(output.rootComponent.code).toEqual(
+        expect.stringContaining(
+          '<pre class="language-undefined">{@html `<code class="language-undefined"></code>`}</pre>'
+        )
+      );
+    });
+  });
+});
