@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "sapper dev",
     "build": "sapper build --legacy",
-    "export": "sapper export --legacy --entry '/ login'",
+    "export": "sapper export --legacy --entry '/ login posts'",
     "start": "node __sapper__/build",
     "validate": "svelte-check --ignore src/node_modules/@wlach/sapper"
   },
