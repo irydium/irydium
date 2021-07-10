@@ -37,7 +37,6 @@
 
   export let fontFace = "Helvetica Neue";
   const tasks = getContext("tasks")();
-  console.log(tasks);
   const layout = sugiyama()
     .size([width, height])
     .layering(layeringSimplex())
@@ -57,7 +56,6 @@
   const arrow = symbol()
     .type(symbolTriangle)
     .size((nodeRadius * nodeRadius) / 5.0);
-  console.log(arrow());
 </script>
 
 <center>
@@ -102,7 +100,6 @@
           const scale = (nodeRadius * 1.15) / Math.sqrt(dx * dx + dy * dy);
           // This is the angle of the last line segment
           const angle = (Math.atan2(-dy, -dx) * 180) / Math.PI + 90;
-          console.log(angle, dx, dy);
           return `translate(${end.x + dx * scale}, ${end.y + dy * scale}) rotate(${angle})`;
         })(link.source, link.target)} />
     {/each}
