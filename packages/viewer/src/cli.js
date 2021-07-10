@@ -80,7 +80,6 @@ polka()
     const input = getFileContents(args[0]);
     try {
       const output = await compile(input, req.query);
-      console.log(req.query);
       res.writeHead(200, {
         "Content-Type": `${
           req.query.mode !== "html" ? "text/plain" : "text/html"
@@ -88,7 +87,6 @@ polka()
       });
       res.end(output.html);
     } catch (err) {
-      console.log(err);
       res.writeHead(200, { "Content-Type": "text/plain; charset=utf-8" });
       res.end(err.stack);
     }

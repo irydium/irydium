@@ -23,7 +23,6 @@ export const codeExtractor = (state) => {
             const nodeContent = fm(node.value);
 
             if (!nodeContent.attributes.id) {
-              console.log(node);
               throw new Error(
                 `Code chunk defined without id (line: ${node.position.start.line})`
               );

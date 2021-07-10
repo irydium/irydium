@@ -57,7 +57,6 @@ async function createSvelteBundle(files) {
             if (pkg.svelte || pkg.module || pkg.main) {
               // use the above url minus `/package.json` to resolve the URL
               const url = pkg_url.replace(/\/package\.json$/, "");
-              console.log([importee, url]);
               return new URL(pkg.svelte || pkg.module || pkg.main, `${url}/`)
                 .href;
             }
