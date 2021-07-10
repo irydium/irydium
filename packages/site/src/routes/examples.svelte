@@ -1,10 +1,10 @@
 <script>
-  import Editor from "../../components/Editor.svelte";
-  import Output from "../../components/Output.svelte";
-  import intro from "../../examples/intro.md";
-  import ffxData from "../../examples/firefox-public-data.md";
-  import gcpBurndown from "../../examples/gcp-burndown.md";
-  import pyodide from "../../examples/pyodide.md";
+  import Editor from "../components/Editor.svelte";
+  import Output from "../components/Output.svelte";
+  import intro from "../examples/intro.md";
+  import ffxData from "../examples/firefox-public-data.md";
+  import gcpBurndown from "../examples/gcp-burndown.md";
+  import pyodide from "../examples/pyodide.md";
 
   let examples = [
     { content: intro, title: "Introduction" },

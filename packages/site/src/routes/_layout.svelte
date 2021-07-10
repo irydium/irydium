@@ -1,5 +1,6 @@
 <script lang="ts">
   import Nav from "../components/Nav.svelte";
+  import NavItem from "../components/NavItem.svelte";
   import { setupStore } from "../state/sessionStore";
 
   export let segment: string;
@@ -20,8 +21,10 @@
 </style>
 
 {#if segment !== 'login'}
-  <Nav {segment} />
-
+  <Nav {segment}>
+    <NavItem segment={'examples'} />
+    <NavItem segment={'repl'} />
+  </Nav>
   <main>
     <slot />
   </main>
