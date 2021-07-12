@@ -1,6 +1,6 @@
 {
   "name": "@irydium/compiler",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Irydium Compiler",
   "main": "dist/main.cjs.js",
   "module": "dist/main.es.js",
