@@ -8,6 +8,9 @@
   "engines": {
     "node": ">=14"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "src/viewer.js",
   "directories": {
     "lib": "lib",
