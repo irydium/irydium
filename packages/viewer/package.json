@@ -20,7 +20,7 @@
     "lib"
   ],
   "bin": {
-    "irmd-viewer": "bin/irmd-compile"
+    "irmd-viewer": "bin/irmd-viewer"
   },
   "repository": {
     "type": "git",
@@ -35,7 +35,6 @@
     "url": "https://github.com/irydium/irydium/issues"
   },
   "dependencies": {
-    "@irydium/compiler": "file:../compiler",
     "livereload": "^0.9.1",
     "polka": "next"
   }
