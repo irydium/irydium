@@ -16,14 +16,22 @@ const path = require("path");
 
 const args = process.argv.slice(2);
 if (args.length !== 1) {
-  console.error(`Usage: ${process.argv[1]} <irmd file>`);
+  console.error(`Usage: ${process.argv[1]} <md file>`);
+  process.exit(1);
+}
+
+const filename = args[0];
+
+// check that file actually exists
+if (!fs.existsSync(filename)) {
+  console.error(`${filename} does not exist`);
   process.exit(1);
 }
 
 // we can't use livereload for the document itself, because it might not be rendered as HTML
-// FIXME: assuming we can create a server on port 35731 is probably dumb
+// FIXME: assuming we can create a server on port 35731 is probably wrong
 const mdReloadServer = new ws.Server({ port: 35731 });
-chokidar.watch(args[0]).on("change", () => {
+chokidar.watch(filename).on("change", () => {
   mdReloadServer.clients.forEach(function each(client) {
     if (client.readyState === ws.OPEN) {
       client.send("1");
@@ -77,7 +85,7 @@ polka()
     }
   })
   .get("/iridium", async (req, res) => {
-    const input = getFileContents(args[0]);
+    const input = getFileContents(filename);
     try {
       const output = await compile(input, req.query);
       res.writeHead(200, {
