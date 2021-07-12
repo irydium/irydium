@@ -1,6 +1,6 @@
 {
   "name": "@irydium/viewer",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Live viewer for irydium files",
   "author": "William Lachance <wlach@protonmail.com>",
   "homepage": "https://github.com/irydium/irydium/tree/master/packages/viewer#readme",
