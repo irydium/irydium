@@ -16,7 +16,9 @@ export const codeExtractor = (state) => {
     return function transformer(tree, _) {
       visit(tree, ["code"], (node, index, parent) => {
         if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
-          if (node.lang === "{code-cell}") {
+          // myst directives are embedded in code chunks, with squiggly braces
+          const mystType = node.lang.substr(1, node.lang.length - 2);
+          if (mystType === "code-cell") {
             // FIXME: assumption that language is the only metadata
             // (should also validate)
             const lang = node.meta;
@@ -57,6 +59,14 @@ export const codeExtractor = (state) => {
               parent.children.splice(index, 1);
               return index;
             }
+          } else if (mystType === "note" || mystType === "warning") {
+            // a note! we want to replace the code chunk with a svelte component
+            let newNode = {
+              type: "html",
+              value: `<Admonition type={"${mystType}"}>${node.value}</Admonition>`,
+            };
+            parent.children[index] = newNode;
+            return index;
           } else {
             // the "language" of this code cell is something we don't yet support
             // (e.g. one of the many things in MyST that we don't handle) -- convert
@@ -182,6 +192,7 @@ export const codeInserter = (state) => {
               `import ${svelteCell.id} from "./${svelteCell.id}.svelte";`
           )
           .join("\n") +
+        'import Admonition from "./Admonition.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks
             .map((task) => task.id)
