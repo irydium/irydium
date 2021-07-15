@@ -37,16 +37,41 @@ You can see a very early version of Irydium in action on the demonstration site:
 
 https://irydium.dev/
 
-## Getting Started
+## Getting started with Irydium
 
-(FIXME: this does not currently work)
-
-If you want to try creating irmd documents and compiling them to HTML, you can install [@irydium/compiler](https://www.npmjs.com/package/@irydium/compiler) from npm:
+Irydium, at heart, is just a set of tools for translating markdown documents into web pages
+(and maybe someday soon, parts of web pages that may be embedded elsewhere).
+If you want to try creating irmd documents and converting them to HTML, you can install [@irydium/compiler](https://www.npmjs.com/package/@irydium/compiler) from npm:
 
 ```bash
 npm install -g @irydium/compiler
-irmd-compile document.irmd
 ```
+
+Then you can convert any document into HTML via the `irmd-compile` command:
+
+```bash
+irmd-compile README.md > README.html
+```
+
+If you want to be able to preview your document as you edit it, you can install the `irmd-viewer`
+command:
+
+```bash
+npm install -g @irydium/viewer
+```
+
+```bash
+irmd-viewer README.md
+```
+
+This will start a webserver on http://localhost:3000/. The rendered document will update as you
+modify and save the underlying markdown document.
+There are also a few debugging affordances: being able to view the chain of computational operations as a graph, as well as being able to switch dynamically between several intermediate representations of the document.
+
+If you use Visual Studio Code, you may find the [MyST Visual Studio Code extension] helpful:
+it will add syntax highlighting to code cells, as well as the other directives that the MyST flavor of Markdown provides.
+
+[myst visual studio code extension]: https://github.com/executablebooks/myst-vs-code
 
 ## Local development
 
@@ -66,7 +91,7 @@ You can hack on the irydium viewer as follows:
 npm run dev -- <path to file>
 ```
 
-This will auto-reload your site if either the irydium source files or your document changes, making it ideal for local development workflows.
+This will auto-reload your site if either the irydium source files or your document changes.
 
 ### Working on the site
 
@@ -78,7 +103,9 @@ npm run dev-site
 
 A local copy of the site above should be accessible via http://localhost:3000/
 
-To test saving/loading documents, you will need a [supabase] account and set up a GitHub OAuth.
+Most of the site's functionality should work as-is without further setup.
+However, to test saving/loading documents, you will need a [supabase] account and set up a GitHub
+OAuth.
 
 Roughly:
 
