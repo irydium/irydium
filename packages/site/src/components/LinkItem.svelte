@@ -5,7 +5,7 @@
 <li>
   <a 
     href={href}><slot />
-</a>
+  </a>
 </li>
 
 <style>
