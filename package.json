@@ -26,7 +26,7 @@
     "@babel/plugin-transform-runtime": "^7.0.0",
     "@babel/preset-env": "^7.12.11",
     "@babel/runtime": "^7.0.0",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/free-brands-svg-icons": "^5.15.3",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^18.1.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -93,7 +93,6 @@
   },
   "homepage": "https://github.com/irydium/irydium#readme",
   "dependencies": {
-    "@fortawesome/free-brands-svg-icons": "^5.15.3",
     "@irydium/compiler": "file:packages/compiler",
     "irydium-site": "file:packages/site"
   }

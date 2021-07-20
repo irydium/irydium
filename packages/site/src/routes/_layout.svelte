@@ -2,13 +2,29 @@
   import Nav from "../components/Nav.svelte";
   import NavItem from "../components/NavItem.svelte";
   import { setupStore } from "../state/sessionStore";
-  import Fa from 'svelte-fa';
-  import { faGithub } from '@fortawesome/free-brands-svg-icons';
+  import Fa from "svelte-fa";
+  import { faGithub } from "@fortawesome/free-brands-svg-icons";
   import LinkItem from "../components/LinkItem.svelte";
+  
   export let segment: string;
 
   setupStore();
 </script>
+
+{#if segment !== "login"}
+  <Nav {segment}>
+    <NavItem segment={"examples"} />
+    <NavItem segment={"repl"} />
+    <LinkItem href={"https://github.com/irydium/irydium"}>
+      <Fa icon={faGithub} />
+    </LinkItem>
+  </Nav>
+  <main>
+    <slot />
+  </main>
+{:else}
+  <slot />
+{/if}
 
 <style>
   main {
@@ -21,18 +37,3 @@
     flex: 1;
   }
 </style>
-
-{#if segment !== 'login'}
-  <Nav {segment}>
-    <NavItem segment={'examples'} />
-    <NavItem segment={'repl'} />
-    <LinkItem href={"https://github.com/irydium/irydium"}>
-      <Fa icon={faGithub} />    
-    </LinkItem>
-  </Nav>
-  <main>
-    <slot />
-  </main>
-{:else}
-  <slot />
-{/if}
