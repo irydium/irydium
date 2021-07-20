@@ -35,7 +35,7 @@
     "@rollup/plugin-url": "^5.0.0",
     "@rollup/plugin-virtual": "^2.0.3",
     "@supabase/supabase-js": "^1.18.0",
-    "@tsconfig/svelte": "^1.0.10",
+    "@tsconfig/svelte": "^2.0.1",
     "@types/compression": "^1.7.0",
     "@types/node": "^14.11.1",
     "@types/polka": "^0.5.1",
