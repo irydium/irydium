@@ -5,10 +5,9 @@
 
 export const TASK_TYPE = {
   LOAD_SCRIPTS: 0,
-  DOWNLOAD: 2,
-  LOAD_PYODIDE: 3,
-  JS: 4,
-  VARIABLE: 5,
+  DOWNLOAD: 1,
+  JS: 2,
+  VARIABLE: 3,
 };
 
 export const TASK_STATE = {
@@ -16,10 +15,6 @@ export const TASK_STATE = {
   EXECUTING: 1,
   COMPLETE: 2,
 };
-
-// FIXME: This is clearly the wrong place for this type of information
-const PYODIDE_LOCATION =
-  "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/pyodide.js";
 
 function loadScript(url) {
   return new Promise((resolve, reject) => {
@@ -48,12 +43,6 @@ async function runTask(tasks, task) {
         console.log(`Loading ${script}`);
         await loadScript(script);
       }
-      break;
-    case TASK_TYPE.LOAD_PYODIDE:
-      await loadScript(PYODIDE_LOCATION);
-      task.value = await loadPyodide({
-        indexURL: "https://cdn.jsdelivr.net/pyodide/v0.17.0/full/",
-      });
       break;
     case TASK_TYPE.DOWNLOAD:
       task.value = await fetch(task.payload).then((r) => {
