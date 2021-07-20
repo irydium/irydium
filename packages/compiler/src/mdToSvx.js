@@ -4,6 +4,7 @@ import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
 export async function mdToSvx(input) {
   let state = {
     codeNodes: [],
+    langPlugins: {},
     frontMatter: {},
     svelteCells: [],
   };

@@ -29,8 +29,21 @@ export const codeExtractor = (state) => {
               );
             }
 
-            // svelte cells are parsed kind of specially
-            if (lang === "svelte") {
+            // language plugins are processed in a special order, so they can be used
+            // *before* any code chunks that use them
+            if (nodeContent.attributes.type === "language_plugin") {
+              state.langPlugins = {
+                ...state.langPlugins,
+                [nodeContent.attributes.lang_extension]: {
+                  ...nodeContent.attributes,
+                  body: nodeContent.body,
+                },
+              };
+            }
+            // we do something similar for "svelte" cells
+            // (FIXME: svelte cells aren't a 100% coherent concept -- may want to somehow implement them
+            // in terms of language plugins)
+            else if (lang === "svelte") {
               if (nodeContent.attributes.name === "mdsvelte") {
                 throw new Error(
                   `The mdsvelte name is reserved (line: ${node.position.start.line})`
@@ -152,28 +165,49 @@ export const codeInserter = (state) => {
           })
       );
 
-      const pyNodes = state.codeNodes.filter((cn) => cn.lang === "python");
-      if (pyNodes.length) {
-        tasks = tasks.concat([
-          {
-            id: "pyodide",
-            payload: JSON.stringify(""),
-            type: TASK_TYPE.LOAD_PYODIDE,
-            state: TASK_STATE.PENDING,
-            inputs: JSON.stringify([]),
-          },
-          ...pyNodes.map((pn) => {
-            const preamble = (pn.inputs || [])
-              .map((i) => `from js import ${i}`)
-              .join("\n");
-            return createJSTask(
-              pn.attributes.id,
-              `return (await pyodide.runPythonAsync(\`${preamble}${pn.body}\`)).toJs()`,
-              ["pyodide"].concat(pn.inputs || [])
-            );
-          }),
-        ]);
-      }
+      // other code cells should be run through language plugins
+
+      // language plugin script dependencies
+      tasks = tasks.concat(
+        Object.keys(state.langPlugins).length
+          ? Object.values(state.langPlugins).map((langPlugin) => ({
+              id: `scripts_${langPlugin.id}`,
+              type: TASK_TYPE.LOAD_SCRIPTS,
+              state: TASK_STATE.PENDING,
+              payload: JSON.stringify(langPlugin.scripts),
+              inputs: JSON.stringify([]),
+            }))
+          : []
+      );
+
+      // load the language plugin as a standard code node
+      tasks = tasks.concat(
+        Object.values(state.langPlugins).map((langPlugin) => ({
+          ...createJSTask(langPlugin.id, langPlugin.body),
+          inputs: JSON.stringify([`scripts_${langPlugin.id}`]),
+        }))
+      );
+
+      // run any scripts depending on language plugins *through* the
+      // language plugin
+      tasks = tasks.concat(
+        flatten(
+          Object.values(state.langPlugins).map((langPlugin) => {
+            return state.codeNodes
+              .filter((cn) => cn.lang === langPlugin.id)
+              .map((cn) => {
+                console.log(cn);
+                return createJSTask(
+                  cn.attributes.id,
+                  `return ${langPlugin.id}([${(cn.inputs || []).join(
+                    ", "
+                  )}], \`${cn.body}\`)`,
+                  [...(cn.inputs || []), langPlugin.id]
+                );
+              });
+          })
+        )
+      );
 
       const extraScript =
         state.svelteCells
