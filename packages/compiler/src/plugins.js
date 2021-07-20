@@ -1,5 +1,6 @@
 import fm from "front-matter";
 import mustache from "mustache";
+import { flatten } from "lodash";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import visit from "unist-util-visit";
 import Message from "vfile-message";
@@ -70,13 +71,13 @@ export const codeExtractor = (state) => {
   };
 };
 
-function createJSTask(id, code, inputs) {
+function createJSTask(id, code, inputs = []) {
   return {
     id,
     type: TASK_TYPE.JS,
     state: TASK_STATE.PENDING,
-    payload: `async (${(inputs || []).join(",")}) => { ${code}\n }`,
-    inputs: JSON.stringify(inputs),
+    payload: `async (${inputs.join(",")}) => { ${code}\n }`,
+    inputs: JSON.stringify(flatten([inputs])),
   };
 }
 
@@ -95,7 +96,7 @@ export const codeInserter = (state) => {
               id: "scripts",
               type: TASK_TYPE.LOAD_SCRIPTS,
               state: TASK_STATE.PENDING,
-              payload: JSON.stringify(state.frontMatter.scripts),
+              payload: JSON.stringify(flatten([state.frontMatter.scripts])),
               inputs: JSON.stringify([]),
             },
           ]
@@ -147,7 +148,7 @@ export const codeInserter = (state) => {
             if (hasScripts) {
               inputs.push("scripts");
             }
-            return createJSTask(cn.attributes.id, cn.body, inputs);
+            return createJSTask(cn.attributes.id, cn.body, flatten([inputs]));
           })
       );
 

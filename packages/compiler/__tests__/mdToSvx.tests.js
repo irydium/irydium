@@ -18,6 +18,34 @@ describe("mdToSvx tests", () => {
     expect(output.frontMatter.title).toEqual("My title");
   });
 
+  it("handles two styles of scripts", async () => {
+    const SCRIPT_URL = "http://localhost:1234/foo.js";
+    [(SCRIPT_URL, [SCRIPT_URL])].forEach(async (scripts) => {
+      const output = await mdToSvx(
+        `---\nscripts: ${JSON.stringify(scripts)}\n---\n# Hello, world`
+      );
+      expect(output.rootComponent.code).toEqual(
+        expect.stringContaining(`payload: [\"${SCRIPT_URL}\"],`)
+      );
+    });
+  });
+
+  it("handles code chunks with various depdendency specifications", async () => {
+    const getCodeChunk = (id, fmExtra, code) => {
+      return `\`\`\`{code-cell} js\n---\nid: ${id}\n${
+        fmExtra ? fmExtra + "\n" : ""
+      }---\n${code}\n\`\`\`\n`;
+    };
+    const codeChunk = getCodeChunk("foo", undefined, "return 123");
+    ["inputs: foo", "inputs: [ foo ]"].forEach(async (fmExtra) => {
+      const depChunk = getCodeChunk("bar", fmExtra, "return foo + 123");
+      const output = await mdToSvx(codeChunk + depChunk);
+      expect(output.rootComponent.code).toEqual(
+        expect.stringContaining('inputs: ["foo"]')
+      );
+    });
+  });
+
   it("handles subcomponents", async () => {
     const output = await mdToSvx(
       "# Hello, world\n\n```{code-cell} svelte\n---\nid: MyComponent\n---\n<h1>Hello subcomponent</h1>\n```"
