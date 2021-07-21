@@ -1,6 +1,7 @@
 # Irydium
 
 [![Build Status](https://github.com/irydium/irydium/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/irydium/irydium/actions?query=workflow%3Abuild-and-test)
+[![Join the chat at https://gitter.im/irydium/community](https://badges.gitter.im/irydium/community.svg)](https://gitter.im/irydium/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Irydium is a set of tooling designed to allow people to create interactive documents
 using web technologies. It will feel familiar to those coming from environments
@@ -73,7 +74,15 @@ it will add syntax highlighting to code cells, as well as the other directives t
 
 [myst visual studio code extension]: https://github.com/executablebooks/myst-vs-code
 
-## Local development
+## Contributing to Irydium
+
+Although this project is in early stages, we welcome contributions!
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details on how to file issues and propose changes.
+See the next section for details on how to set up your development environment.
+
+## Development
+
+### Local setup
 
 There are a few options for local development. But the first step is to bootstrap
 the local environment as follows:
@@ -85,7 +94,7 @@ npm run bootstrap
 
 ### Hacking on the irydium viewer
 
-You can hack on the irydium viewer as follows:
+After setting the environment locally, you can run the irydium viewer as follows:
 
 ```bash
 npm run dev -- <path to file>
