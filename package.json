@@ -81,7 +81,7 @@
     "tslib": "^2.0.1",
     "typescript": "^4.0.3",
     "unist-util-visit": "^3.1.0",
-    "vfile-message": "^2.0.4"
+    "vfile-message": "^3.0.1"
   },
   "repository": {
     "type": "git",
