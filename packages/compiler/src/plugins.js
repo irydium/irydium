@@ -2,7 +2,7 @@ import fm from "front-matter";
 import mustache from "mustache";
 import { flatten } from "lodash";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
-import visit from "unist-util-visit";
+import { visit } from "unist-util-visit";
 import Message from "vfile-message";
 import { parse as svelteParse } from "svelte/compiler";
 import yaml from "js-yaml";
