@@ -11,10 +11,9 @@ const dev = NODE_ENV === "development";
 polka() // You can also use Express
   .use(json())
   .use(
+    // @ts-ignore
     compression({ threshold: 0 }),
     sirv("static", { dev }),
     sapper.middleware()
   )
-  .listen(PORT, (err) => {
-    if (err) console.log("error", err);
-  });
+  .listen(PORT);
