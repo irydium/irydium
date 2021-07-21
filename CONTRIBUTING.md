@@ -16,7 +16,7 @@ in the root of this repository.
 If you have questions about Irydium, the easiest way to get in touch with the maintainers
 is via the Irydium community chat, accessible either via Gitter or Matrix:
 
-- [irydium/community]https://gitter.im/irydium/community) (Gitter)
+- [irydium/community](https://gitter.im/irydium/community) (Gitter)
 - [#irydium_communty:gitter.im](https://matrix.to/#/#irydium_community:gitter.im) (Matrix)
 
 ## Filing issues
