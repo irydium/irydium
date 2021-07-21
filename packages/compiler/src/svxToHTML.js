@@ -4,7 +4,11 @@ import mustache from "mustache";
 import * as rollup from "rollup/dist/es/rollup.browser.js";
 import fetch from "cross-fetch";
 
-import { bundleIndexSource, taskRunnerSource } from "./templates";
+import {
+  admonitionSource,
+  bundleIndexSource,
+  taskRunnerSource,
+} from "./templates";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
 
@@ -104,6 +108,7 @@ export async function svxToHTML(
 ) {
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
+    ["./Admonition.svelte", { code: admonitionSource, map: "" }],
     [
       "./taskrunner",
       {
@@ -113,7 +118,6 @@ export async function svxToHTML(
     ],
     ...svelteComponents,
   ]);
-
   const svelteJs = await createSvelteBundle(files);
   return {
     html: mustache.render(bundleIndexSource, {

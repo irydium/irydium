@@ -10,8 +10,14 @@ if (!Object.keys(__TEMPLATES).length) {
   __TEMPLATES = templatePlugin.createTemplates();
 }
 
+const admonitionSource = __TEMPLATES["templates/Admonition.svelte"];
 const bundleIndexSource = __TEMPLATES["templates/index.html"];
 const taskScriptSource = __TEMPLATES["templates/tasks.js"];
 const taskRunnerSource = __TEMPLATES["taskrunner.js"];
 
-export { bundleIndexSource, taskScriptSource, taskRunnerSource };
+export {
+  admonitionSource,
+  bundleIndexSource,
+  taskScriptSource,
+  taskRunnerSource,
+};
