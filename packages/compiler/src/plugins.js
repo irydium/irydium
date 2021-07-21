@@ -3,7 +3,7 @@ import mustache from "mustache";
 import { flatten } from "lodash";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { visit } from "unist-util-visit";
-import Message from "vfile-message";
+import { VFileMessage } from "vfile-message";
 import { parse as svelteParse } from "svelte/compiler";
 import yaml from "js-yaml";
 
@@ -269,7 +269,7 @@ export const frontMatterExtractor = (state) => {
       state.frontMatter = yaml.load(src);
       return state.frontMatter;
     } catch (e) {
-      messages.push(new Message("YAML failed to parse", e));
+      messages.push(new VFileMessage("YAML failed to parse", e));
     }
   };
 };
