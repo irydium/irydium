@@ -5,10 +5,12 @@
   import ffxData from "../examples/firefox-public-data.md";
   import gcpBurndown from "../examples/gcp-burndown.md";
   import pyodide from "../examples/pyodide.md";
+  import mystSupport from "../examples/myst-support.md";
 
   let examples = [
     { content: intro, title: "Introduction" },
     { content: pyodide, title: "Using Python" },
+    { content: mystSupport, title: "MyST Directives" },
     { content: gcpBurndown, title: "GCP Burndown" },
     { content: ffxData, title: "Firefox Data Report" },
   ];
@@ -23,6 +25,33 @@
     editor.updateMd(md); // pass through updated state to codemirror
   }
 </script>
+
+<svelte:head>
+  <title>Examples</title>
+</svelte:head>
+
+<div class="body">
+  <section class="example-list">
+    <ul>
+      {#each examples as example}
+        <li>
+          <span
+            aria-current={example.title === selectedExample.title
+              ? "example"
+              : undefined}
+            on:click={() => updateSelected(example)}>{example.title}</span
+          >
+        </li>
+      {/each}
+    </ul>
+  </section>
+  <section>
+    <Editor bind:this={editor} bind:md />
+  </section>
+  <section>
+    <Output {md} />
+  </section>
+</div>
 
 <style>
   .body {
@@ -65,27 +94,3 @@
     bottom: -1px;
   }
 </style>
-
-<svelte:head>
-  <title>Examples</title>
-</svelte:head>
-
-<div class="body">
-  <section class="example-list">
-    <ul>
-      {#each examples as example}
-        <li>
-          <span
-            aria-current={example.title === selectedExample.title ? 'example' : undefined}
-            on:click={() => updateSelected(example)}>{example.title}</span>
-        </li>
-      {/each}
-    </ul>
-  </section>
-  <section>
-    <Editor bind:this={editor} bind:md />
-  </section>
-  <section>
-    <Output {md} />
-  </section>
-</div>
