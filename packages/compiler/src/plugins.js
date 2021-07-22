@@ -3,15 +3,13 @@ import mustache from "mustache";
 import { flatten } from "lodash";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { visit } from "unist-util-visit";
-import { VFileMessage } from "vfile-message";
 import { parse as svelteParse } from "svelte/compiler";
-import yaml from "js-yaml";
 
 import { taskScriptSource } from "./templates";
 
 // remark plugin: extracts `{code-cell}` chunks, removing them from the
 // markdown (the plugin below will re-insert them)
-export const codeExtractor = (state) => {
+export const codeExtractor = (extractedCode) => {
   return () => {
     return function transformer(tree, _) {
       visit(tree, ["code"], (node, index, parent) => {
@@ -40,12 +38,12 @@ export const codeExtractor = (state) => {
               }
 
               // FIXME: should probably parse out the svelte files to make sure they compile at this stage
-              state.svelteCells.push({
+              extractedCode.svelteCells.push({
                 id: nodeContent.attributes.id,
                 body: nodeContent.body,
               });
             } else {
-              state.codeNodes.push({ lang, ...nodeContent });
+              extractedCode.codeCells.push({ lang, ...nodeContent });
             }
 
             if (nodeContent && nodeContent.attributes.inline) {
@@ -94,19 +92,18 @@ function createJSTask(id, code, inputs = []) {
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
 // the script block that mdsvex generates (or creating one, in the case
 // of a document without one)
-export const codeInserter = (state) => {
+export const codeInserter = (extractedCode, frontMatter) => {
   return () => {
     return function transformer(tree, _) {
       // we allow a top-level "scripts" to load arbitrary javascript
-      const hasScripts =
-        state.frontMatter.scripts && state.frontMatter.scripts.length;
+      const hasScripts = frontMatter.scripts && frontMatter.scripts.length;
       let tasks = hasScripts
         ? [
             {
               id: "scripts",
               type: TASK_TYPE.LOAD_SCRIPTS,
               state: TASK_STATE.PENDING,
-              payload: JSON.stringify(flatten([state.frontMatter.scripts])),
+              payload: JSON.stringify(flatten([frontMatter.scripts])),
               inputs: JSON.stringify([]),
             },
           ]
@@ -114,7 +111,7 @@ export const codeInserter = (state) => {
 
       // turn data blocks into async tasks
       tasks = tasks.concat(
-        (state.frontMatter.data || [])
+        (frontMatter.data || [])
           .map((datum) => {
             return Object.entries(datum).map(([id, url]) => {
               return {
@@ -132,7 +129,7 @@ export const codeInserter = (state) => {
       // variables should likewise get processed as their own type of "task"
       // (FIXME: duplication with ^^^)
       tasks = tasks.concat(
-        (state.frontMatter.variables || [])
+        (frontMatter.variables || [])
           .map((datum) => {
             return Object.entries(datum).map(([id, value]) => {
               return {
@@ -149,7 +146,7 @@ export const codeInserter = (state) => {
 
       // turn js code cells into async tasks
       tasks = tasks.concat(
-        state.codeNodes
+        extractedCode.codeCells
           .filter((cn) => cn.lang === "js")
           .map((cn) => {
             let inputs = cn.attributes.inputs || [];
@@ -162,7 +159,9 @@ export const codeInserter = (state) => {
           })
       );
 
-      const pyNodes = state.codeNodes.filter((cn) => cn.lang === "python");
+      const pyNodes = extractedCode.codeCells.filter(
+        (cn) => cn.lang === "python"
+      );
       if (pyNodes.length) {
         tasks = tasks.concat([
           {
@@ -186,7 +185,7 @@ export const codeInserter = (state) => {
       }
 
       const extraScript =
-        state.svelteCells
+        extractedCode.svelteCells
           .map(
             (svelteCell) =>
               `import ${svelteCell.id} from "./${svelteCell.id}.svelte";`
@@ -197,8 +196,7 @@ export const codeInserter = (state) => {
           taskVariables: tasks
             .map((task) => task.id)
             .filter(
-              (taskVariable) =>
-                !Object.keys(state.frontMatter).includes(taskVariable)
+              (taskVariable) => !Object.keys(frontMatter).includes(taskVariable)
             ),
           tasks,
         });
@@ -257,19 +255,5 @@ export const codeInserter = (state) => {
           .concat([{ type: "raw", value: "{/await}" }]);
       });
     };
-  };
-};
-
-// we define our own yaml-based frontmatter extractor which is basically
-// identical to that which mdsvex provides but lets us peek at what the
-// front matter will be, which helps us generate our task list
-export const frontMatterExtractor = (state) => {
-  return (src, messages) => {
-    try {
-      state.frontMatter = yaml.load(src);
-      return state.frontMatter;
-    } catch (e) {
-      messages.push(new VFileMessage("YAML failed to parse", e));
-    }
   };
 };
