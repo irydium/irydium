@@ -1,26 +1,24 @@
+import fm from "front-matter";
 import { compile as mdsvexCompile } from "mdsvex/dist/browser-es.js";
-import { codeExtractor, codeInserter, frontMatterExtractor } from "./plugins";
+import { codeExtractor, codeInserter } from "./plugins";
 
 export async function mdToSvx(input) {
-  let state = {
-    codeNodes: [],
-    frontMatter: {},
+  // mdsvex does its own frontmatter parsing, but we also need it
+  const frontMatter = fm(input).attributes;
+  let extractedCode = {
+    codeCells: [],
     svelteCells: [],
   };
+
   const rootComponent = await mdsvexCompile(input, {
-    remarkPlugins: [codeExtractor(state)],
-    rehypePlugins: [codeInserter(state)],
-    frontmatter: {
-      parse: frontMatterExtractor(state),
-      marker: "-",
-      type: "yaml",
-    },
+    remarkPlugins: [codeExtractor(extractedCode)],
+    rehypePlugins: [codeInserter(extractedCode, frontMatter)],
   });
 
-  const subComponents = state.svelteCells.map((sc) => [
+  const subComponents = extractedCode.svelteCells.map((sc) => [
     `./${sc.id}.svelte`,
     { code: sc.body, map: "" },
   ]);
 
-  return { rootComponent, subComponents, frontMatter: state.frontMatter };
+  return { rootComponent, subComponents, frontMatter };
 }
