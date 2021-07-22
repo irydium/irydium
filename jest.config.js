@@ -1,5 +1,17 @@
+ESM_IMPORTS = [
+  "bail",
+  "is-plain-obj",
+  "mdsvex",
+  "remark-parse",
+  "trough",
+  "unified",
+  "unist-util-visit",
+  "unist-util-is",
+  "unist-util-stringify-position",
+  "vfile",
+  "vfile-message",
+];
+
 module.exports = {
-  transformIgnorePatterns: [
-    "/node_modules/(?!mdsvex|unist-util-visit|unist-util-is|unist-util-stringify-position|vfile-message)",
-  ],
+  transformIgnorePatterns: [`/node_modules/(?!${ESM_IMPORTS.join("|")})`],
 };

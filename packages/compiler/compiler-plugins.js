@@ -1,4 +1,5 @@
 import replace from "@rollup/plugin-replace";
+import json from "rollup-plugin-json";
 
 export function createTemplates(baseDir) {
   const dirname = baseDir || __dirname;
@@ -19,6 +20,8 @@ export function createTemplates(baseDir) {
 
 export const getBaseCompilerPlugins = (baseDir = ".") => {
   return [
+    // unified has an implicit dependency on rollup-plugin-json
+    json(),
     replace({
       "__TEMPLATES = {}":
         "__TEMPLATES = " + JSON.stringify(createTemplates(baseDir)),

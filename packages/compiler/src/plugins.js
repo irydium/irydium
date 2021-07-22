@@ -7,75 +7,51 @@ import { parse as svelteParse } from "svelte/compiler";
 
 import { taskScriptSource } from "./templates";
 
-// remark plugin: extracts `{code-cell}` chunks, removing them from the
-// markdown (the plugin below will re-insert them)
-export const codeExtractor = (extractedCode) => {
-  return () => {
-    return function transformer(tree, _) {
-      visit(tree, ["code"], (node, index, parent) => {
-        if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
-          // myst directives are embedded in code chunks, with squiggly braces
-          const mystType = node.lang.substr(1, node.lang.length - 2);
-          if (mystType === "code-cell") {
-            // FIXME: assumption that language is the only metadata
-            // (should also validate)
-            const lang = node.meta;
+// remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
+// markdown unless they are inline code chunks (actual processing of code chunks is handled
+// in ./parseMd.jd)
+export const processMyst = () => {
+  return (tree) => {
+    visit(tree, ["code"], (node, index, parent) => {
+      if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
+        // myst directives are embedded in code chunks, with squiggly braces
+        const mystType = node.lang.substr(1, node.lang.length - 2);
+        if (mystType === "code-cell") {
+          // FIXME: assumption that language is the only metadata
+          // (should also validate)
+          const lang = node.meta;
 
-            const nodeContent = fm(node.value);
+          const nodeContent = fm(node.value);
 
-            if (!nodeContent.attributes.id) {
-              throw new Error(
-                `Code chunk defined without id (line: ${node.position.start.line})`
-              );
-            }
-
-            // svelte cells are parsed kind of specially
-            if (lang === "svelte") {
-              if (nodeContent.attributes.name === "mdsvelte") {
-                throw new Error(
-                  `The mdsvelte name is reserved (line: ${node.position.start.line})`
-                );
-              }
-
-              // FIXME: should probably parse out the svelte files to make sure they compile at this stage
-              extractedCode.svelteCells.push({
-                id: nodeContent.attributes.id,
-                body: nodeContent.body,
-              });
-            } else {
-              extractedCode.codeCells.push({ lang, ...nodeContent });
-            }
-
-            if (nodeContent && nodeContent.attributes.inline) {
-              // inline node: take out the code cell parts, make them a
-              // standard ""```foo" code chunk
-              node.lang = lang;
-              node.meta = undefined;
-            } else {
-              // non-inline node, take it out, we only want to execute it,
-              // not see it
-              parent.children.splice(index, 1);
-              return index;
-            }
-          } else if (mystType === "note" || mystType === "warning") {
-            // a note! we want to replace the code chunk with a svelte component
-            let newNode = {
-              type: "html",
-              value: `<Admonition type={"${mystType}"}>${node.value}</Admonition>`,
-            };
-            parent.children[index] = newNode;
-            return index;
+          if (nodeContent && nodeContent.attributes.inline) {
+            // inline node: take out the code cell parts, make them a
+            // standard ""```foo" code chunk
+            node.lang = lang;
+            node.meta = undefined;
           } else {
-            // the "language" of this code cell is something we don't yet support
-            // (e.g. one of the many things in MyST that we don't handle) -- convert
-            // it to a normal code cell with no language, at least that way we won't
-            // confuse svelte downstream (since tokens with curly braces have special
-            // meaning)
-            node.lang = undefined;
+            // non-inline node, take it out, we only want to execute it,
+            // not see it
+            parent.children.splice(index, 1);
+            return index;
           }
+        } else if (mystType === "note" || mystType === "warning") {
+          // a note! we want to replace the code chunk with a svelte component
+          let newNode = {
+            type: "html",
+            value: `<Admonition type={"${mystType}"}>${node.value}</Admonition>`,
+          };
+          parent.children[index] = newNode;
+          return index;
+        } else {
+          // the "language" of this code cell is something we don't yet support
+          // (e.g. one of the many things in MyST that we don't handle) -- convert
+          // it to a normal code cell with no language, at least that way we won't
+          // confuse svelte downstream (since tokens with curly braces have special
+          // meaning)
+          node.lang = undefined;
         }
-      });
-    };
+      }
+    });
   };
 };
 
@@ -92,7 +68,7 @@ function createJSTask(id, code, inputs = []) {
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
 // the script block that mdsvex generates (or creating one, in the case
 // of a document without one)
-export const codeInserter = (extractedCode, frontMatter) => {
+export const augmentSvx = ({ codeCells, svelteCells, frontMatter }) => {
   return () => {
     return function transformer(tree, _) {
       // we allow a top-level "scripts" to load arbitrary javascript
@@ -146,7 +122,7 @@ export const codeInserter = (extractedCode, frontMatter) => {
 
       // turn js code cells into async tasks
       tasks = tasks.concat(
-        extractedCode.codeCells
+        codeCells
           .filter((cn) => cn.lang === "js")
           .map((cn) => {
             let inputs = cn.attributes.inputs || [];
@@ -159,9 +135,7 @@ export const codeInserter = (extractedCode, frontMatter) => {
           })
       );
 
-      const pyNodes = extractedCode.codeCells.filter(
-        (cn) => cn.lang === "python"
-      );
+      const pyNodes = codeCells.filter((cn) => cn.lang === "python");
       if (pyNodes.length) {
         tasks = tasks.concat([
           {
@@ -185,7 +159,7 @@ export const codeInserter = (extractedCode, frontMatter) => {
       }
 
       const extraScript =
-        extractedCode.svelteCells
+        svelteCells
           .map(
             (svelteCell) =>
               `import ${svelteCell.id} from "./${svelteCell.id}.svelte";`
