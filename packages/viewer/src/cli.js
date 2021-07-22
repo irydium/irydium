@@ -85,7 +85,7 @@ polka()
     }
   })
   .get("/iridium", async (req, res) => {
-    const input = getFileContents(filename);
+    const input = getFileContents(filename).toString();
     try {
       const output = await compile(input, req.query);
       res.writeHead(200, {
