@@ -9,7 +9,7 @@ import { taskScriptSource } from "./templates";
 
 // remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
 // markdown unless they are inline code chunks (actual processing of code chunks is handled
-// in ./parseMd.jd)
+// in ./parseMd.js)
 export const processMyst = () => {
   return (tree) => {
     visit(tree, ["code"], (node, index, parent) => {
@@ -68,7 +68,7 @@ function createJSTask(id, code, inputs = []) {
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
 // the script block that mdsvex generates (or creating one, in the case
 // of a document without one)
-export const augmentSvx = ({ codeCells, svelteCells, frontMatter }) => {
+export const augmentSvx = ({ codeCells, frontMatter }) => {
   return () => {
     return function transformer(tree, _) {
       // we allow a top-level "scripts" to load arbitrary javascript
@@ -159,10 +159,11 @@ export const augmentSvx = ({ codeCells, svelteCells, frontMatter }) => {
       }
 
       const extraScript =
-        svelteCells
+        codeCells
+          .filter((cn) => cn.lang === "svelte")
           .map(
             (svelteCell) =>
-              `import ${svelteCell.id} from "./${svelteCell.id}.svelte";`
+              `import ${svelteCell.attributes.id} from "./${svelteCell.attributes.id}.svelte";`
           )
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
@@ -174,6 +175,7 @@ export const augmentSvx = ({ codeCells, svelteCells, frontMatter }) => {
             ),
           tasks,
         });
+
       visit(tree, "root", (node) => {
         const moduleIndex = node.children
           .filter((n) => n.type === "raw")

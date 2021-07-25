@@ -13,5 +13,7 @@ ESM_IMPORTS = [
 ];
 
 module.exports = {
+  automock: false,
+  setupFiles: ["./test/setupJest.js"],
   transformIgnorePatterns: [`/node_modules/(?!${ESM_IMPORTS.join("|")})`],
 };
