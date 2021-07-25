@@ -1,12 +1,12 @@
-import { mdToSvx } from "./mdToSvx";
-import { svxToHTML } from "./svxToHTML";
+import { mdToSvelte } from "./mdToSvelte";
+import { svelteToHTML } from "./svelteToHTML";
 
 export function compile(input, options = {}) {
-  return mdToSvx(input).then(
+  return mdToSvelte(input).then(
     ({ rootComponent, subComponents, frontMatter }) => {
       return options.mode === "mdsvex"
         ? { html: rootComponent.code, frontMatter }
-        : svxToHTML(rootComponent, subComponents, frontMatter, options);
+        : svelteToHTML(rootComponent, subComponents, frontMatter, options);
     }
   );
 }

@@ -100,7 +100,7 @@ async function createSvelteBundle(files) {
   return (await bundle.generate({ format: "esm" })).output[0].code;
 }
 
-export async function svxToHTML(
+export async function svelteToHTML(
   mdSvelte,
   svelteComponents,
   frontMatter,

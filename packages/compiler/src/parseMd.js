@@ -2,13 +2,46 @@ import fm from "front-matter";
 import { unified } from "unified";
 import markdown from "remark-parse";
 import { visit } from "unist-util-visit";
+import fetch from "cross-fetch";
+
+function getCodeCells(cells, referenceId) {
+  const referencedCell = cells.find((c) => c.attributes.id === referenceId);
+  if (!referencedCell) {
+    throw new Error(
+      `Code cell ${referenceId} referenced, but unable to find cell.`
+    );
+  }
+
+  return [
+    referencedCell,
+    ...(referencedCell.inputs || []).flatMap((input) =>
+      getCodeCells(cells, input)
+    ),
+  ].flat();
+}
 
 export default async function extractCode(input) {
   const frontMatter = fm(input).attributes;
-  let extracted = {
-    codeCells: [],
-    svelteCells: [],
-  };
+  let scripts = frontMatter.scripts || [];
+  let codeCells = [];
+
+  // go through any imports and extract code cells and scripts that they depend on
+  // FIXME: this only goes one level deep, i.e. we can't chase dependencies of dependencies.
+  if (frontMatter.imports) {
+    for (const importedRef of [frontMatter.imports].flat()) {
+      const referenceId = importedRef.split("#")[1];
+      if (!referenceId) {
+        throw new Error(`Import with no referenced element: ${importedRef}`);
+      }
+
+      const importedDoc = await (await fetch(importedRef)).text();
+      const imported = await extractCode(importedDoc);
+      const extractedCells = getCodeCells(imported.codeCells, referenceId);
+      codeCells = [...codeCells, ...extractedCells];
+      scripts = [...scripts, ...imported.frontMatter.scripts];
+      // include extracted references and their dependencies
+    }
+  }
 
   const tree = unified().use(markdown).parse(input);
 
@@ -37,21 +70,14 @@ export default async function extractCode(input) {
               `The mdsvelte name is reserved (line: ${node.position.start.line})`
             );
           }
-
-          // FIXME: should probably parse out the svelte files to make sure they compile at this stage
-          extracted.svelteCells.push({
-            id: nodeContent.attributes.id,
-            body: nodeContent.body,
-          });
-        } else {
-          extracted.codeCells.push({ lang, ...nodeContent });
         }
+        codeCells.push({ lang, ...nodeContent });
       }
     }
   });
 
   return {
-    frontMatter,
-    ...extracted,
+    frontMatter: { ...frontMatter, scripts },
+    codeCells,
   };
 }
