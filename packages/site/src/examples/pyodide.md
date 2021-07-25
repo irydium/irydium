@@ -1,9 +1,7 @@
 ---
 title: Irydium ❤️ Python
-scripts:
-  - https://cdn.plot.ly/plotly-latest.min.js
-components:
-  - https://github.com/irydium/irdium/files/blah/document.md#PlotlyGraph
+imports:
+  - /examples/plotlyjs.md#Plotly
 ---
 
 # {title}
@@ -28,25 +26,4 @@ y = np.sin(x)
 
 And here's its output in a Plotly graph:
 
-<PlotlyGraph data={sinwave} />
-
-```{code-cell} svelte
----
-id: PlotlyGraph
----
-<script>
-  import { onMount } from 'svelte';
-
-  export let data = undefined;
-  let dom_node;
-
-  onMount(() => {
-    // pyodide returns some objects as maps, which plotly doesn't understand
-    let transformed = data.map(d=>d instanceof Map ? Object.fromEntries(d.entries()) : d);
-    console.log(transformed)
-    Plotly.newPlot(dom_node, transformed);
-  });
-</script>
-
-<div bind:this={dom_node}></div>
-```
+<Plotly data={sinwave} />
