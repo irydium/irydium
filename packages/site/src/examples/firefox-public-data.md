@@ -1,10 +1,9 @@
 ---
 title: Firefox Public Data Report
 scripts:
-  [
-    https://cdn.jsdelivr.net/npm/arquero@latest,
-    https://cdn.plot.ly/plotly-latest.min.js,
-  ]
+  - https://cdn.jsdelivr.net/npm/arquero@latest
+imports:
+  - /examples/plotlyjs.md#Plotly
 data:
   - os_data_raw: https://data.firefox.com/datasets/desktop/hardware/default/osName/index.json
 ---
@@ -24,7 +23,7 @@ This is a straightforward reproduction of the operating chart at [hardware secti
 Try clicking (or double clicking!) on the elements of the legend to get a "zoomed in" picture of the trends.
 Some things become much more obvious when you look at them individually.
 
-<PlotlyGraph data={os_data} />
+<Plotly data={os_data} />
 
 [hardware section]: https://data.firefox.com/dashboard/hardware
 
@@ -36,7 +35,7 @@ Again, try clicking (or double clicking!) on the elements of the legend to get a
 
 [this post]: https://discourse.mozilla.org/t/some-hardware-reports-could-yield-more-interesting-information-than-they-currently-do/49462
 
-<PlotlyGraph data={os_data_grouped} />
+<Plotly data={os_data_grouped} />
 
 ```{code-cell} js
 ---
@@ -83,22 +82,4 @@ const grouped = Object.entries(summed.reduce((acc, curr) => {
 });
 
 return grouped;
-```
-
-```{code-cell} svelte
----
-id: PlotlyGraph
----
-<script>
-  import { onMount } from 'svelte';
-
-  export let data = undefined;
-  let dom_node;
-
-  onMount(() => {
-    Plotly.newPlot(dom_node, data);
-  });
-</script>
-
-<div id="plotDiv" bind:this={dom_node}></div>
 ```

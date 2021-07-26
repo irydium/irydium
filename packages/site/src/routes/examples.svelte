@@ -7,12 +7,14 @@
   import pyodide from "../examples/pyodide.md";
   import mystSupport from "../examples/myst-support.md";
   import vegaEmbed from "../examples/vega-embed.md";
+  import plotlyJs from "../examples/plotlyjs.md";
 
   let examples = [
     { content: intro, title: "Introduction" },
     { content: pyodide, title: "Using Python" },
     { content: mystSupport, title: "MyST Directives" },
     { content: vegaEmbed, title: "Vega Lite" },
+    { content: plotlyJs, title: "Plotly.js" },
     { content: gcpBurndown, title: "GCP Burndown" },
     { content: ffxData, title: "Firefox Data Report" },
   ];

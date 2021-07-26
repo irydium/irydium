@@ -1,10 +1,9 @@
 ---
 title: Is the Telemetry Data Platform still on AWS?
 scripts:
-  [
-    https://cdn.plot.ly/plotly-latest.min.js,
-    https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js,
-  ]
+  - https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js
+imports:
+  - /examples/plotlyjs.md#Plotly
 data:
   - data_migration_gcp_heka: https://bugzilla.mozilla.org/rest/bug?blocks=1579435&include_fields=id,last_change_time,status,creation_time
   - data_migration_gcp_query: https://bugzilla.mozilla.org/rest/bug?blocks=1560158&include_fields=id,last_change_time,status,creation_time
@@ -16,52 +15,34 @@ data:
 
 ## Overall progress
 
-<PlotlyGraph data={allBugs} />
+<Plotly data={allBugs} />
 
 This track the total number of outstanding bugs under the categories below: it is meant to track our overall progress. See also the [AWS inventory spreadsheet](https://docs.google.com/spreadsheets/d/1f6fVsEp8FaX6ri98benHexzsHWYU9HMEbNW1poJQd1w/edit#gid=0) which we are using to
 track due dates.
 
 ## Heka tasks
 
-<PlotlyGraph data={hekaCounts} />
+<Plotly data={hekaCounts} />
 
 This covers tasks related to decomissioning the heka data lake ([metabug data-migration-gcp-data-lake](https://bugzilla.mozilla.org/show_bug.cgi?id=data-migration-gcp-data-lake))
 
 ## Spark tasks
 
-<PlotlyGraph data={sparkCounts} />
+<Plotly data={sparkCounts} />
 
 This covers tasks related to scheduled spark jobs ([metabug data-migration-gcp-spark](https://bugzilla.mozilla.org/show_bug.cgi?id=data-migration-gcp-spark))
 
 ## Query migration tasks
 
-<PlotlyGraph data={queryCounts} />
+<Plotly data={queryCounts} />
 
 This covers tasks related to the query migration ([metabug data-migration-gcp-query](https://bugzilla.mozilla.org/show_bug.cgi?id=data-migration-gcp-query)). For fine-grained information on the status of migrating the queries themselves, see the [the athena presto to bigquery migration dashboard](https://sql.telemetry.mozilla.org/dashboard/athena-presto-to-bigquery-migration).
 
 ## Miscellaneous tasks
 
-<PlotlyGraph data={miscCounts} />
+<Plotly data={miscCounts} />
 
 This covers tasks outside that don't fall into any of the other tracks ([metabug data-migration-gcp-misc](https://bugzilla.mozilla.org/show_bug.cgi?id=data-migration-gcp-misc))
-
-```{code-cell} svelte
----
-id: PlotlyGraph
----
-<script>
-  import { onMount } from 'svelte';
-
-  export let data = undefined;
-  let dom_node;
-
-  onMount(() => {
-    Plotly.newPlot(dom_node, data, {barmode: 'stack'});
-  });
-</script>
-
-<div id="plotDiv" bind:this={dom_node}></div>
-```
 
 ```{code-cell} js
 ---
