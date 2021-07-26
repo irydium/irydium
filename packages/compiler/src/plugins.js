@@ -1,6 +1,5 @@
 import fm from "front-matter";
 import mustache from "mustache";
-import { flatten } from "lodash";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
@@ -61,7 +60,7 @@ function createJSTask(id, code, inputs = []) {
     type: TASK_TYPE.JS,
     state: TASK_STATE.PENDING,
     payload: `async (${inputs.join(",")}) => { ${code}\n }`,
-    inputs: JSON.stringify(flatten([inputs])),
+    inputs: JSON.stringify([inputs].flat()),
   };
 }
 
@@ -79,7 +78,7 @@ export const augmentSvx = ({ codeCells, frontMatter }) => {
               id: "scripts",
               type: TASK_TYPE.LOAD_SCRIPTS,
               state: TASK_STATE.PENDING,
-              payload: JSON.stringify(flatten([frontMatter.scripts])),
+              payload: JSON.stringify([frontMatter.scripts].flat()),
               inputs: JSON.stringify([]),
             },
           ]
@@ -131,7 +130,7 @@ export const augmentSvx = ({ codeCells, frontMatter }) => {
             if (hasScripts) {
               inputs.push("scripts");
             }
-            return createJSTask(cn.attributes.id, cn.body, flatten([inputs]));
+            return createJSTask(cn.attributes.id, cn.body, [inputs].flat());
           })
       );
 
