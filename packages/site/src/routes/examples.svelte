@@ -1,4 +1,8 @@
 <script>
+  import { goto } from "@sapper/app";
+  import { onMount } from "svelte";
+  import { kebabCase } from "lodash";
+
   import Editor from "../components/Editor.svelte";
   import Output from "../components/Output.svelte";
   import intro from "../examples/intro.md";
@@ -9,7 +13,7 @@
   import vegaEmbed from "../examples/vega-embed.md";
   import plotlyJs from "../examples/plotlyjs.md";
 
-  let examples = [
+  const examples = [
     { content: intro, title: "Introduction" },
     { content: pyodide, title: "Using Python" },
     { content: mystSupport, title: "MyST Directives" },
@@ -17,17 +21,45 @@
     { content: plotlyJs, title: "Plotly.js" },
     { content: gcpBurndown, title: "GCP Burndown" },
     { content: ffxData, title: "Firefox Data Report" },
-  ];
+  ].map((ex) => ({ ...ex, id: kebabCase(ex.title.toLowerCase()) }));
 
-  let selectedExample = examples[0];
-  let md = selectedExample.content;
   let editor;
 
-  function updateSelected(newSelected) {
-    selectedExample = newSelected;
-    md = newSelected.content;
-    editor.updateMd(md); // pass through updated state to codemirror
+  let selectedId;
+  let selectedExample;
+  let md;
+
+  $: {
+    if (!selectedExample || selectedExample.id !== selectedId) {
+      selectedExample = examples.find(
+        ({ id }) => id === (selectedId || examples[0].id)
+      );
+      md = selectedExample.content;
+      editor && editor.updateMd(md); // pass through updated state to codemirror
+    }
   }
+
+  onMount(() => {
+    const getFragment = () => window.location.hash.slice(1);
+
+    // shamelessly stolen from: https://github.com/sveltejs/svelte/blob/18780fac00ea21d7a21fbf815ffd0cd5048e5185/site/src/routes/examples/index.svelte#L76
+    const onhashchange = () => {
+      selectedId = getFragment();
+    };
+    window.addEventListener("hashchange", onhashchange, false);
+
+    const fragment = getFragment();
+    if (fragment) {
+      selectedId = fragment;
+    } else {
+      selectedId = examples[0].id;
+      goto(`examples#${selectedId}`);
+    }
+
+    return () => {
+      window.removeEventListener("hashchange", onhashchange, false);
+    };
+  });
 </script>
 
 <svelte:head>
@@ -39,11 +71,9 @@
     <ul>
       {#each examples as example}
         <li>
-          <span
-            aria-current={example.title === selectedExample.title
-              ? "example"
-              : undefined}
-            on:click={() => updateSelected(example)}>{example.title}</span
+          <a
+            aria-current={example.id === selectedId ? "example" : undefined}
+            href={`/examples#${example.id}`}>{example.title}</a
           >
         </li>
       {/each}
@@ -81,6 +111,10 @@
   .example-list li {
     padding: 8px 8px 8px 16px;
     cursor: pointer;
+  }
+
+  .example-list a {
+    text-decoration: none;
   }
 
   [aria-current] {
