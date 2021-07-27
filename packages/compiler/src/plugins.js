@@ -134,6 +134,45 @@ export const augmentSvx = ({ codeCells, frontMatter }) => {
           })
       );
 
+      //
+      // other cells need to be processed through language plugins
+      //
+      const langPlugins = codeCells.filter(
+        (cn) => cn.attributes.type === "language-plugin"
+      );
+      const customLangCells = codeCells.filter(
+        (cn) => !["js", "python", "svelte"].includes(cn.lang)
+      );
+
+      // bail if there are any non-js cells without an associated language plugins
+      const supportedLanguages = new Set(
+        langPlugins.map((cn) => cn.attributes.id)
+      );
+      customLangCells.forEach((cn) => {
+        if (!supportedLanguages.has(cn.lang)) {
+          throw new Error(`Unsupported language: ${cn.lang}`);
+        }
+      });
+
+      tasks = [
+        ...tasks,
+        ...Object.values(langPlugins)
+          .map((langPlugin) => {
+            return customLangCells
+              .filter((cn) => cn.lang === langPlugin.attributes.id)
+              .map((cn) => {
+                return createJSTask(
+                  cn.attributes.id,
+                  `return ${langPlugin.attributes.id}([${(cn.inputs || []).join(
+                    ", "
+                  )}], \`${cn.body}\`)`,
+                  [...(cn.inputs || []), langPlugin.attributes.id]
+                );
+              });
+          })
+          .flat(),
+      ];
+
       const pyNodes = codeCells.filter((cn) => cn.lang === "python");
       if (pyNodes.length) {
         tasks = tasks.concat([
