@@ -25,36 +25,28 @@
 
   let editor;
 
-  let selectedId;
+  const getFragment = () =>
+    typeof window !== "undefined" && window.location.hash.slice(1);
+
+  let selectedId = getFragment() || examples[0].id;
   let selectedExample;
   let md;
 
   $: {
     if (!selectedExample || selectedExample.id !== selectedId) {
-      selectedExample = examples.find(
-        ({ id }) => id === (selectedId || examples[0].id)
-      );
+      selectedExample =
+        examples.find(({ id }) => id === selectedId) || examples[0];
       md = selectedExample.content;
       editor && editor.updateMd(md); // pass through updated state to codemirror
     }
   }
 
   onMount(() => {
-    const getFragment = () => window.location.hash.slice(1);
-
     // shamelessly stolen from: https://github.com/sveltejs/svelte/blob/18780fac00ea21d7a21fbf815ffd0cd5048e5185/site/src/routes/examples/index.svelte#L76
     const onhashchange = () => {
       selectedId = getFragment();
     };
     window.addEventListener("hashchange", onhashchange, false);
-
-    const fragment = getFragment();
-    if (fragment) {
-      selectedId = fragment;
-    } else {
-      selectedId = examples[0].id;
-      goto(`examples#${selectedId}`);
-    }
 
     return () => {
       window.removeEventListener("hashchange", onhashchange, false);
