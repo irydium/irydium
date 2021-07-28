@@ -3,7 +3,7 @@ title: Firefox Public Data Report
 scripts:
   - https://cdn.jsdelivr.net/npm/arquero@latest
 imports:
-  - /examples/plotlyjs.md#Plotly
+  - /components/plotlyjs.md#Plotly
 data:
   - os_data_raw: https://data.firefox.com/datasets/desktop/hardware/default/osName/index.json
 ---

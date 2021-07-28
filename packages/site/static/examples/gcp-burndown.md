@@ -3,7 +3,7 @@ title: Is the Telemetry Data Platform still on AWS?
 scripts:
   - https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js
 imports:
-  - /examples/plotlyjs.md#Plotly
+  - /components/plotlyjs.md#Plotly
 data:
   - data_migration_gcp_heka: https://bugzilla.mozilla.org/rest/bug?blocks=1579435&include_fields=id,last_change_time,status,creation_time
   - data_migration_gcp_query: https://bugzilla.mozilla.org/rest/bug?blocks=1560158&include_fields=id,last_change_time,status,creation_time
