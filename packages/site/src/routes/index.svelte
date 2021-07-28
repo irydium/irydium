@@ -87,6 +87,7 @@
     color: rgb(138, 127, 141);
     padding-left: 15px;
     padding-right: 15px;
+    justify-self: center;
   }
 
   .brag-items h3 {
