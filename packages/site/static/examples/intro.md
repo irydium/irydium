@@ -3,7 +3,7 @@ scripts: ["https://d3js.org/d3-dsv.v1.min.js"]
 data:
   - eviction_notice_csv: https://data.sfgov.org/api/views/5cei-gny5/rows.csv?accessType=DOWNLOAD
 imports:
-  - /examples/vega-embed.md#VegaEmbed
+  - /components/vega-embed.md#VegaEmbed
 variables:
   - chart_display: "bar"
 ---

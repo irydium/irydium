@@ -5,7 +5,7 @@
   import Fa from "svelte-fa";
   import { faGithub } from "@fortawesome/free-brands-svg-icons";
   import LinkItem from "../components/LinkItem.svelte";
-  
+
   export let segment: string;
 
   setupStore();
@@ -14,6 +14,7 @@
 {#if segment !== "login"}
   <Nav {segment}>
     <NavItem segment={"examples"} />
+    <NavItem segment={"components"} />
     <NavItem segment={"repl"} />
     <LinkItem href={"https://github.com/irydium/irydium"}>
       <Fa icon={faGithub} />

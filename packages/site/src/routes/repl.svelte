@@ -7,7 +7,7 @@
     saveDocument,
   } from "../state/serverActions";
   import { user } from "../state/sessionStore";
-  import intro from "../examples/repl.md";
+  import intro from "../../static/examples/repl.md";
 
   import Editor from "../components/Editor.svelte";
   import Output from "../components/Output.svelte";
@@ -61,6 +61,35 @@
   }
 </script>
 
+<svelte:head>
+  <title>Repl</title>
+</svelte:head>
+
+<div class="repl-outer CodeMirror">
+  <div class="title">{title}</div>
+  <div class="identity">
+    {#if $user}
+      <button on:click={save}>Save</button>
+      Logged in as
+      <a href="/posts">{$user.email}</a>
+      <button on:click={_logout}>Logout</button>
+    {:else}<button on:click={_login}>Log in to save</button>{/if}
+  </div>
+</div>
+
+{#await loadingMd}
+  Loading...
+{:then}
+  <div class="body">
+    <section>
+      <Editor bind:md />
+    </section>
+    <section>
+      <Output bind:title {md} />
+    </section>
+  </div>
+{/await}
+
 <style>
   .body {
     position: relative;
@@ -97,32 +126,3 @@
     height: calc(100vh - var(--nav-h));
   }
 </style>
-
-<svelte:head>
-  <title>Repl</title>
-</svelte:head>
-
-<div class="repl-outer CodeMirror">
-  <div class="title">{title}</div>
-  <div class="identity">
-    {#if $user}
-      <button on:click={save}>Save</button>
-      Logged in as
-      <a href="/posts">{$user.email}</a>
-      <button on:click={_logout}>Logout</button>
-    {:else}<button on:click={_login}>Log in to save</button>{/if}
-  </div>
-</div>
-
-{#await loadingMd}
-  Loading...
-{:then}
-  <div class="body">
-    <section>
-      <Editor bind:md />
-    </section>
-    <section>
-      <Output bind:title {md} />
-    </section>
-  </div>
-{/await}
