@@ -1,7 +1,7 @@
 ---
 title: Irydium ❤️ Python
 imports:
-  - /examples/plotlyjs.md#Plotly
+  - /components/plotlyjs.md#Plotly
 ---
 
 # {title}
