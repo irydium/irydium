@@ -35,7 +35,11 @@ export default [
   },
   {
     // the irydium cli
-    plugins: [...getBaseCompilerPlugins(), resolve({ preferBuiltins: true })],
+    plugins: [
+      ...getBaseCompilerPlugins(),
+      resolve({ preferBuiltins: true }),
+      commonjs(),
+    ],
     input: "src/cli.js",
     external: [
       "front-matter",
@@ -47,14 +51,10 @@ export default [
       "lodash",
       "mustache",
       "mdsvex",
-      "fs",
-      "fsevents",
-      "crypto",
       "remark-parse",
-      "unified",
-      "unist-util-visit",
-      "vfile-message",
     ],
-    output: [{ file: "dist/cli.js", format: "cjs", sourcemap: false }],
+    output: [
+      { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },
+    ],
   },
 ];

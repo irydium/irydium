@@ -8,7 +8,7 @@ if (args.length !== 1) {
   process.exit(1);
 }
 
-const input = fs.readFileSync(args[0]);
+const input = fs.readFileSync(args[0]).toString();
 compile(input)
   .then((output) => console.log(output.html))
   .catch((err) => {

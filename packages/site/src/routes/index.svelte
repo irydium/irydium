@@ -20,8 +20,8 @@
       Use the
       <a href="/repl">Irydium repl</a> or
       <i>whatever editor you prefer</i> to create your interactive document. When
-      you're happy with what you've created, export it into a fast and efficient
-      web site which stands on its own.
+      you're happy with what you've built, export it into a fast and efficient web
+      site which stands on its own.
     </div>
     <div>
       <h3>Easy to extend</h3>
