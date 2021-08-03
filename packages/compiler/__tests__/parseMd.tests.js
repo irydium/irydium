@@ -11,7 +11,8 @@ describe("extractCode basics", () => {
     expect(
       await extractCode(createCodeCell("js", "base", undefined, "return 52;"))
     ).toEqual({
-      frontMatter: { scripts: [] },
+      frontMatter: {},
+      scripts: [],
       codeCells: [
         {
           attributes: {
@@ -41,8 +42,8 @@ describe("extractCode imports", () => {
     ).toEqual({
       frontMatter: {
         imports: "http://localhost:8888/foo.md#foo",
-        scripts: [],
       },
+      scripts: [],
       codeCells: [
         {
           attributes: {

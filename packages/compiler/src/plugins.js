@@ -67,23 +67,21 @@ function createJSTask(id, code, inputs = []) {
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
 // the script block that mdsvex generates (or creating one, in the case
 // of a document without one)
-export const augmentSvx = ({ codeCells, frontMatter }) => {
+export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
   return () => {
     return function transformer(tree, _) {
       // we allow a top-level "scripts" to load arbitrary javascript
-      const hasScripts = frontMatter.scripts && frontMatter.scripts.length;
-      let tasks = hasScripts
+      let tasks = scripts.length
         ? [
             {
               id: "scripts",
               type: TASK_TYPE.LOAD_SCRIPTS,
               state: TASK_STATE.PENDING,
-              payload: JSON.stringify([frontMatter.scripts].flat()),
+              payload: JSON.stringify(scripts),
               inputs: JSON.stringify([]),
             },
           ]
         : [];
-
       // turn data blocks into async tasks
       tasks = tasks.concat(
         (frontMatter.data || [])
@@ -125,13 +123,30 @@ export const augmentSvx = ({ codeCells, frontMatter }) => {
           .filter((cn) => cn.lang === "js")
           .map((cn) => {
             let inputs = cn.attributes.inputs || [];
+            let deps = [];
             // if there are any scripts, we want to load them
             // before running any code cells
-            if (hasScripts) {
+            if (scripts.length) {
               inputs.push("scripts");
             }
-            return createJSTask(cn.attributes.id, cn.body, [inputs].flat());
+            // code cells can have scripts dependencies which apply just to that cell
+            if (cn.attributes.scripts) {
+              const scriptsId = `${cn.attributes.id}_scripts`;
+              deps.push({
+                id: scriptsId,
+                type: TASK_TYPE.LOAD_SCRIPTS,
+                state: TASK_STATE.PENDING,
+                payload: JSON.stringify([cn.attributes.scripts].flat()),
+                inputs: JSON.stringify([]),
+              });
+              inputs.push(scriptsId);
+            }
+            return [
+              ...deps,
+              createJSTask(cn.attributes.id, cn.body, [inputs].flat()),
+            ];
           })
+          .flat()
       );
 
       //
@@ -141,7 +156,7 @@ export const augmentSvx = ({ codeCells, frontMatter }) => {
         (cn) => cn.attributes.type === "language-plugin"
       );
       const customLangCells = codeCells.filter(
-        (cn) => !["js", "python", "svelte"].includes(cn.lang)
+        (cn) => !["js", "svelte"].includes(cn.lang)
       );
 
       // bail if there are any non-js cells without an associated language plugins
@@ -172,29 +187,6 @@ export const augmentSvx = ({ codeCells, frontMatter }) => {
           })
           .flat(),
       ];
-
-      const pyNodes = codeCells.filter((cn) => cn.lang === "python");
-      if (pyNodes.length) {
-        tasks = tasks.concat([
-          {
-            id: "pyodide",
-            payload: JSON.stringify(""),
-            type: TASK_TYPE.LOAD_PYODIDE,
-            state: TASK_STATE.PENDING,
-            inputs: JSON.stringify([]),
-          },
-          ...pyNodes.map((pn) => {
-            const preamble = (pn.inputs || [])
-              .map((i) => `from js import ${i}`)
-              .join("\n");
-            return createJSTask(
-              pn.attributes.id,
-              `return (await pyodide.runPythonAsync(\`${preamble}${pn.body}\`)).toJs()`,
-              ["pyodide"].concat(pn.inputs || [])
-            );
-          }),
-        ]);
-      }
 
       const extraScript =
         codeCells

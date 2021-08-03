@@ -1,11 +1,5 @@
 ---
 title: Vega-Lite
-scripts:
-  [
-    "https://cdn.jsdelivr.net/npm/vega@5",
-    "https://cdn.jsdelivr.net/npm/vega-lite@5",
-    "https://cdn.jsdelivr.net/npm/vega-embed/build/vega-embed.js",
-  ]
 ---
 
 # {title}
@@ -17,6 +11,10 @@ Here's the definition of a component:
 ```{code-cell} svelte
 ---
 id: VegaEmbed
+scripts:
+  - https://cdn.jsdelivr.net/npm/vega@5
+  - https://cdn.jsdelivr.net/npm/vega-lite@5
+  - https://cdn.jsdelivr.net/npm/vega-embed/build/vega-embed.js
 inline: true
 ---
 <script>
