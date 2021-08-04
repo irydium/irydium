@@ -81,11 +81,11 @@
 
   .document-list li {
     padding: 8px 8px 8px 16px;
-    cursor: pointer;
   }
 
   .document-list a {
     text-decoration: none;
+    cursor: pointer;
   }
 
   [aria-current] {
