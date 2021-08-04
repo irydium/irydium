@@ -1,7 +1,5 @@
 ---
 title: Plotly.js
-scripts:
-  - https://cdn.plot.ly/plotly-latest.min.js
 ---
 
 # {title}
@@ -13,6 +11,7 @@ Here's the definition of a component:
 ```{code-cell} svelte
 ---
 id: Plotly
+scripts: https://cdn.plot.ly/plotly-latest.min.js
 ---
 <script>
   import { onMount } from 'svelte';

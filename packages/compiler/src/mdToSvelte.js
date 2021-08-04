@@ -3,11 +3,11 @@ import { processMyst, augmentSvx } from "./plugins";
 import extractCode from "./parseMd";
 
 export async function mdToSvelte(input) {
-  const { frontMatter, codeCells } = await extractCode(input);
+  const { frontMatter, scripts, codeCells } = await extractCode(input);
 
   const rootComponent = await mdsvexCompile(input, {
     remarkPlugins: [processMyst],
-    rehypePlugins: [augmentSvx({ frontMatter, codeCells })],
+    rehypePlugins: [augmentSvx({ frontMatter, scripts, codeCells })],
   });
 
   const subComponents = codeCells

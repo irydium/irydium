@@ -7,7 +7,6 @@ import url from "@rollup/plugin-url";
 import svelte from "rollup-plugin-svelte";
 import babel from "@rollup/plugin-babel";
 import json from "@rollup/plugin-json";
-import { string } from "rollup-plugin-string";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
@@ -37,9 +36,6 @@ export default {
     output: config.client.output(),
     plugins: [
       ...getBaseCompilerPlugins("../compiler"),
-      string({
-        include: ["**/*.md"],
-      }),
       replace({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
@@ -107,9 +103,6 @@ export default {
     output: config.server.output(),
     plugins: [
       ...getBaseCompilerPlugins("../compiler"),
-      string({
-        include: "**/*.md",
-      }),
       replace({
         "process.browser": false,
         "process.env.NODE_ENV": JSON.stringify(mode),

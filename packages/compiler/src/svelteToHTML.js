@@ -86,7 +86,7 @@ async function createSvelteBundle(files) {
             const compiled = svelteCompile(code);
             if (compiled.warnings.length) {
               throw new Error(
-                "Error processing svelte component:\n" +
+                `Error processing svelte component ${id}:\n` +
                   compiled.warnings.map((w) => w.message).join("\n")
               );
             }

@@ -8,9 +8,9 @@ imports:
 
 Irydium supports running python cells, through [pyodide](https://pyodide.org)!
 This feature is preliminary: we are still working on getting the ergonomics right.
+You may also be interested in the [component](/components#python-via-pyodide) where Irydium defines support for Python.
 
-Here's some code which generates a basic sine wave in Python (based off of the
-original [A Brief Tour through Pyodide](https://alpha.iodide.io/notebooks/300/)):
+As a quick demonstration, here's some code which generates a basic sine wave in Python (based off of the original [A Brief Tour through Pyodide](https://alpha.iodide.io/notebooks/300/)):
 
 ```{code-cell} python
 ---
