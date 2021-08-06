@@ -48,7 +48,6 @@ if (!__PRODUCTION__) {
     port: BUILD_LIVERELOAD_PORT,
   });
 
-  //
   buildReloadServer.server.once("connection", () => {
     setTimeout(() => {
       buildReloadServer.refresh("/");
