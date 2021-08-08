@@ -8,11 +8,10 @@ imports:
 
 Irydium supports the ideas of language plugins, defined inside the document itself.
 This has many advantages, but one interesting benefit is that it lets us prototype support for interesting and/or experimental language runtimes.
-In this case, we'll use this feature to run the currently in-development pyodide 0.18.0 release.
+In this case, we'll use this feature to allow Irydium to support Python via [pyodide].
 
 This particular plugin is always available when you're using Irydium: no need to import it explicitly.
-
-Below is an example of a python language plugin:
+However, if you wish to override the plugin in your own document (e.g. to test an in-development version of Pyodide), you can do so by copying and pasting the declaration below into it:
 
 ```{code-cell} js
 ---
@@ -38,7 +37,7 @@ return async (inputs, code) => {
 }
 ```
 
-Here's a simple example of using the above-defined plugin to return the value of "pi":
+Here's an example of using the above-defined plugin to return the value of "pi":
 
 ```{code-cell} python
 ---
@@ -66,3 +65,5 @@ y = np.sin(x)
 And here's its output in a Plotly graph:
 
 <Plotly data={sinwave} />
+
+[pyodide]: https://pyodide.org
