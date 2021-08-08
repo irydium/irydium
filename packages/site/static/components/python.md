@@ -18,10 +18,10 @@ Below is an example of a python language plugin:
 ---
 id: python
 type: language-plugin
-scripts: https://cdn.jsdelivr.net/pyodide/v0.18.0a1/full/pyodide.js
+scripts: https://cdn.jsdelivr.net/pyodide/v0.18.0/full/pyodide.js
 ---
 const pyodide = await loadPyodide({
-  indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.0a1/full/",
+  indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.0/full/",
 });
 
 return async (inputs, code) => {
