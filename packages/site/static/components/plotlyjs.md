@@ -20,10 +20,7 @@ scripts: https://cdn.plot.ly/plotly-latest.min.js
   let dom_node;
 
   onMount(() => {
-    // pyodide returns some objects as maps, which plotly doesn't understand
-    let transformed = data.map(d=>d instanceof Map ? Object.fromEntries(d.entries()) : d);
-    console.log(transformed)
-    Plotly.newPlot(dom_node, transformed);
+    Plotly.newPlot(dom_node, data);
   });
 </script>
 

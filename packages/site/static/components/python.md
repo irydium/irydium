@@ -32,7 +32,7 @@ return async (inputs, code) => {
   const result = await pyodide.runPythonAsync(`${preamble}${code}`);
   // if result has type conversion code, then use that
   if (result && result.toJs) {
-    return result.toJs();
+    return result.toJs({dict_converter : Object.fromEntries});
   }
   return result;
 }
