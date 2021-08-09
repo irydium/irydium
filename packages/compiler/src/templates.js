@@ -11,6 +11,7 @@ if (!Object.keys(__TEMPLATES).length) {
 }
 
 const admonitionSource = __TEMPLATES["Admonition.svelte"];
+const cellResultsSource = __TEMPLATES["CellResults.svelte"];
 const bundleIndexSource = __TEMPLATES["index.html"];
 const taskScriptSource = __TEMPLATES["tasks.js"];
 const taskRunnerSource = __TEMPLATES["taskrunner.js"];
@@ -18,6 +19,7 @@ const pythonPluginSource = __TEMPLATES["python.md"];
 
 export {
   admonitionSource,
+  cellResultsSource,
   bundleIndexSource,
   taskScriptSource,
   taskRunnerSource,
