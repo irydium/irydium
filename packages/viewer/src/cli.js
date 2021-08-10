@@ -1,3 +1,4 @@
+/* global __PRODUCTION__ */
 import { compile } from "../../compiler/src/compile.js";
 
 // the following two files are imported as strings, this lets us
@@ -12,7 +13,6 @@ const chokidar = require("chokidar");
 const mustache = require("mustache");
 const polka = require("polka");
 const fs = require("fs");
-const path = require("path");
 
 const args = process.argv.slice(2);
 if (args.length !== 1) {

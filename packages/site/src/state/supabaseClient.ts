@@ -5,7 +5,7 @@ interface API {
   SUPABASE_ANON_KEY: string;
 }
 
-declare var __api: API;
+declare const __api: API;
 
 const supabaseUrl = __api.SUPABASE_URL;
 const supabaseAnonKey = __api.SUPABASE_ANON_KEY;
@@ -13,6 +13,6 @@ const supabaseAnonKey = __api.SUPABASE_ANON_KEY;
 export let supabase =
   __api.SUPABASE_URL && createClient(supabaseUrl, supabaseAnonKey);
 
-export function recreateClient() {
+export function recreateClient(): void {
   supabase = __api.SUPABASE_URL && createClient(supabaseUrl, supabaseAnonKey);
 }

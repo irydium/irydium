@@ -4,7 +4,7 @@ const { SUPABASE_URL, SUPABASE_ANON_KEY } = process.env;
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-exports.handler = async function (event, context) {
+exports.handler = async function (event /*, context*/) {
   const docId = event.queryStringParameters.id;
   try {
     const { data, error } = await supabase

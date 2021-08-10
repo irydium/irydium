@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rollup --config",
     "compile": "rollup --config && ./bin/irmd-compile-local.sh",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint ."
   },
   "author": "William Lachance <wlach@protonmail.com>",
   "license": "MIT",

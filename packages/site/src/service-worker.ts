@@ -14,6 +14,7 @@ self.addEventListener("install", (event: ExtendableEvent) => {
       .then((cache) => cache.addAll(to_cache))
       .then(() => {
         ((self as any) as ServiceWorkerGlobalScope).skipWaiting();
+
       })
   );
 });

@@ -69,7 +69,7 @@ function createJSTask(id, code, inputs = []) {
 // of a document without one)
 export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
   return () => {
-    return function transformer(tree, _) {
+    return function transformer(tree) {
       // we allow a top-level "scripts" to load arbitrary javascript
       let tasks = scripts.length
         ? [

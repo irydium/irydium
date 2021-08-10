@@ -53,7 +53,7 @@ async function runTask(tasks, task) {
         return r.blob();
       });
       break;
-    case TASK_TYPE.JS:
+    case TASK_TYPE.JS: {
       // create a map of task ids->input values to preserve expected ordering
       const inputValues = getDependencies(task, tasks).reduce((acc, task) => {
         acc[task.id] = task.value;
@@ -64,6 +64,7 @@ async function runTask(tasks, task) {
         task.inputs.map((inputId) => inputValues[inputId])
       );
       break;
+    }
     case TASK_TYPE.VARIABLE:
       // variables don't actually do anything, they're just there to indicate
       // that dependencies should be re-evaluated
@@ -87,8 +88,6 @@ async function runTask(tasks, task) {
   );
   return task;
 }
-
-function taskReady(task) {}
 
 export async function runTasks(tasks) {
   return await Promise.all(

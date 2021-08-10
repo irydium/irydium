@@ -11,7 +11,8 @@
     "build": "sapper build --legacy",
     "export": "sapper export --legacy --entry '/ login posts'",
     "start": "node __sapper__/build",
-    "validate": "svelte-check --ignore src/node_modules/@wlach/sapper"
+    "validate": "svelte-check --ignore src/node_modules/@wlach/sapper",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@irydium/compiler": "file:../compiler",
