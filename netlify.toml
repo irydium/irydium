@@ -1,4 +1,5 @@
 [build]
+ignore = "git log -1 --pretty=%B | grep dependabot" # skip dependabot PRs
 command = """
     set -e
     npx lerna run --scope irydium-site export
