@@ -22,7 +22,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup --config --watch",
-    "start": "bin/irmd-viewer"
+    "start": "bin/irmd-viewer",
+    "lint": "eslint ."
   },
   "bugs": {
     "url": "https://github.com/irydium/irydium/issues"

@@ -52,10 +52,6 @@
       }))
     )
   ).dag;
-
-  const arrow = symbol()
-    .type(symbolTriangle)
-    .size((nodeRadius * nodeRadius) / 5.0);
 </script>
 
 <center>
@@ -63,11 +59,12 @@
     {#each dag.links() as link}
       <line
         stroke-width={3}
-        stroke={'gray'}
+        stroke={"gray"}
         x1={link.source.x}
         y1={link.source.y}
         x2={link.target.x}
-        y2={link.target.y} />
+        y2={link.target.y}
+      />
     {/each}
     {#each dag.descendants() as descendant}
       <circle cx={descendant.x} cy={descendant.y} r={nodeRadius} />
@@ -76,7 +73,8 @@
         y={descendant.y + 7 - 14.0 / 2}
         width={descendant.data.textWidth}
         height={fontSize}
-        style="fill:rgb(247, 250, 252);stroke-width:1;stroke:rgb(226, 232, 240)" />
+        style="fill:rgb(247, 250, 252);stroke-width:1;stroke:rgb(226, 232, 240)"
+      />
       <text
         x={descendant.x}
         y={descendant.y + 12}
@@ -84,7 +82,8 @@
         fill="rgb(113, 128, 150)"
         font-size={fontSize}
         font-face={fontFace}
-        text-anchor={'middle'}>
+        text-anchor={"middle"}
+      >
         {descendant.id}
       </text>
     {/each}
@@ -93,15 +92,18 @@
         d={symbol()
           .type(symbolTriangle)
           .size((nodeRadius * nodeRadius) / 5.0)()}
-        stroke={'white'}
+        stroke={"white"}
         transform={((start, end) => {
           const dx = start.x - end.x;
           const dy = start.y - end.y;
           const scale = (nodeRadius * 1.15) / Math.sqrt(dx * dx + dy * dy);
           // This is the angle of the last line segment
           const angle = (Math.atan2(-dy, -dx) * 180) / Math.PI + 90;
-          return `translate(${end.x + dx * scale}, ${end.y + dy * scale}) rotate(${angle})`;
-        })(link.source, link.target)} />
+          return `translate(${end.x + dx * scale}, ${
+            end.y + dy * scale
+          }) rotate(${angle})`;
+        })(link.source, link.target)}
+      />
     {/each}
   </svg>
 </center>

@@ -2,7 +2,7 @@ import { supabase, recreateClient } from "./supabaseClient";
 import { setupStore, user } from "./sessionStore";
 import { get } from "svelte/store";
 
-export async function login(redirectTo: string) {
+export async function login(redirectTo: string): Promise<void> {
   if (supabase) {
     const { error } = await supabase.auth.signIn(
       { provider: "github" },
@@ -12,10 +12,10 @@ export async function login(redirectTo: string) {
   }
 }
 
-export function createLoginWindow() {
+export function createLoginWindow(): void {
   // set up a callback on the window object that the
   // child window can call
-  window["loginSuccess"] = (userData) => {
+  window["loginSuccess"] = () => {
     // need to recreate the client based on our new credentials
     recreateClient();
     setupStore();
@@ -28,7 +28,7 @@ export function createLoginWindow() {
   authWindow.focus();
 }
 
-export async function logout() {
+export async function logout(): Promise<void> {
   const { error } = await supabase.auth.signOut();
   if (error) throw error;
 }
@@ -44,16 +44,17 @@ interface DocumentSummary {
   id: string;
 }
 
-export async function getDocument(documentId: string) {
-  const { data, error, status } = await supabase
+export async function getDocument(documentId: string): Promise<string> {
+  const { data, error } = await supabase
     .from("documents")
     .select("content")
     .eq("id", documentId);
-  return data.length ? data[0].content : undefined;
+    if (error) throw error;
+    return data.length ? data[0].content : undefined;
 }
 
-export async function saveDocument(document: StoredDocument) {
-  let { data, error, status } = await supabase.from("documents").upsert({
+export async function saveDocument(document: StoredDocument): Promise<string> {
+  const { data, error } = await supabase.from("documents").upsert({
     ...document,
     user_id: get(user)["id"],
   });
@@ -64,7 +65,7 @@ export async function saveDocument(document: StoredDocument) {
 export async function getDocumentSummariesForUser(): Promise<
   DocumentSummary[]
 > {
-  let { data, error, status } = await supabase
+  const { data, error } = await supabase
     .from("documents")
     .select("id,title")
     .eq("user_id", get(user)["id"]);

@@ -8,7 +8,7 @@
   let iframe;
 
   let mdChangeSocket = new WebSocket("ws://localhost:35731");
-  mdChangeSocket.onmessage = function (event) {
+  mdChangeSocket.onmessage = function () {
     iframe.contentWindow.location.reload();
   };
 
@@ -16,6 +16,18 @@
     open(GraphView);
   };
 </script>
+
+<div class="header">
+  <div class="buttons">
+    <button on:click={openGraph}>Graph</button>
+    <select bind:value={mode}>
+      <option value="html">Rendered</option>
+      <option value="rawhtml">Raw HTML</option>
+      <option value="mdsvex">mdsvex output</option>
+    </select>
+  </div>
+</div>
+<iframe bind:this={iframe} title="irydium" src={`/iridium?mode=${mode}`} />
 
 <style>
   iframe {
@@ -39,15 +51,3 @@
     top: 10px;
   }
 </style>
-
-<div class="header">
-  <div class="buttons">
-    <button on:click={openGraph}>Graph</button>
-    <select bind:value={mode}>
-      <option value="html">Rendered</option>
-      <option value="rawhtml">Raw HTML</option>
-      <option value="mdsvex">mdsvex output</option>
-    </select>
-  </div>
-</div>
-<iframe bind:this={iframe} title="irydium" src={`/iridium?mode=${mode}`} />

@@ -27,7 +27,7 @@ describe("mdToSvelte tests", () => {
         `---\nscripts: ${JSON.stringify(scripts)}\n---\n# Hello, world`
       );
       expect(output.rootComponent.code).toEqual(
-        expect.stringContaining(`payload: [\"${SCRIPT_URL}\"],`)
+        expect.stringContaining(`payload: ["${SCRIPT_URL}"],`)
       );
     });
   });
