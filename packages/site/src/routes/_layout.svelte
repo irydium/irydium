@@ -20,7 +20,7 @@
     <LinkItem href={"https://gitter.im/irydium/community"}>
       <Fa icon={faComments} />
     </LinkItem>
-      <LinkItem href={"https://github.com/irydium/irydium"}>
+    <LinkItem href={"https://github.com/irydium/irydium"}>
       <Fa icon={faGithub} />
     </LinkItem>
   </Nav>
