@@ -6,6 +6,7 @@ import fetch from "cross-fetch";
 
 import {
   admonitionSource,
+  cellResultsSource,
   bundleIndexSource,
   taskRunnerSource,
 } from "./templates";
@@ -109,6 +110,7 @@ export async function svelteToHTML(
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     ["./Admonition.svelte", { code: admonitionSource, map: "" }],
+    ["./CellResults.svelte", { code: cellResultsSource, map: "" }],
     [
       "./taskrunner",
       {

@@ -11,6 +11,15 @@ import { taskScriptSource } from "./templates";
 // in ./parseMd.js)
 export const processMyst = () => {
   return (tree) => {
+    let unlabeledIdCounter = 0;
+
+    const getAnonymousNode = () => {
+      return {
+        type: "html",
+        value: `<CellResults value={__cell${unlabeledIdCounter++}} />`,
+      };
+    };
+
     visit(tree, ["code"], (node, index, parent) => {
       if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
         // myst directives are embedded in code chunks, with squiggly braces
@@ -22,14 +31,28 @@ export const processMyst = () => {
 
           const nodeContent = fm(node.value);
 
-          if (nodeContent && nodeContent.attributes.inline) {
+          const isInline = nodeContent && nodeContent.attributes.inline;
+          const anonymousNode = !nodeContent || !nodeContent.attributes.id;
+
+          if (isInline) {
             // inline node: take out the code cell parts, make them a
             // standard ""```foo" code chunk
             node.lang = lang;
             node.meta = undefined;
+
+            // if it's an anonymous node, then put its output immediately after
+            // and return
+            if (anonymousNode) {
+              parent.children.splice(index + 1, 0, getAnonymousNode());
+              return index;
+            }
+          } else if (anonymousNode) {
+            // a non-inline anonymous node should just replace the code chunk
+            parent.children[index] = getAnonymousNode();
+            return index;
           } else {
-            // non-inline node, take it out, we only want to execute it,
-            // not see it
+            // non-inline node with an id, take it out, we only want to execute
+            // it and store the results, not see it
             parent.children.splice(index, 1);
             return index;
           }
@@ -197,6 +220,7 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
           )
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
+        'import CellResults from "./CellResults.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks
             .map((task) => task.id)

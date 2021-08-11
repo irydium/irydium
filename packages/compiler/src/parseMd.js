@@ -54,6 +54,8 @@ export default async function extractCode(input, topLevel = true) {
 
   const tree = unified().use(markdown).parse(input);
 
+  let unlabeledIdCounter = 0;
+
   visit(tree, ["code"], (node) => {
     // process and extract myst directives
     if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
@@ -67,9 +69,8 @@ export default async function extractCode(input, topLevel = true) {
         const nodeContent = fm(node.value);
 
         if (!nodeContent.attributes.id) {
-          throw new Error(
-            `Code chunk defined without id (line: ${node.position.start.line})`
-          );
+          // cells without an identifier get rendered directly in the document
+          nodeContent.attributes.id = `__cell${unlabeledIdCounter++}`;
         }
 
         // svelte cells are parsed kind of specially
