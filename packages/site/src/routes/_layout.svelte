@@ -4,6 +4,7 @@
   import { setupStore } from "../state/sessionStore";
   import Fa from "svelte-fa";
   import { faGithub } from "@fortawesome/free-brands-svg-icons";
+  import { faComments } from "@fortawesome/free-regular-svg-icons";
   import LinkItem from "../components/LinkItem.svelte";
 
   export let segment: string;
@@ -16,7 +17,10 @@
     <NavItem segment={"examples"} />
     <NavItem segment={"components"} />
     <NavItem segment={"repl"} />
-    <LinkItem href={"https://github.com/irydium/irydium"}>
+    <LinkItem href={"https://gitter.im/irydium/community"}>
+      <Fa icon={faComments} />
+    </LinkItem>
+      <LinkItem href={"https://github.com/irydium/irydium"}>
       <Fa icon={faGithub} />
     </LinkItem>
   </Nav>
