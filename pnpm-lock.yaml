@@ -169,12 +169,14 @@ importers:
   packages/site:
     dependencies:
       '@irydium/compiler': 'link:../compiler'
+      '@wlach/sapper': 0.29.2-a4
       body-parser: 1.19.0
       compression: 1.7.4
       polka: 1.0.0-next.17
       sirv: 1.0.14
     specifiers:
       '@irydium/compiler': 'workspace:../compiler'
+      '@wlach/sapper': ^0.29.2-a4
       body-parser: ^1.19.0
       compression: ^1.7.1
       polka: next
@@ -2157,6 +2159,21 @@ packages:
       node: ^8.10.0 || ^10.13.0 || >=11.10.1
     resolution:
       integrity: sha512-zLqtjMoXvgdZY/PG6gqA73V8BjqPs4af1v2kiiETBObp+uC6gRYnJLmJHxC0QyUrrHDLJPIWNYxoBV3wbcRlag==
+  /@wlach/sapper/0.29.2-a4:
+    dependencies:
+      html-minifier: 4.0.0
+      http-link-header: 1.0.3
+      shimport: 2.0.5
+      source-map: 0.6.1
+      sourcemap-codec: 1.4.8
+      string-hash: 1.1.3
+    dev: false
+    hasBin: true
+    peerDependencies:
+      svelte: ^3.17.3
+    resolution:
+      integrity: sha512-7jQfnUSgVmnSo2ufqnpCZO3Ouoem7G5qhPWxLpdY1mloeCSAHVdMar1MyIAwdDiAIN38tVDDsEcm47iRcMs8dg==
+      tarball: '@wlach/sapper/-/sapper-0.29.2-a4.tgz'
   /@wlach/sapper/0.29.2-a4_svelte@3.42.1:
     dependencies:
       html-minifier: 4.0.0
@@ -2662,7 +2679,6 @@ packages:
     dependencies:
       no-case: 2.3.2
       upper-case: 1.1.3
-    dev: true
     resolution:
       integrity: sha1-yjw2iKTpzzpM2nd9xNy8cTJJz3M=
   /camelcase/5.3.1:
@@ -2751,7 +2767,6 @@ packages:
   /clean-css/4.2.3:
     dependencies:
       source-map: 0.6.1
-    dev: true
     engines:
       node: '>= 4.0'
     resolution:
@@ -2826,7 +2841,6 @@ packages:
     resolution:
       integrity: sha512-6tvAOO+D6OENvRAh524Dh9jcfKTYDQAqvqezbCW82xj5X0pSrcpxtvRKHLG0yBY6SD7PSDrJaj+0AiOcKVd1Xg==
   /commander/2.20.3:
-    dev: true
     resolution:
       integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==
   /commondir/1.0.1:
@@ -3901,7 +3915,6 @@ packages:
     resolution:
       integrity: sha512-taOaskGt4z4SOANNseOviYDvjEJinIkRgmp7LbKP2YTTmVxWBl87s/uzK9r+44BclBSp2X7K1hqeNfz9JbBeXA==
   /he/1.2.0:
-    dev: true
     hasBin: true
     resolution:
       integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -3953,7 +3966,6 @@ packages:
       param-case: 2.1.1
       relateurl: 0.2.7
       uglify-js: 3.14.1
-    dev: true
     engines:
       node: '>=6'
     hasBin: true
@@ -3972,7 +3984,6 @@ packages:
     resolution:
       integrity: sha512-uUQBt3H/cSIVfch6i1EuPNy/YsRSOUBXTVfZ+yR7Zjez3qjBz6i9+i4zjNaoqcoFVI4lQJ5plg63TvGfRSDCRg==
   /http-link-header/1.0.3:
-    dev: true
     engines:
       node: '>=4.0.0'
     resolution:
@@ -5071,7 +5082,6 @@ packages:
     resolution:
       integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
   /lower-case/1.1.4:
-    dev: true
     resolution:
       integrity: sha1-miyr0bno4K6ZOkv31YdcOcQujqw=
   /lru-cache/6.0.0:
@@ -5266,7 +5276,6 @@ packages:
   /no-case/2.3.2:
     dependencies:
       lower-case: 1.1.4
-    dev: true
     resolution:
       integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==
   /node-fetch/2.6.1:
@@ -5487,7 +5496,6 @@ packages:
   /param-case/2.1.1:
     dependencies:
       no-case: 2.3.2
-    dev: true
     resolution:
       integrity: sha1-35T9jPZTHs915r75oIWPvHK+Ikc=
   /parent-module/1.0.1:
@@ -5915,7 +5923,6 @@ packages:
     resolution:
       integrity: sha512-ZqbNRz1SNjLAiYuwY0zoXW8Ne675IX5q+YHioAGbCw4X96Mjl2+dcX9B2ciaeyYjViDAfvIjFpQjJgLttTEERQ==
   /relateurl/0.2.7:
-    dev: true
     engines:
       node: '>= 0.10'
     resolution:
@@ -6185,7 +6192,6 @@ packages:
     resolution:
       integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
   /shimport/2.0.5:
-    dev: true
     resolution:
       integrity: sha512-H2FeQyImK4CFhGG1wVhHEB1hASWz+WQK6t2gMP5lk+b0PW30XSrsryDONDBwF1n6hBKsmbr0REfTinaNdEkcPQ==
   /side-channel/1.0.4:
@@ -6244,7 +6250,6 @@ packages:
     resolution:
       integrity: sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=
   /source-map/0.6.1:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -6256,7 +6261,6 @@ packages:
     resolution:
       integrity: sha512-CkCj6giN3S+n9qrYiBTX5gystlENnRW5jZeNLHpe6aue+SrHcG5VYwujhW9s4dY31mEGsxBDrHR6oI69fTXsaQ==
   /sourcemap-codec/1.4.8:
-    dev: true
     resolution:
       integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==
   /spdx-correct/3.1.1:
@@ -6299,7 +6303,6 @@ packages:
     resolution:
       integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
   /string-hash/1.1.3:
-    dev: true
     resolution:
       integrity: sha1-6Kr8CsGFW0Zmkp7X3RJ1311sgRs=
   /string-length/4.0.2:
@@ -6727,7 +6730,6 @@ packages:
     resolution:
       integrity: sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
   /uglify-js/3.14.1:
-    dev: true
     engines:
       node: '>=0.8.0'
     hasBin: true
@@ -6829,7 +6831,6 @@ packages:
     resolution:
       integrity: sha1-sr9O6FFKrmFltIF4KdIbLvSZBOw=
   /upper-case/1.1.3:
-    dev: true
     resolution:
       integrity: sha1-9rRQHC7EzdJrp4vnIilh3ndiFZg=
   /uri-js/4.4.1:
