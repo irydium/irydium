@@ -8,7 +8,7 @@ command = """
 publish = "packages/site/__sapper__/export"
 
 [build.environment]
-  NPM_FLAGS="--prefix=/"
+NPM_FLAGS="--prefix=/"
 
 [functions]
 directory = "packages/site/netlify_functions"
