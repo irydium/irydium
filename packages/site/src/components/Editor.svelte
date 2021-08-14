@@ -22,4 +22,5 @@
   bind:this={editor}
   on:change={(event) => {
     md = event.detail.value;
-  }} />
+  }}
+/>

@@ -1,7 +1,10 @@
+import json from "@rollup/plugin-json";
+import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import typescript from "@rollup/plugin-typescript";
 
-import { getBaseCompilerPlugins } from "./compiler-plugins";
+import { createTemplates } from "./src/create-templates";
 import pkg from "./package.json";
 
 const EXTERNALS = [
@@ -16,15 +19,24 @@ const EXTERNALS = [
   "mdsvex",
 ];
 
+const TEMPLATE_PLUGIN = replace({
+  "__TEMPLATES = {}":
+    "__TEMPLATES = " + JSON.stringify(createTemplates("./src")),
+  delimiters: ["", ""],
+});
+
 export default [
   {
     // libraries for use by other things
     plugins: [
-      ...getBaseCompilerPlugins(),
+      TEMPLATE_PLUGIN,
       resolve({ browser: true }),
+      // unified has an implicit dependency on @rollup/plugin-json
+      json(),
       commonjs(),
+      typescript(),
     ],
-    input: "src/main.js",
+    input: "src/main.ts",
     external: EXTERNALS,
     output: [
       { file: pkg.module, format: "es", sourcemap: false },
@@ -34,11 +46,14 @@ export default [
   {
     // the irydium cli
     plugins: [
-      ...getBaseCompilerPlugins(),
+      TEMPLATE_PLUGIN,
       resolve({ preferBuiltins: true }),
+      // unified has an implicit dependency on @rollup/plugin-json
+      json(),
       commonjs(),
+      typescript(),
     ],
-    input: "src/cli.js",
+    input: "src/cli.ts",
     external: EXTERNALS,
     output: [
       { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },

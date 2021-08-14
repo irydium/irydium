@@ -1,11 +1,16 @@
 import fm from "front-matter";
 import { unified } from "unified";
-import markdown from "remark-parse";
+import remarkParse from "remark-parse";
 import { visit } from "unist-util-visit";
 import fetch from "cross-fetch";
-import defaultLanguagePlugins from "./langPluginRegistry";
 
-function getCodeCells(cells, referenceId) {
+import defaultLanguagePlugins from "./langPluginRegistry";
+import type { CodeCell, CodeNode, FrontMatter, ParsedDocument } from "./types";
+
+function getCodeCells(
+  cells: Array<CodeCell>,
+  referenceId: string
+): Array<CodeCell> {
   const referencedCell = cells.find((c) => c.attributes.id === referenceId);
   if (!referencedCell) {
     throw new Error(
@@ -15,24 +20,31 @@ function getCodeCells(cells, referenceId) {
 
   return [
     referencedCell,
-    ...(referencedCell.inputs || []).flatMap((input) =>
+    ...(referencedCell.attributes.inputs || []).flatMap((input) =>
       getCodeCells(cells, input)
     ),
   ].flat();
 }
 
-async function importCode(doc, referenceId) {
+async function importCode(
+  doc: string,
+  referenceId: string
+): Promise<ParsedDocument> {
   const imported = await extractCode(doc, false);
   return {
+    frontMatter: {},
     codeCells: getCodeCells(imported.codeCells, referenceId),
     scripts: [imported.frontMatter.scripts || []].flat(),
   };
 }
 
-export default async function extractCode(input, topLevel = true) {
-  const frontMatter = fm(input).attributes;
-  let scripts = [frontMatter.scripts || []].flat();
-  let codeCells = [];
+export async function extractCode(
+  input: string,
+  topLevel = true
+): Promise<ParsedDocument> {
+  const frontMatter = fm(input).attributes as FrontMatter;
+  let scripts: string[] = frontMatter.scripts || [];
+  let codeCells: CodeCell[] = [];
 
   // go through any imports and extract code cells and scripts that they depend on
   // FIXME: this only goes one level deep, i.e. we can't chase dependencies of dependencies.
@@ -52,11 +64,11 @@ export default async function extractCode(input, topLevel = true) {
     }
   }
 
-  const tree = unified().use(markdown).parse(input);
+  const tree = unified().use(remarkParse).parse(input);
 
   let unlabeledIdCounter = 0;
 
-  visit(tree, ["code"], (node) => {
+  visit(tree, ["code"], (node: CodeNode) => {
     // process and extract myst directives
     if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
       // myst directives are embedded in code chunks, with squiggly braces

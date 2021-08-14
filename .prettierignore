@@ -1,4 +1,8 @@
 packages/*/node_modules/
 packages/*/__sapper__/
+packages/*/build/
 packages/*/dist/
 packages/compiler/src/template.html
+packages/compiler/src/templates/tasks.js
+pnpm-lock.yaml
+pnpm-workspace.yaml

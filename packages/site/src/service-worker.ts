@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { timestamp, files, shell } from "@sapper/service-worker";
 
 const ASSETS = `cache${timestamp}`;
@@ -13,8 +14,7 @@ self.addEventListener("install", (event: ExtendableEvent) => {
       .open(ASSETS)
       .then((cache) => cache.addAll(to_cache))
       .then(() => {
-        ((self as any) as ServiceWorkerGlobalScope).skipWaiting();
-
+        (self as any as ServiceWorkerGlobalScope).skipWaiting();
       })
   );
 });
@@ -27,7 +27,7 @@ self.addEventListener("activate", (event: ExtendableEvent) => {
         if (key !== ASSETS) await caches.delete(key);
       }
 
-      ((self as any) as ServiceWorkerGlobalScope).clients.claim();
+      (self as any as ServiceWorkerGlobalScope).clients.claim();
     })
   );
 });

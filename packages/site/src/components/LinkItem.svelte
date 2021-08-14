@@ -3,9 +3,7 @@
 </script>
 
 <li>
-  <a 
-    href={href}><slot />
-  </a>
+  <a {href}><slot /> </a>
 </li>
 
 <style>

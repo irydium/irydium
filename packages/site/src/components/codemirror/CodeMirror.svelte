@@ -219,6 +219,24 @@
   }
 </script>
 
+<div
+  class="codemirror-container"
+  class:flex
+  bind:offsetWidth={w}
+  bind:offsetHeight={h}
+>
+  <!-- svelte-ignore a11y-positive-tabindex -->
+  <textarea tabindex="2" bind:this={refs.editor} readonly value={code} />
+
+  {#if !CodeMirror}
+    <pre style="position: absolute; left: 0; top: 0">{code}</pre>
+
+    <div style="position: absolute; width: 100%; bottom: 0">
+      loading editor...
+    </div>
+  {/if}
+</div>
+
 <style>
   .codemirror-container {
     position: relative;
@@ -286,20 +304,3 @@
     height: auto;
   }
 </style>
-
-<div
-  class="codemirror-container"
-  class:flex
-  bind:offsetWidth={w}
-  bind:offsetHeight={h}>
-  <!-- svelte-ignore a11y-positive-tabindex -->
-  <textarea tabindex="2" bind:this={refs.editor} readonly value={code} />
-
-  {#if !CodeMirror}
-    <pre style="position: absolute; left: 0; top: 0">{code}</pre>
-
-    <div style="position: absolute; width: 100%; bottom: 0">
-      loading editor...
-    </div>
-  {/if}
-</div>

@@ -1,4 +1,4 @@
-import extractCode from "../src/parseMd.js";
+import { extractCode } from "../src/parseMd.ts";
 
 function createCodeCell(lang, id, inputs, body) {
   return `\`\`\`{code-cell} ${lang}\n---\nid: ${id}\n${

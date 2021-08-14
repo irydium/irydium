@@ -1,4 +1,4 @@
-import { mdToSvelte } from "../src/mdToSvelte.js";
+import { mdToSvelte } from "../src/mdToSvelte.ts";
 
 describe("mdToSvelte tests", () => {
   it("can handle the basics", async () => {

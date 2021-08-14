@@ -21,6 +21,8 @@
   }
 </script>
 
+<iframe title="Rendered REPL" {srcdoc} />
+
 <style>
   iframe {
     width: 100%;
@@ -29,5 +31,3 @@
     border-left: 1px #000;
   }
 </style>
-
-<iframe title="Rendered REPL" {srcdoc} />

@@ -10,20 +10,29 @@ import {
   bundleIndexSource,
   taskRunnerSource,
 } from "./templates";
+import type {
+  CompileOptions,
+  CompilerOutput,
+  FrontMatter,
+  SvelteComponentDefinition,
+  SvelteComponentVFile,
+} from "./types";
 
 const CDN_URL = "https://cdn.jsdelivr.net/npm";
 
-async function fetch_package(url) {
+async function fetch_package(url: string): Promise<string> {
   return (await fetch(url)).text();
 }
 
-async function createSvelteBundle(files) {
+async function createSvelteBundle(
+  files: Map<string, SvelteComponentDefinition>
+): Promise<string> {
   const bundle = await rollup.rollup({
     input: "./mdsvelte.svelte",
     plugins: [
       {
         name: "repl-plugin",
-        resolveId: async (importee, importer) => {
+        resolveId: async (importee: string, importer: string) => {
           // handle imports from 'svelte'
 
           // import x from 'svelte'
@@ -72,7 +81,7 @@ async function createSvelteBundle(files) {
           // we probably missed stuff, pass it along as is
           return importee;
         },
-        load: async (id) => {
+        load: async (id: string): Promise<string> => {
           // local repl components are stored in memory
           // this is our virtual filesystem
           if (files.has(id)) return files.get(id).code;
@@ -80,9 +89,8 @@ async function createSvelteBundle(files) {
           // everything else comes from a cdn
           return await fetch_package(id);
         },
-        transform: async (code, id) => {
+        transform: async (code: string, id: string): Promise<string> => {
           // our only transform is to compile svelte components
-          //@ts-ignore
           if (/.*\.svelte/.test(id)) {
             const compiled = svelteCompile(code);
             if (compiled.warnings.length) {
@@ -93,6 +101,7 @@ async function createSvelteBundle(files) {
             }
             return compiled.js.code;
           }
+          return code;
         },
       },
     ],
@@ -102,11 +111,11 @@ async function createSvelteBundle(files) {
 }
 
 export async function svelteToHTML(
-  mdSvelte,
-  svelteComponents,
-  frontMatter,
-  options
-) {
+  mdSvelte: SvelteComponentDefinition,
+  svelteComponents: Array<SvelteComponentVFile>,
+  frontMatter: FrontMatter,
+  options: CompileOptions
+): Promise<CompilerOutput> {
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     ["./Admonition.svelte", { code: admonitionSource, map: "" }],
