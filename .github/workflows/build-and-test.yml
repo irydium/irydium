@@ -24,7 +24,11 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-      - run: pnpm i
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: 5
+        run_install: |
+          - recursive: true
       - run: pnpm test
       - run: pnpm -r build
       - run: pnpm lint
