@@ -26,7 +26,6 @@ importers:
       '@types/polka': 0.5.3
       '@typescript-eslint/eslint-plugin': 4.29.1_d4376362794b743c19f4cba25c7fc6f5
       '@typescript-eslint/parser': 4.29.1_eslint@7.32.0+typescript@4.3.5
-      '@wlach/sapper': 0.29.2-a4_svelte@3.42.1
       babel-jest: 27.0.6_@babel+core@7.15.0
       chokidar: 3.5.2
       codemirror: 5.62.2
@@ -95,7 +94,6 @@ importers:
       '@types/polka': ^0.5.1
       '@typescript-eslint/eslint-plugin': ^4.29.0
       '@typescript-eslint/parser': ^4.29.1
-      '@wlach/sapper': ^0.29.2-a4
       babel-jest: ^27.0.6
       chokidar: ^3.5.1
       codemirror: ^5.61.0
@@ -2174,22 +2172,6 @@ packages:
     resolution:
       integrity: sha512-7jQfnUSgVmnSo2ufqnpCZO3Ouoem7G5qhPWxLpdY1mloeCSAHVdMar1MyIAwdDiAIN38tVDDsEcm47iRcMs8dg==
       tarball: '@wlach/sapper/-/sapper-0.29.2-a4.tgz'
-  /@wlach/sapper/0.29.2-a4_svelte@3.42.1:
-    dependencies:
-      html-minifier: 4.0.0
-      http-link-header: 1.0.3
-      shimport: 2.0.5
-      source-map: 0.6.1
-      sourcemap-codec: 1.4.8
-      string-hash: 1.1.3
-      svelte: 3.42.1
-    dev: true
-    hasBin: true
-    peerDependencies:
-      svelte: ^3.17.3
-    resolution:
-      integrity: sha512-7jQfnUSgVmnSo2ufqnpCZO3Ouoem7G5qhPWxLpdY1mloeCSAHVdMar1MyIAwdDiAIN38tVDDsEcm47iRcMs8dg==
-      tarball: '@wlach/sapper/-/sapper-0.29.2-a4.tgz'
   /abab/2.0.5:
     dev: true
     resolution:
@@ -3966,6 +3948,7 @@ packages:
       param-case: 2.1.1
       relateurl: 0.2.7
       uglify-js: 3.14.1
+    dev: false
     engines:
       node: '>=6'
     hasBin: true
@@ -3984,6 +3967,7 @@ packages:
     resolution:
       integrity: sha512-uUQBt3H/cSIVfch6i1EuPNy/YsRSOUBXTVfZ+yR7Zjez3qjBz6i9+i4zjNaoqcoFVI4lQJ5plg63TvGfRSDCRg==
   /http-link-header/1.0.3:
+    dev: false
     engines:
       node: '>=4.0.0'
     resolution:
@@ -6192,6 +6176,7 @@ packages:
     resolution:
       integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
   /shimport/2.0.5:
+    dev: false
     resolution:
       integrity: sha512-H2FeQyImK4CFhGG1wVhHEB1hASWz+WQK6t2gMP5lk+b0PW30XSrsryDONDBwF1n6hBKsmbr0REfTinaNdEkcPQ==
   /side-channel/1.0.4:
@@ -6303,6 +6288,7 @@ packages:
     resolution:
       integrity: sha1-Fhx9rBd2Wf2YEfQ3cfqZOBR4Yow=
   /string-hash/1.1.3:
+    dev: false
     resolution:
       integrity: sha1-6Kr8CsGFW0Zmkp7X3RJ1311sgRs=
   /string-length/4.0.2:
@@ -6730,6 +6716,7 @@ packages:
     resolution:
       integrity: sha512-DqQgihaQ9cUrskJo9kIyW/+g0Vxsk8cDtZ52a3NGh0YNTfpUSArXSohyUGnvbPazEPLu398C0UxmKSOrPumUzA==
   /uglify-js/3.14.1:
+    dev: false
     engines:
       node: '>=0.8.0'
     hasBin: true
