@@ -2,7 +2,7 @@
 ignore = "git log -1 --pretty=%B | grep dependabot" # skip dependabot PRs
 command = """
     set -e
-    npm install -g pnpm
+    npm install -g pnpm@6.13.0
     pnpm i
     pnpm build-site
     cd packages/site && npm run export
