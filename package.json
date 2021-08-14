@@ -9,7 +9,7 @@
   },
   "private": true,
   "scripts": {
-    "bootstrap": "lerna bootstrap",
+    "prebuild": "[[ $CI = true ]] && npx pnpm@3 install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
     "compile": "cd packages/compiler && npm run compile --",
     "dev": "cd packages/viewer && npm run dev --",
     "dev-site": "cd packages/site && npm run dev",
@@ -43,7 +43,6 @@
     "@types/polka": "^0.5.1",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.1",
-    "@wlach/sapper": "^0.29.2-a4",
     "babel-jest": "^27.0.6",
     "chokidar": "^3.5.1",
     "codemirror": "^5.61.0",
