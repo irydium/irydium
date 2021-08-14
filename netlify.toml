@@ -2,7 +2,9 @@
 ignore = "git log -1 --pretty=%B | grep dependabot" # skip dependabot PRs
 command = """
     set -e
-    npm run prebuild
+    npm install -g pnpm
+    pnpm i
+    pnpm build-site
     cd packages/site && npm run export
 """
 publish = "packages/site/__sapper__/export"

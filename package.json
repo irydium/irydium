@@ -9,11 +9,11 @@
   },
   "private": true,
   "scripts": {
-    "prebuild": "[[ $CI = true ]] && npx pnpm@3 install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
     "compile": "cd packages/compiler && npm run compile --",
     "dev": "cd packages/viewer && npm run dev --",
     "dev-site": "cd packages/site && npm run dev",
     "build": "pnpm build --filter=\"@irydium/*\"",
+    "build-site": "pnpm build --filter=\"@irydium/compiler\" --filter=\"@irydium/site\"",
     "lint": "pnpm -r lint",
     "start": "cd packages/site && node __sapper__/build",
     "test": "jest",
