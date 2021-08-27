@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "rollup --config",
+    "dev": "rollup --config --watch",
     "compile": "rollup --config && ./bin/irmd-compile-local.sh",
     "test": "jest",
     "lint": "eslint ."
