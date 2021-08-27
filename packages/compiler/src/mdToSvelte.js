@@ -10,6 +10,8 @@ export async function mdToSvelte(input) {
     rehypePlugins: [augmentSvx({ frontMatter, scripts, codeCells })],
   });
 
+  console.log("Hello?");
+
   const subComponents = codeCells
     .filter((cn) => cn.lang === "svelte")
     .map((sc) => [`./${sc.attributes.id}.svelte`, { code: sc.body, map: "" }]);

@@ -82,19 +82,46 @@ See the next section for details on how to set up your development environment.
 
 ## Development
 
+The Irydium project is built as a monorepo, with three seperate components:
+
+- The compiler: `@irydium/compiler`: A tool for converting markdown documents into HTML. Lives in `packages/compiler`.
+- The viewer: `@irydium/viewer`: A tool for previewing documents. Lives in `packages/viewer`.
+- The site: `@irydium/site`: The site behind irydium.dev. Lives in `packages/site`.
+
 ### Local setup
 
-There are a few options for local development. But the first step is to bootstrap
-the local environment as follows:
+Irydium uses [pnpm] to manage dependencies. To install it, run:
 
 ```bash
-npm install
-npm run bootstrap
+npm i -g pnpm
 ```
+
+After installing pnpm, install the dependencies:
+
+```bash
+pnpm i
+```
+
+The first step is to build the compiler. You can do this by running this:
+
+```bash
+cd packages/compiler && npm run build
+```
+
+If you want to continuously rebuild the compiler as you go, you can run:
+
+```bash
+cd packages/compiler && npm run dev
+```
+
+At that point, you can also build/run the viewer or site (see below).
+If you make changes to the compiler, restart the viewer or site to pick up the changes.
+
+[pnpm]: https://pnpm.js.org/
 
 ### Hacking on the irydium viewer
 
-After setting the environment locally, you can run the irydium viewer as follows:
+After setting up the environment locally, you can run the irydium viewer as follows:
 
 ```bash
 npm run dev -- <path to file>

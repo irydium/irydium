@@ -2,9 +2,15 @@
 ignore = "git log -1 --pretty=%B | grep dependabot" # skip dependabot PRs
 command = """
     set -e
-    npx lerna run --scope irydium-site export
+    npm install -g pnpm@6.13.0
+    pnpm i
+    pnpm build-site
+    cd packages/site && npm run export
 """
 publish = "packages/site/__sapper__/export"
+
+[build.environment]
+    NPM_FLAGS="--prefix=./netlify-placeholder/"
 
 [functions]
 directory = "packages/site/netlify_functions"

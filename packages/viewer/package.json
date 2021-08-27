@@ -29,6 +29,7 @@
     "url": "https://github.com/irydium/irydium/issues"
   },
   "dependencies": {
+    "@irydium/compiler": "workspace:../compiler",
     "livereload": "^0.9.1",
     "polka": "next"
   }
