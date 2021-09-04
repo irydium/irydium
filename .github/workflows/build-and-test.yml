@@ -32,4 +32,4 @@ jobs:
       - run: pnpm test
       - run: pnpm -r build
       - run: pnpm lint
-      - run: cd packages/site && npm run export
+      - run: cd packages/site && pnpm run export

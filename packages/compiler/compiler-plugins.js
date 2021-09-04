@@ -1,5 +1,5 @@
 import replace from "@rollup/plugin-replace";
-import json from "rollup-plugin-json";
+import json from "@rollup/plugin-json";
 import { string } from "rollup-plugin-string";
 
 export function createTemplates(baseDir) {
@@ -28,7 +28,7 @@ export function createTemplates(baseDir) {
 
 export const getBaseCompilerPlugins = (baseDir = ".") => {
   return [
-    // unified has an implicit dependency on rollup-plugin-json
+    // unified has an implicit dependency on @rollup/plugin-json
     json(),
     string({
       include: ["../site/**/*.md"],

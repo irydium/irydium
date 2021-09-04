@@ -10,12 +10,11 @@
   "private": true,
   "scripts": {
     "compile": "cd packages/compiler && npm run compile --",
-    "dev": "cd packages/viewer && npm run dev --",
-    "dev-site": "cd packages/site && npm run dev",
-    "build": "pnpm build --filter=\"@irydium/*\"",
+    "dev": "cd packages/viewer && pnpm run dev --",
+    "dev-compiler": "cd packages/compiler && pnpm run dev",
+    "dev-site": "cd packages/site && pnpm run dev",
     "build-site": "pnpm build --filter=\"@irydium/compiler\" --filter=\"@irydium/site\"",
     "lint": "pnpm -r lint",
-    "start": "cd packages/site && node __sapper__/build",
     "test": "jest",
     "format": "prettier --plugin-search-dir=. --write .",
     "format:check": "prettier --plugin-search-dir=. --check ."
@@ -71,7 +70,6 @@
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-html": "^0.2.1",
-    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-string": "^3.0.0",
