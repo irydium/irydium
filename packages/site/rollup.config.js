@@ -1,18 +1,18 @@
 import { config as dotenvConfig } from "dotenv";
 import path from "path";
+import json from "@rollup/plugin-json";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import commonjs from "@rollup/plugin-commonjs";
+import { string } from "rollup-plugin-string";
 import url from "@rollup/plugin-url";
 import svelte from "rollup-plugin-svelte";
 import babel from "@rollup/plugin-babel";
-import json from "@rollup/plugin-json";
 import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import config from "@wlach/sapper/config/rollup.js";
 import pkg from "./package.json";
-import { getBaseCompilerPlugins } from "../compiler/compiler-plugins";
 
 const mode = process.env.NODE_ENV;
 const dev = mode === "development";
@@ -35,7 +35,9 @@ export default {
     input: config.client.input().replace(/\.js$/, ".ts"),
     output: config.client.output(),
     plugins: [
-      ...getBaseCompilerPlugins("../compiler"),
+      string({
+        include: ["./static/**/*.md"],
+      }),
       replace({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
@@ -102,7 +104,6 @@ export default {
     input: { server: config.server.input().server.replace(/\.js$/, ".ts") },
     output: config.server.output(),
     plugins: [
-      ...getBaseCompilerPlugins("../compiler"),
       replace({
         "process.browser": false,
         "process.env.NODE_ENV": JSON.stringify(mode),
@@ -112,10 +113,12 @@ export default {
           SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
         }),
       }),
+      string({
+        include: ["./static/**/*.md"],
+      }),
       json(),
       svelte({
         preprocess: sveltePreprocess(),
-        exclude: ["../compiler/src/templates/*"],
         compilerOptions: {
           dev,
           generate: "ssr",

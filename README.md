@@ -105,13 +105,13 @@ pnpm i
 The first step is to build the compiler. You can do this by running this:
 
 ```bash
-cd packages/compiler && npm run build
+pnpm run build --filter="@irydium/compiler"
 ```
 
 If you want to continuously rebuild the compiler as you go, you can run:
 
 ```bash
-cd packages/compiler && npm run dev
+pnpm run dev-compiler
 ```
 
 At that point, you can also build/run the viewer or site (see below).
@@ -124,20 +124,23 @@ If you make changes to the compiler, restart the viewer or site to pick up the c
 After setting up the environment locally, you can run the irydium viewer as follows:
 
 ```bash
-npm run dev -- <path to file>
+pnpm run dev -- <path to file>
 ```
 
-This will auto-reload your site if either the irydium source files or your document changes.
+This will auto-reload your site if either the viewer source files or your document changes.
+You will need to restart this process if the compiler changes (see above).
 
 ### Working on the site
 
 If you want to hack on the irydium site, try this workflow:
 
 ```bash
-npm run dev-site
+pnpm run dev-site
 ```
 
 A local copy of the site above should be accessible via http://localhost:3000/
+
+As with the viewer, it will auto-reload if any aspect of the site changes, but you will need to restart the process if you want to test changes to the compiler.
 
 Most of the site's functionality should work as-is without further setup.
 However, to test saving/loading documents, you will need a [supabase] account and set up a GitHub

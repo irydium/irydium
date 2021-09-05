@@ -1,6 +1,6 @@
 <script lang="ts">
   import { throttle } from "lodash";
-  import { compile } from "../../../compiler/src/compile.js";
+  import { compile } from "@irydium/compiler";
 
   export let md = "";
   export let title = "Untitled Document";
