@@ -64,6 +64,13 @@ export const processMyst = () => {
           };
           parent.children[index] = newNode;
           return index;
+        } else if (mystType === "panels") {
+          let newNode = {
+            type: "html",
+            value: `<Panels>${node.value}</Panels>`,
+          };
+          parent.children[index] = newNode;
+          return index;
         } else {
           // the "language" of this code cell is something we don't yet support
           // (e.g. one of the many things in MyST that we don't handle) -- convert
@@ -221,6 +228,7 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
+        'import Panels from "./Panels.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks
             .map((task) => task.id)

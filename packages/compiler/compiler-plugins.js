@@ -12,6 +12,7 @@ export function createTemplates(baseDir) {
     "../../site/static/components/python.md",
     "templates/Admonition.svelte",
     "templates/CellResults.svelte",
+    "templates/Panels.svelte",
     "templates/index.html",
     "templates/tasks.js",
     "taskrunner.js",

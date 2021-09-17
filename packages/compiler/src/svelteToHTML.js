@@ -7,6 +7,7 @@ import fetch from "cross-fetch";
 import {
   admonitionSource,
   cellResultsSource,
+  panelsSource,
   bundleIndexSource,
   taskRunnerSource,
 } from "./templates";
@@ -111,6 +112,7 @@ export async function svelteToHTML(
     ["./mdsvelte.svelte", mdSvelte],
     ["./Admonition.svelte", { code: admonitionSource, map: "" }],
     ["./CellResults.svelte", { code: cellResultsSource, map: "" }],
+    ["./Panels.svelte", {code: panelsSource, map: ""}],
     [
       "./taskrunner",
       {
