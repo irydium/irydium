@@ -11,5 +11,7 @@ This is an exciting note!
 This is a warning! It means be careful!
 ```
 
+```{panels}
+```
 [myst markdown format]: https://myst-parser.readthedocs.io/en/latest/index.html
 [irydium/irydium#123]: https://github.com/irydium/irydium/issues/123
