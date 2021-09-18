@@ -67,8 +67,9 @@ export const processMyst = () => {
         } else if (mystType === "panels") {
           let newNode = {
             type: "html",
-            value: `<Panels>${node.value}</Panels>`,
+            value: `<Panels panelContents={"${node.value}"}/>`,
           };
+          console.log("panels node value: ", node.value);
           parent.children[index] = newNode;
           return index;
         } else {
