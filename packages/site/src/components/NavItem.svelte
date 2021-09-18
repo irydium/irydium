@@ -5,6 +5,12 @@
   const current = getContext("current");
 </script>
 
+<li>
+  <a aria-current={segment === $current ? "page" : undefined} href={segment}
+    >{segment}</a
+  >
+</li>
+
 <style>
   li {
     display: block;
@@ -38,9 +44,3 @@
     color: black;
   }
 </style>
-
-<li>
-  <a
-    aria-current={segment === $current ? 'page' : undefined}
-    href={segment}>{segment}</a>
-</li>

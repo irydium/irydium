@@ -1,16 +1,22 @@
 import fm from "front-matter";
 import mustache from "mustache";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
-import { visit } from "unist-util-visit";
+import { Node, Parent, visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
 
 import { taskScriptSource } from "./templates";
+import type {
+  CodeNode,
+  CodeNodeAttributes,
+  ParsedDocument,
+  ScriptNode,
+} from "./types";
 
 // remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
 // markdown unless they are inline code chunks (actual processing of code chunks is handled
-// in ./parseMd.js)
+// in ./parseMd.ts)
 export const processMyst = () => {
-  return (tree) => {
+  return (tree: Node): void => {
     let unlabeledIdCounter = 0;
 
     const getAnonymousNode = () => {
@@ -20,49 +26,55 @@ export const processMyst = () => {
       };
     };
 
-    visit(tree, ["code"], (node, index, parent) => {
-      if (node.lang && node.lang.startsWith("{") && node.lang.endsWith("}")) {
+    visit(tree, ["code"], (node, _index, parent) => {
+      const { lang, meta, value } = node as CodeNode;
+      const index = _index as number;
+
+      if (lang && lang.startsWith("{") && lang.endsWith("}")) {
         // myst directives are embedded in code chunks, with squiggly braces
-        const mystType = node.lang.substr(1, node.lang.length - 2);
+        const mystType = lang.substr(1, lang.length - 2);
         if (mystType === "code-cell") {
           // FIXME: assumption that language is the only metadata
           // (should also validate)
-          const lang = node.meta;
+          const lang = meta;
 
-          const nodeContent = fm(node.value);
+          const nodeAttributes = fm(value).attributes as CodeNodeAttributes;
 
-          const isInline = nodeContent && nodeContent.attributes.inline;
-          const anonymousNode = !nodeContent || !nodeContent.attributes.id;
+          const isInline = nodeAttributes.inline;
+          const anonymousNode = !nodeAttributes.id;
 
           if (isInline) {
             // inline node: take out the code cell parts, make them a
             // standard ""```foo" code chunk
-            node.lang = lang;
-            node.meta = undefined;
+            (node as CodeNode).lang = lang;
+            (node as CodeNode).meta = undefined;
 
             // if it's an anonymous node, then put its output immediately after
             // and return
             if (anonymousNode) {
-              parent.children.splice(index + 1, 0, getAnonymousNode());
+              parent &&
+                parent.children.splice(index + 1, 0, getAnonymousNode());
               return index;
             }
           } else if (anonymousNode) {
             // a non-inline anonymous node should just replace the code chunk
-            parent.children[index] = getAnonymousNode();
+            (parent as Parent).children[index] = getAnonymousNode();
             return index;
           } else {
             // non-inline node with an id, take it out, we only want to execute
             // it and store the results, not see it
-            parent.children.splice(index, 1);
+            (parent as Parent).children.splice(index, 1);
             return index;
           }
         } else if (mystType === "note" || mystType === "warning") {
           // a note! we want to replace the code chunk with a svelte component
-          let newNode = {
+          const newNode = {
             type: "html",
-            value: `<Admonition type={"${mystType}"}>${node.value}</Admonition>`,
+            value: `<Admonition type={"${mystType}"}>${
+              (node as CodeNode).value
+            }</Admonition>`,
           };
-          parent.children[index] = newNode;
+          (parent as Parent).children[index] = newNode;
           return index;
         } else {
           // the "language" of this code cell is something we don't yet support
@@ -70,14 +82,14 @@ export const processMyst = () => {
           // it to a normal code cell with no language, at least that way we won't
           // confuse svelte downstream (since tokens with curly braces have special
           // meaning)
-          node.lang = undefined;
+          (node as CodeNode).lang = undefined;
         }
       }
     });
   };
 };
 
-function createJSTask(id, code, inputs = []) {
+function createJSTask(id: string, code: string, inputs: Array<string> = []) {
   return {
     id,
     type: TASK_TYPE.JS,
@@ -90,9 +102,13 @@ function createJSTask(id, code, inputs = []) {
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
 // the script block that mdsvex generates (or creating one, in the case
 // of a document without one)
-export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
+export const augmentSvx = ({
+  codeCells,
+  scripts,
+  frontMatter,
+}: ParsedDocument) => {
   return () => {
-    return function transformer(tree) {
+    return function transformer(tree: Node): void {
       // we allow a top-level "scripts" to load arbitrary javascript
       let tasks = scripts.length
         ? [
@@ -126,8 +142,8 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
       // (FIXME: duplication with ^^^)
       tasks = tasks.concat(
         (frontMatter.variables || [])
-          .map((datum) => {
-            return Object.entries(datum).map(([id, value]) => {
+          .map((variable) => {
+            return Object.entries(variable).map(([id, value]) => {
               return {
                 id,
                 type: TASK_TYPE.VARIABLE,
@@ -145,16 +161,19 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
         codeCells
           .filter((cn) => cn.lang === "js")
           .map((cn) => {
-            let inputs = cn.attributes.inputs || [];
-            let deps = [];
+            const inputs = cn.attributes.inputs || [];
+            const deps = [];
             // if there are any scripts, we want to load them
             // before running any code cells
             if (scripts.length) {
               inputs.push("scripts");
             }
             // code cells can have scripts dependencies which apply just to that cell
+            // we can assume that we have an id by this point (since they should have
+            // been given that property in the initial parsing stage)
             if (cn.attributes.scripts) {
-              const scriptsId = `${cn.attributes.id}_scripts`;
+              const id = cn.attributes.id as string;
+              const scriptsId = `${id}_scripts`;
               deps.push({
                 id: scriptsId,
                 type: TASK_TYPE.LOAD_SCRIPTS,
@@ -199,12 +218,16 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
             return customLangCells
               .filter((cn) => cn.lang === langPlugin.attributes.id)
               .map((cn) => {
+                // we can assume a code cell has an id property by this point
+                // language plugins should always have an id
+                const id = cn.attributes.id as string;
+                const langPluginId = langPlugin.attributes.id as string;
                 return createJSTask(
-                  cn.attributes.id,
-                  `return ${langPlugin.attributes.id}([${(cn.inputs || []).join(
+                  id,
+                  `return ${langPluginId}([${(cn.attributes.inputs || []).join(
                     ", "
                   )}], \`${cn.body}\`)`,
-                  [...(cn.inputs || []), langPlugin.attributes.id]
+                  [...(cn.attributes.inputs || []), langPluginId]
                 );
               });
           })
@@ -214,10 +237,11 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
       const extraScript =
         codeCells
           .filter((cn) => cn.lang === "svelte")
-          .map(
-            (svelteCell) =>
-              `import ${svelteCell.attributes.id} from "./${svelteCell.attributes.id}.svelte";`
-          )
+          .map((svelteCell): string => {
+            // we *know* this cell has an id (we check for it earlier)
+            const id = svelteCell.attributes.id as string;
+            return `import ${id} from "./${id}.svelte";`;
+          })
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
@@ -230,22 +254,22 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
           tasks,
         });
 
-      visit(tree, "root", (node) => {
+      visit(tree, "root", (node: Parent) => {
         const moduleIndex = node.children
           .filter((n) => n.type === "raw")
-          .findIndex((n) => {
+          .findIndex((n: ScriptNode) => {
             return svelteParse(n.value).module;
           });
-        let scriptIndex = node.children
+        const scriptIndex = node.children
           .filter((n) => n.type === "raw")
-          .findIndex((n) => {
+          .findIndex((n: ScriptNode) => {
             const parsed = svelteParse(n.value);
             return parsed.instance && parsed.instance.type === "Script";
           });
 
         let scriptNodes, remainderNodes;
         if (scriptIndex >= 0) {
-          const script = node.children[scriptIndex];
+          const script = node.children[scriptIndex] as ScriptNode;
           // if we have a script tag already, append our stuff to the end
           script.value = script.value.replace(
             new RegExp("(</script>)$"),
@@ -261,8 +285,8 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
               {
                 type: "raw",
                 value: `<script>\n${extraScript}\n</script>`,
-              },
-            ]);
+              } as ScriptNode,
+            ]) as Array<ScriptNode>;
             remainderNodes = node.children.slice(moduleIndex + 1);
           } else {
             // neither a script nor a module block

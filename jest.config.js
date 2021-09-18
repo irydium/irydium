@@ -1,7 +1,14 @@
+// this is very tedious, basically we need to transpile everything we import
+// and use via jest that uses either ES modules or TypeScript
 ESM_IMPORTS = [
   "bail",
+  "character-entities",
   "is-plain-obj",
+  "micromark",
+  "mdast-util-from-markdown",
+  "mdast-util-to-string",
   "mdsvex",
+  "parse-entities",
   "remark-parse",
   "trough",
   "unified",

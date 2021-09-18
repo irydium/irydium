@@ -32,12 +32,6 @@
   $: $user && $user.id && _getPosts();
 </script>
 
-<style>
-  .body {
-    padding: 6rem;
-  }
-</style>
-
 <svelte:head>
   <title>Posts</title>
 </svelte:head>
@@ -58,3 +52,9 @@
     to see your posts.
   {/if}
 </div>
+
+<style>
+  .body {
+    padding: 6rem;
+  }
+</style>

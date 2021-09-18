@@ -6,8 +6,6 @@ import svelte from "rollup-plugin-svelte";
 import { string } from "rollup-plugin-string";
 import { spawn } from "child_process";
 
-import { getBaseCompilerPlugins } from "../compiler/compiler-plugins";
-
 const production = !process.env.ROLLUP_WATCH;
 
 function serve() {
@@ -67,7 +65,6 @@ export default [
   // the irydium cli
   {
     plugins: [
-      ...getBaseCompilerPlugins("../compiler"),
       string({
         include: ["build/bundle.*", "./src/index.html"],
       }),

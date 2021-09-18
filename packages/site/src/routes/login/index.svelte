@@ -17,10 +17,10 @@
   }
 </script>
 
+<p>Logging in...</p>
+
 <style>
   p {
     padding: 20px;
   }
 </style>
-
-<p>Logging in...</p>

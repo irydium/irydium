@@ -11,6 +11,13 @@
   }
 </script>
 
+<nav>
+  <div class="title"><a href="/">Irydium</a></div>
+  <ul>
+    <slot />
+  </ul>
+</nav>
+
 <style>
   .title {
     font-size: 2.5rem;
@@ -48,10 +55,3 @@
     float: right;
   }
 </style>
-
-<nav>
-  <div class="title"><a href="/">Irydium</a></div>
-  <ul>
-    <slot />
-  </ul>
-</nav>

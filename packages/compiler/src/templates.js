@@ -6,7 +6,7 @@
 let __TEMPLATES = {};
 
 if (!Object.keys(__TEMPLATES).length) {
-  const templatePlugin = require("../compiler-plugins.js");
+  const templatePlugin = require("./create-templates.js");
   __TEMPLATES = templatePlugin.createTemplates();
 }
 

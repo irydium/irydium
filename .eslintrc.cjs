@@ -7,19 +7,31 @@ module.exports = {
     "*.cjs",
     "**/dist/*.js",
     "packages/viewer/build/*.js",
-    // FIXME: move most of the below into a proper module which *can* be linted
+    // mdsvex as an esm module is hard to lint properly
+    // (and we're probably going to move away from using
+    // mdsvex in the client)
+    "packages/compiler/src/mdToSvelte.ts",
+    // rollup is complicated for similar reasons
+    "packages/compiler/src/svelteToHTML.ts",
+    // not a lintable file (it's a mustache template)
     "packages/compiler/src/templates/tasks.js",
-    "packages/site/__sapper__/**/*",
+    // sapper files -- generated, not worth linting
+    "packages/site/src/client.ts",
+    "packages/site/src/server.ts",
     "packages/site/src/service-worker.ts",
+    "packages/site/__sapper__/**/*",
   ],
   overrides: [
     { files: ["*.svelte"], processor: "svelte3/svelte3" },
     {
       files: ["**/*.ts"],
       plugins: ["@typescript-eslint"],
-      extends: ["plugin:@typescript-eslint/recommended"],
+      extends: [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+      ],
       rules: {
-        "@typescript-eslint/...": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
       },
     },
     {
@@ -36,6 +48,7 @@ module.exports = {
   },
   parserOptions: {
     sourceType: "module",
+    project: "./tsconfig.json",
     ecmaVersion: 2019,
   },
   env: {

@@ -7,6 +7,11 @@
   else if (type === "warning") symbol = "⚠️";
 </script>
 
+<div class="admonition {type}">
+  <p class="admonition-title {type}">{symbol ? symbol + " " : ""}{title}</p>
+  <slot />
+</div>
+
 <style>
   .admonition {
     margin: 1.5625em auto;
@@ -50,8 +55,3 @@
     background-color: rgba(255, 145, 0, 0.1);
   }
 </style>
-
-<div class="admonition {type}">
-  <p class="admonition-title {type}">{symbol ? symbol + ' ' : ''}{title}</p>
-  <slot />
-</div>

@@ -1,6 +1,6 @@
 import { compile } from "./compile";
 
-const fs = require("fs");
+import * as fs from "fs";
 
 const args = process.argv.slice(2);
 if (args.length !== 1) {
