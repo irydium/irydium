@@ -2,9 +2,13 @@
   import { onMount } from "svelte";
   const contents = "Test\n---\nTest2";
   export let panelContents;
-  let literalContents;
   let cards = [];
   let reactiveCards = [];
+  let value;
+
+  $: ({ value } = panelContents);
+
+  console.log(value);
 
   onMount(() => {
     if (contents !== "") {
@@ -18,11 +22,6 @@
     return cards;
   }
 
-  $: literalContents = `${panelContents}`;
-
-  /* $: reactiveCards = parsePanels(panelContents); */
-
-  /* $: console.log(reactiveCards); */
 </script>
 
 <style>
