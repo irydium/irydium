@@ -1,18 +1,15 @@
 <script>
   import { onMount } from "svelte";
   const contents = "Test\n---\nTest2";
-  export let panelContents;
+  export let value = "";
   let cards = [];
   let reactiveCards = [];
-  let value;
 
-  $: ({ value } = panelContents);
-
-  console.log(value);
+  $: console.log(value);
 
   onMount(() => {
     if (contents !== "") {
-      cards = parsePanels(contents);
+      cards = parsePanels(value);
     }
   })
 

@@ -12,6 +12,7 @@ This is a warning! It means be careful!
 ```
 
 ```{panels}
+Test\n---\nTest
 ```
 [myst markdown format]: https://myst-parser.readthedocs.io/en/latest/index.html
 [irydium/irydium#123]: https://github.com/irydium/irydium/issues/123
