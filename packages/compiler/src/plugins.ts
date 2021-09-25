@@ -1,5 +1,6 @@
 import fm from "front-matter";
 import mustache from "mustache";
+import { micromark } from "micromark";
 import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { Node, Parent, visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
@@ -70,9 +71,9 @@ export const processMyst = () => {
           // a note! we want to replace the code chunk with a svelte component
           const newNode = {
             type: "html",
-            value: `<Admonition type={"${mystType}"}>${
-              (node as CodeNode).value
-            }</Admonition>`,
+            value: `<Admonition type={"${mystType}"}>${micromark(
+              value
+            )}</Admonition>`,
           };
           (parent as Parent).children[index] = newNode;
           return index;

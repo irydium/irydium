@@ -13,6 +13,14 @@ data:
 
 # {title}
 
+```{note}
+This is a reproduction of an [Iodide notebook](https://alpha.iodide.io/notebooks/3593/)
+which was used to track the progress of an internal effort to migrate Mozilla's data
+platform from AWS to GCP in 2019.
+
+The project has long since been completed.
+```
+
 ## Overall progress
 
 <Plotly data={allBugs} />
