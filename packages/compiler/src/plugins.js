@@ -67,6 +67,15 @@ export const processMyst = () => {
           };
           parent.children[index] = newNode;
           return index;
+        } else if (mystType ==="panels") {
+          let panels = parsePanels(node.value);
+          // parse each card
+          let newNode = {
+            type: "html",
+            value: `Thing`
+          }
+          parent.children[index] = newNode;
+          return index;
         } else {
           // the "language" of this code cell is something we don't yet support
           // (e.g. one of the many things in MyST that we don't handle) -- convert
@@ -79,6 +88,41 @@ export const processMyst = () => {
     });
   };
 };
+
+function parsePanels (contents) {
+  const panelDelimiterRegex = /\n\-{3,}\n/;
+  const headerDelimiterRegex = /\n\^{3,}\n/;
+  const footerDelimiterRegex = /\n\+{3,}\n/;
+
+  // first retrieve cards
+  const cards = contents.split(panelDelimiterRegex);
+
+  // retrieve header and footer if exists
+  for (const card of cards) {
+    // default empty string for now
+    let header = "";
+    let body = card;
+    let footer = "";
+    let contents;
+
+    if (headerDelimiterRegex.test(body)) {
+      contents = body.split(headerDelimiterRegex)
+      if (contents.length == 2) {
+        [header, body]  = contents
+      } else {console.log("Invalid syntax for panel header.")}
+    }
+    if (footerDelimiterRegex.test(body)) {
+      contents = body.split(footerDelimiterRegex)
+      if (contents.length == 2) {
+        [body, footer]  = body.split(footerDelimiterRegex)
+      } else {console.log("Invalid syntax for panel footer.")}
+    }
+    console.log("header: ", header);
+    console.log("body: ", body);
+    console.log("footer: ", footer);
+  }
+  return;
+}
 
 function createJSTask(id, code, inputs = []) {
   return {
@@ -223,6 +267,7 @@ export const augmentSvx = ({ codeCells, scripts, frontMatter }) => {
           )
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
+        'import Panels from "./Panels.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks
