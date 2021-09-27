@@ -5,6 +5,7 @@ import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { Node, Parent, visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
 
+import { parsePanels } from "./myst";
 import { taskScriptSource } from "./templates";
 import type {
   CodeNode,
@@ -74,6 +75,30 @@ export const processMyst = () => {
             value: `<Admonition type={"${mystType}"}>${micromark(
               value
             )}</Admonition>`,
+          };
+          (parent as Parent).children[index] = newNode;
+          return index;
+        } else if (mystType === "panels") {
+          let cards = parsePanels(value);
+          console.log(cards);
+          // parse each card
+          const newNode = {
+            type: "html",
+            value: mustache.render(
+              `<Panels>
+               <ul>
+               {{#cards}}
+               <li>Card </li>
+               <ul>
+               <li>{{header}}</li>
+               <li>{{body}}</li>
+               <li>{{footer}}</li>
+               </ul>
+               {{/cards}}
+               </ul>
+               </Panels>`,
+              cards
+            ),
           };
           (parent as Parent).children[index] = newNode;
           return index;
@@ -245,6 +270,7 @@ export const augmentSvx = ({
           })
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
+        'import Panels from "./Panels.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks
