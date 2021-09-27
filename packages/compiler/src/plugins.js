@@ -69,16 +69,22 @@ export const processMyst = () => {
           return index;
         } else if (mystType ==="panels") {
           let cards = parsePanels(node.value);
+          console.log(cards)
           // parse each card
           let newNode = {
             type: "html",
-            value: `<Panels>
-                    <ul>
-                    {#each ${cards} as card}
-                    <li>card</li>
-                    {/each}
-                    </ul>
-                   </Panels>`
+            value: mustache.render(`<Panels>
+                                    <ul>
+                                    {{#cards}}
+                                    <li>Test Card </li>
+                                    <ul>
+                                    <li>{{header}}</li>
+                                    <li>{{body}}</li>
+                                    <li>{{footer}}</li>
+                                    </ul>
+                                    {{/cards}}
+                                    </ul>
+                                    </Panels>`, cards)
           }
           parent.children[index] = newNode;
           return index;
@@ -102,11 +108,11 @@ function parsePanels (contents) {
 
   // first retrieve cards
   const cards = contents.split(panelDelimiterRegex);
-  let bodies = [];
+  let splitCards = [];
 
   // retrieve header and footer if exists
   for (const card of cards) {
-    // default empty string for now
+    // default empty string
     let header = "";
     let body = card;
     let footer = "";
@@ -130,12 +136,9 @@ function parsePanels (contents) {
         return;
       }
     }
-    // console.log("header: ", header);
-    // console.log("body: ", body);
-    // console.log("footer: ", footer);
-    bodies.push(body);
+    splitCards.push({'header': header, 'body': body, 'footer': footer});
   }
-  return bodies;
+  return {'cards': splitCards};
 }
 
 function createJSTask(id, code, inputs = []) {
