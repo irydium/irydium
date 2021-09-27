@@ -68,11 +68,17 @@ export const processMyst = () => {
           parent.children[index] = newNode;
           return index;
         } else if (mystType ==="panels") {
-          let panels = parsePanels(node.value);
+          let cards = parsePanels(node.value);
           // parse each card
           let newNode = {
             type: "html",
-            value: `Thing`
+            value: `<Panels>
+                    <ul>
+                    {#each ${cards} as card}
+                    <li>card</li>
+                    {/each}
+                    </ul>
+                   </Panels>`
           }
           parent.children[index] = newNode;
           return index;
@@ -96,6 +102,7 @@ function parsePanels (contents) {
 
   // first retrieve cards
   const cards = contents.split(panelDelimiterRegex);
+  let bodies = [];
 
   // retrieve header and footer if exists
   for (const card of cards) {
@@ -109,19 +116,26 @@ function parsePanels (contents) {
       contents = body.split(headerDelimiterRegex)
       if (contents.length == 2) {
         [header, body]  = contents
-      } else {console.log("Invalid syntax for panel header.")}
+      } else {
+        console.log("Invalid syntax for panel header.");
+        return;
+      }
     }
     if (footerDelimiterRegex.test(body)) {
       contents = body.split(footerDelimiterRegex)
       if (contents.length == 2) {
         [body, footer]  = body.split(footerDelimiterRegex)
-      } else {console.log("Invalid syntax for panel footer.")}
+      } else {
+        console.log("Invalid syntax for panel footer.");
+        return;
+      }
     }
-    console.log("header: ", header);
-    console.log("body: ", body);
-    console.log("footer: ", footer);
+    // console.log("header: ", header);
+    // console.log("body: ", body);
+    // console.log("footer: ", footer);
+    bodies.push(body);
   }
-  return;
+  return bodies;
 }
 
 function createJSTask(id, code, inputs = []) {

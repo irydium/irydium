@@ -1,6 +1,16 @@
 <script>
-  const contents = "Test\n---\nTest2";
-  /* export const cards=[]; */
+  import { onMount, afterUpdate } from 'svelte';
+  const contents = ["test", "test2"];
+  export let cards=[];
+
+  onMount(async () => {
+    console.log(cards);
+  });
+
+  afterUpdate(async () => {
+    console.log(cards);
+  });
+
 </script>
 
 <style>
@@ -8,6 +18,6 @@
 
 <div class="container">
   <div class="row">
-    `${contents}`
+    <slot></slot>
   </div>
 </div>
