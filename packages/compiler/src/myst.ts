@@ -1,3 +1,5 @@
+import { micromark } from "micromark";
+
 export function parsePanels (contents) {
    const panelDelimiterRegex = /\n\-{3,}\n/;
   const headerDelimiterRegex = /\n\^{3,}\n/;
@@ -33,7 +35,7 @@ export function parsePanels (contents) {
         return;
       }
     }
-    splitCards.push({'header': header, 'body': body, 'footer': footer});
+    splitCards.push({'header': micromark(header), 'body': micromark(body), 'footer': micromark(footer)});
   }
   return {'cards': splitCards};
 }

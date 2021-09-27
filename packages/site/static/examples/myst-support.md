@@ -12,7 +12,7 @@ This is a warning! It means be careful!
 ```
 
 ```{panels}
-This is a header
+# This is a header
 ^^^
 This is a body
 +++
@@ -20,11 +20,11 @@ This is a footer
 ---
 This is a new panel with no header or footer
 ---
-Header
+# Header
 ^^^
 This is a panel with only a header and body
 ---
-This is a panel with only a body and footer
+This is a panel with only a body and footer.
 +++
 Footer
 ```

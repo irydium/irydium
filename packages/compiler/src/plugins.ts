@@ -86,16 +86,13 @@ export const processMyst = () => {
             type: "html",
             value: mustache.render(
               `<Panels>
-               <ul>
+               <div>
                {{#cards}}
-               <li>Card </li>
-               <ul>
-               <li>{{header}}</li>
-               <li>{{body}}</li>
-               <li>{{footer}}</li>
-               </ul>
+               {{header}}
+               {{body}}
+               {{footer}}
                {{/cards}}
-               </ul>
+               </div>
                </Panels>`,
               cards
             ),
