@@ -89,7 +89,6 @@ export const processMyst = () => {
             return card;
           });
           const cards = {'cards': htmlCards};
-          console.log(cards);
           // parse each card
           const newNode = {
             type: "html",
@@ -97,7 +96,6 @@ export const processMyst = () => {
               `<Panels>
                <div>
                {{#cards}}
-               {{{{header}}}
                {{{header}}}
                {{{body}}}
                {{{footer}}}
