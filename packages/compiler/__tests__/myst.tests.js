@@ -1,7 +1,7 @@
 import { parsePanel } from "../src/myst.ts";
 
 function createPanel() {
-  let panel;
+  let panel = ``;
   const card1 = createCard("body", "header", "footer");
   const card2 = createCard("body");
   const cards = [card1, card2];
