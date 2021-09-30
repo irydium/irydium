@@ -90,12 +90,12 @@ export const processMyst = () => {
           });
           // create dummy object to access array properties with mustache
           const cards = {'cards': htmlCards};
+          console.log(cards);
           // parse each card
           const newNode = {
             type: "html",
             value: mustache.render(
               `<Panels>
-               <div>
                {{#cards}}
                <Card>
                <div slot="header">
@@ -109,7 +109,6 @@ export const processMyst = () => {
                </div>
                </Card>
                {{/cards}}
-               </div>
                </Panels>`,
               cards
             ),
