@@ -1,4 +1,4 @@
-import { parsePanels } from "../src/myst.ts";
+import { parsePanel } from "../src/myst.ts";
 
 function createPanel() {
   let panel = `\`\`\`{panels}\n`;
@@ -27,7 +27,7 @@ function createCard(body, header, footer) {
 
 describe("create basic panel", () => {
   it("should create a panel with two cards", async () => {
-    expect(await parsePanels(createPanel())).toEqual([
+    expect(await parsePanel(createPanel())).toEqual([
       { header: "header", body: "body", footer: "footer" },
       { body: "body" },
     ]);
