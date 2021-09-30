@@ -79,7 +79,7 @@ export const processMyst = () => {
           (parent as Parent).children[index] = newNode;
           return index;
         } else if (mystType === "panels") {
-          let cards = {'cards': parsePanels(value)};
+          const cards = {'cards': parsePanels(value)};
           console.log(cards);
           // parse each card
           const newNode = {

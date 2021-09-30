@@ -1,14 +1,13 @@
-import { micromark } from "micromark";
 import type { MystPanel } from "./types";
 
 export function parsePanels(contents: string): Array<MystPanel> {
-  const panelDelimiterRegex = /\n\-{3,}\n/;
+  const panelDelimiterRegex = /\n-{3,}\n/;
   const headerDelimiterRegex = /\n\^{3,}\n/;
   const footerDelimiterRegex = /\n\+{3,}\n/;
 
   // first retrieve cards
   const cards = contents.split(panelDelimiterRegex);
-  let splitCards = [];
+  const splitCards = [];
 
   // retrieve header and footer if exists
   for (const card of cards) {
