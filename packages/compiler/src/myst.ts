@@ -17,20 +17,20 @@ export function parsePanel(contents: string): Array<MystCard> {
     let footer = "";
     let contents;
 
-    const parsedCard = {'body': body} as MystCard;
+    const parsedCard = { body: body } as MystCard;
     if (headerDelimiterRegex.test(body)) {
-      contents = body.split(headerDelimiterRegex)
+      contents = body.split(headerDelimiterRegex);
       if (contents.length == 2) {
-        [header, body]  = contents;
+        [header, body] = contents;
         parsedCard.header = header;
       } else {
         throw new Error(`Invalid syntax for MyST panel card header.`);
       }
     }
     if (footerDelimiterRegex.test(body)) {
-      contents = body.split(footerDelimiterRegex)
+      contents = body.split(footerDelimiterRegex);
       if (contents.length == 2) {
-        [body, footer]  = body.split(footerDelimiterRegex)
+        [body, footer] = body.split(footerDelimiterRegex);
         parsedCard.footer = footer;
       } else {
         throw new Error(`Invalid syntax for MyST panel card footer.`);

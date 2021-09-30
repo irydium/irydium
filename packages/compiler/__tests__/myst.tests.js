@@ -13,6 +13,7 @@ function createPanel() {
   }
   return panel;
 }
+
 function createCard(body, header, footer) {
   if (header && footer) {
     return `${header}\n^^^\n${body}\n+++\n${footer}`;

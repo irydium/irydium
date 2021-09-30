@@ -12,7 +12,7 @@ import type {
   CodeNodeAttributes,
   ParsedDocument,
   ScriptNode,
-  MystCard
+  MystCard,
 } from "./types";
 
 // remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
@@ -89,8 +89,7 @@ export const processMyst = () => {
             return card;
           });
           // create dummy object to access array properties with mustache
-          const cards = {'cards': htmlCards};
-          console.log(cards);
+          const cards = { cards: htmlCards };
           // parse each card
           const newNode = {
             type: "html",
