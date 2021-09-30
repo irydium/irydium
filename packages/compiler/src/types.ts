@@ -43,6 +43,12 @@ export interface ParsedDocument {
   codeCells: Array<CodeCell>;
 }
 
+export interface MystPanel {
+  header?: string;
+  body: string;
+  footer?: string;
+}
+
 export interface SvelteComponentDefinition {
   code: string;
   map: string;

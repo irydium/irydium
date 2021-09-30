@@ -1,7 +1,8 @@
 import { micromark } from "micromark";
+import type { MystPanel } from "./types";
 
-export function parsePanels (contents) {
-   const panelDelimiterRegex = /\n\-{3,}\n/;
+export function parsePanels(contents: string): Array<MystPanel> {
+  const panelDelimiterRegex = /\n\-{3,}\n/;
   const headerDelimiterRegex = /\n\^{3,}\n/;
   const footerDelimiterRegex = /\n\+{3,}\n/;
 
@@ -22,8 +23,7 @@ export function parsePanels (contents) {
       if (contents.length == 2) {
         [header, body]  = contents
       } else {
-        console.log("Invalid syntax for panel header.");
-        return;
+        throw new Error(`Invalid syntax for MyST panel header.`);
       }
     }
     if (footerDelimiterRegex.test(body)) {
@@ -31,11 +31,10 @@ export function parsePanels (contents) {
       if (contents.length == 2) {
         [body, footer]  = body.split(footerDelimiterRegex)
       } else {
-        console.log("Invalid syntax for panel footer.");
-        return;
+        throw new Error(`Invalid syntax for MyST panel footer.`);
       }
     }
-    splitCards.push({'header': micromark(header), 'body': micromark(body), 'footer': micromark(footer)});
+    splitCards.push({'header': header, 'body': body, 'footer': footer});
   }
-  return {'cards': splitCards};
+  return splitCards;
 }
