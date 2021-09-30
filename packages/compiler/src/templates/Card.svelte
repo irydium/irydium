@@ -36,21 +36,9 @@
 	  padding: .75rem 1.25rem;
   }
 
-  .col-4 {
-	  flex: 0 0 33.33333%;
-	  max-width: 33.33333%;
-	  position: relative;
-	  width: 100%;
-	  padding-right: 15px;
-	  padding-left: 15px;
-  }
-
-  .d-flex {
-	  display: flex !important;
-  }
-
 </style>
-<div class="d-flex col-4">
+
+<div>
   <div class="card">
     {#if $$slots.header}
     <div class="card-header">

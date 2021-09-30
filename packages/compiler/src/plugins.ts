@@ -98,15 +98,19 @@ export const processMyst = () => {
               `<Panels>
                {{#cards}}
                <Card>
+               {{#header}}
                <div slot="header">
                {{{header}}}
                </div>
+               {{/header}}
                <div slot="body">
                {{{body}}}
                </div>
+               {{#footer}}
                <div slot="footer">
                {{{footer}}}
                </div>
+               {{/footer}}
                </Card>
                {{/cards}}
                </Panels>`,
