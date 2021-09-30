@@ -81,8 +81,8 @@ export const processMyst = () => {
           return index;
         } else if (mystType === "panels") {
           const mdCards = parsePanel(value);
-          let k: keyof typeof MystCard;
-          let htmlCards = mdCards.map((card) => {
+          const htmlCards = mdCards.map((card: MystCard) => {
+            let k: keyof MystCard;
             for (k in card) {
               card[k] = micromark(card[k]);
             }
