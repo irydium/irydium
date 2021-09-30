@@ -5,13 +5,14 @@ import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { Node, Parent, visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
 
-import { parsePanels } from "./myst";
+import { parsePanel } from "./myst";
 import { taskScriptSource } from "./templates";
 import type {
   CodeNode,
   CodeNodeAttributes,
   ParsedDocument,
   ScriptNode,
+  MystCard
 } from "./types";
 
 // remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
@@ -79,7 +80,15 @@ export const processMyst = () => {
           (parent as Parent).children[index] = newNode;
           return index;
         } else if (mystType === "panels") {
-          const cards = {'cards': parsePanels(value)};
+          const mdCards = parsePanel(value);
+          let k: keyof typeof MystCard;
+          let htmlCards = mdCards.map((card) => {
+            for (k in card) {
+              card[k] = micromark(card[k]);
+            }
+            return card;
+          });
+          const cards = {'cards': htmlCards};
           console.log(cards);
           // parse each card
           const newNode = {
@@ -88,9 +97,10 @@ export const processMyst = () => {
               `<Panels>
                <div>
                {{#cards}}
-               {{header}}
-               {{body}}
-               {{footer}}
+               {{{{header}}}
+               {{{header}}}
+               {{{body}}}
+               {{{footer}}}
                {{/cards}}
                </div>
                </Panels>`,

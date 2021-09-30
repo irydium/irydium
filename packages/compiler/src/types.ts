@@ -43,7 +43,7 @@ export interface ParsedDocument {
   codeCells: Array<CodeCell>;
 }
 
-export interface MystPanel {
+export interface MystCard {
   header?: string;
   body: string;
   footer?: string;

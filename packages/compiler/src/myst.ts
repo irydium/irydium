@@ -1,6 +1,6 @@
-import type { MystPanel } from "./types";
+import type { MystCard } from "./types";
 
-export function parsePanels(contents: string): Array<MystPanel> {
+export function parsePanel(contents: string): Array<MystCard> {
   const panelDelimiterRegex = /\n-{3,}\n/;
   const headerDelimiterRegex = /\n\^{3,}\n/;
   const footerDelimiterRegex = /\n\+{3,}\n/;
@@ -22,7 +22,7 @@ export function parsePanels(contents: string): Array<MystPanel> {
       if (contents.length == 2) {
         [header, body]  = contents
       } else {
-        throw new Error(`Invalid syntax for MyST panel header.`);
+        throw new Error(`Invalid syntax for MyST panel card header.`);
       }
     }
     if (footerDelimiterRegex.test(body)) {
@@ -30,7 +30,7 @@ export function parsePanels(contents: string): Array<MystPanel> {
       if (contents.length == 2) {
         [body, footer]  = body.split(footerDelimiterRegex)
       } else {
-        throw new Error(`Invalid syntax for MyST panel footer.`);
+        throw new Error(`Invalid syntax for MyST panel card footer.`);
       }
     }
     splitCards.push({'header': header, 'body': body, 'footer': footer});
