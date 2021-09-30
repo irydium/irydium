@@ -88,6 +88,7 @@ export const processMyst = () => {
             }
             return card;
           });
+          // create dummy object to access array properties with mustache
           const cards = {'cards': htmlCards};
           // parse each card
           const newNode = {
@@ -96,9 +97,17 @@ export const processMyst = () => {
               `<Panels>
                <div>
                {{#cards}}
+               <Card>
+               <div slot="header">
                {{{header}}}
+               </div>
+               <div slot="body">
                {{{body}}}
+               </div>
+               <div slot="footer">
                {{{footer}}}
+               </div>
+               </Card>
                {{/cards}}
                </div>
                </Panels>`,
@@ -276,6 +285,7 @@ export const augmentSvx = ({
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
         'import Panels from "./Panels.svelte";\n' +
+        'import Card from "./Card.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks
