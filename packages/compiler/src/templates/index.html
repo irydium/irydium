@@ -2,10 +2,7 @@
   <head>
     <title>{{ title }}</title>
     <base target="_blank" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/4.0.0/github-markdown.css"
-    />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous"/>
     <style>
       .markdown-body {
         box-sizing: border-box;
@@ -13,6 +10,29 @@
         max-width: 980px;
         margin: 0 auto;
         padding: 20px;
+      }
+
+      /* Augment bootstrap with nicer code styling (taken from: https://github.com/sindresorhus/github-markdown-css) */
+
+      .markdown-body pre {
+        padding: 16px;
+        overflow: auto;
+        font-size: 85%;
+        line-height: 1.45;
+        background-color: #f6f8fa;
+        border-radius: 3px;
+      }
+
+      .markdown-body pre code {
+        display: inline;
+        max-width: auto;
+        padding: 0;
+        margin: 0;
+        overflow: visible;
+        line-height: inherit;
+        word-wrap: normal;
+        background-color: initial;
+        border: 0;
       }
     </style>
     <script id="svelteapp" type="text/plain">
