@@ -2,6 +2,7 @@ import type { Node } from "unist";
 
 export interface CodeCellAttributes {
   id?: string;
+  name?: string;
   inputs: string[];
   scripts: string[];
   type: string;

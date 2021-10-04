@@ -5,7 +5,7 @@ import { visit } from "unist-util-visit";
 import fetch from "cross-fetch";
 
 import defaultLanguagePlugins from "./langPluginRegistry";
-import type { CodeCell, CodeNode, FrontMatter, ParsedDocument } from "./types";
+import type { CodeCell, CodeCellAttributes, CodeNode, FrontMatter, ParsedDocument } from "./types";
 
 function getCodeCells(
   cells: Array<CodeCell>,
@@ -79,21 +79,17 @@ export async function extractCode(
         const lang = node.meta;
 
         const nodeContent = fm(node.value);
-
-        if (!nodeContent.attributes.id) {
-          // cells without an identifier get rendered directly in the document
-          nodeContent.attributes.id = `__cell${unlabeledIdCounter++}`;
-        }
+        const attributes = nodeContent.attributes as CodeCellAttributes;
 
         // svelte cells are parsed kind of specially
-        if (lang === "svelte") {
-          if (nodeContent.attributes.name === "mdsvelte") {
+        if (lang === "svelte" && attributes.name === "mdsvelte") {
             throw new Error(
               `The mdsvelte name is reserved (line: ${node.position.start.line})`
             );
-          }
         }
-        codeCells.push({ lang, ...nodeContent });
+
+        // cells without an identifier get rendered directly in the document
+        codeCells.push({ lang, ...nodeContent, attributes: { ...attributes, id: attributes.id || `__cell${unlabeledIdCounter++}` } });
       }
     }
   });
@@ -122,7 +118,7 @@ export async function extractCode(
         .map(({ lang }) => lang)
     );
     for (const requiredLanguage of Array.from(requiredLanguages)) {
-      if (defaultLanguagePlugins[requiredLanguage]) {
+      if (requiredLanguage in defaultLanguagePlugins) {
         const { codeCells: extractedCells, scripts: extractedScripts } =
           await importCode(
             defaultLanguagePlugins[requiredLanguage],
