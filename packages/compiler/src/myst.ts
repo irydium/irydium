@@ -11,15 +11,12 @@ export function parsePanel(contents: string): Array<MystCard> {
 
   // retrieve header and footer if exists
   for (const card of cards) {
-    // default empty string
-    let header = "";
+    let header, footer;
     let body = card;
-    let footer = "";
-    let contents;
 
     const parsedCard = { body: body } as MystCard;
     if (headerDelimiterRegex.test(body)) {
-      contents = body.split(headerDelimiterRegex);
+      const contents = body.split(headerDelimiterRegex);
       if (contents.length == 2) {
         [header, body] = contents;
         parsedCard.header = header;
@@ -28,7 +25,7 @@ export function parsePanel(contents: string): Array<MystCard> {
       }
     }
     if (footerDelimiterRegex.test(body)) {
-      contents = body.split(footerDelimiterRegex);
+      const contents = body.split(footerDelimiterRegex);
       if (contents.length == 2) {
         [body, footer] = body.split(footerDelimiterRegex);
         parsedCard.footer = footer;
