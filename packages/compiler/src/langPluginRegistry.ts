@@ -1,3 +1,7 @@
 import { pythonPluginSource } from "./templates";
 
-export default { python: pythonPluginSource as string };
+const defaultPlugins: { [unit: string]: string } = {
+  python: pythonPluginSource as string
+}
+
+export default defaultPlugins;
