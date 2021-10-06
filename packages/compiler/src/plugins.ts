@@ -5,12 +5,14 @@ import { TASK_TYPE, TASK_STATE } from "./taskrunner";
 import { Node, Parent, visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
 
+import { parsePanel } from "./myst";
 import { taskScriptSource } from "./templates";
 import type {
   CodeNode,
   CodeNodeAttributes,
   ParsedDocument,
   ScriptNode,
+  MystCard,
 } from "./types";
 
 // remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
@@ -74,6 +76,45 @@ export const processMyst = () => {
             value: `<Admonition type={"${mystType}"}>${micromark(
               value
             )}</Admonition>`,
+          };
+          (parent as Parent).children[index] = newNode;
+          return index;
+        } else if (mystType === "panels") {
+          const mdCards = parsePanel(value);
+          const htmlCards = mdCards.map((card: MystCard) => {
+            let k: keyof MystCard;
+            for (k in card) {
+              card[k] = micromark(card[k]);
+            }
+            return card;
+          });
+          // create dummy object to access array properties with mustache
+          const cards = { cards: htmlCards };
+          // parse each card
+          const newNode = {
+            type: "html",
+            value: mustache.render(
+              `<Panels>
+               {{#cards}}
+               <Card>
+               {{#header}}
+               <div slot="header">
+               {{{header}}}
+               </div>
+               {{/header}}
+               <div slot="body">
+               {{{body}}}
+               </div>
+               {{#footer}}
+               <div slot="footer">
+               {{{footer}}}
+               </div>
+               {{/footer}}
+               </Card>
+               {{/cards}}
+               </Panels>`,
+              cards
+            ),
           };
           (parent as Parent).children[index] = newNode;
           return index;
@@ -245,6 +286,8 @@ export const augmentSvx = ({
           })
           .join("\n") +
         'import Admonition from "./Admonition.svelte";\n' +
+        'import Panels from "./Panels.svelte";\n' +
+        'import Card from "./Card.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
         mustache.render(taskScriptSource, {
           taskVariables: tasks

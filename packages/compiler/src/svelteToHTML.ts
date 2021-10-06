@@ -6,6 +6,8 @@ import fetch from "cross-fetch";
 
 import {
   admonitionSource,
+  panelsSource,
+  cardSource,
   cellResultsSource,
   bundleIndexSource,
   taskRunnerSource,
@@ -119,6 +121,8 @@ export async function svelteToHTML(
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     ["./Admonition.svelte", { code: admonitionSource, map: "" }],
+    ["./Panels.svelte", {code: panelsSource, map: ""}],
+    ["./Card.svelte", {code: cardSource, map: ""}],
     ["./CellResults.svelte", { code: cellResultsSource, map: "" }],
     [
       "./taskrunner",
