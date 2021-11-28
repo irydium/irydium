@@ -42,6 +42,7 @@ Here's an example of using the above-defined plugin to return the value of "pi":
 ```{code-cell} python
 ---
 id: pi
+inline: true
 ---
 import math
 
@@ -55,6 +56,7 @@ And here's a somewhat more involved example which creates a sine wave and render
 ```{code-cell} python
 ---
 id: sinwave
+inline: true
 ---
 import numpy as np
 x = np.linspace(0, 2.0 * np.pi, 100)
