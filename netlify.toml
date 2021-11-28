@@ -3,14 +3,15 @@ ignore = "git log -1 --pretty=%B | grep dependabot" # skip dependabot PRs
 command = """
     set -e
     npm install -g pnpm@6.13.0
-    pnpm i
+    pnpm i -r --shamefully-hoist --store=node_modules/.pnpm-store
     pnpm build-site
     cd packages/site && pnpm run export
 """
 publish = "packages/site/__sapper__/export"
 
 [build.environment]
-    NPM_FLAGS="--prefix=./netlify-placeholder/"
+    NPM_FLAGS="--version"
+    NODE_VERSION="16"
 
 [functions]
 directory = "packages/site/netlify_functions"
