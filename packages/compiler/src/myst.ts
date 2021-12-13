@@ -8,9 +8,9 @@ export function parsePanel(contents: string): Array<MystCard> {
   const footerDelimiterRegex = /\n\+{3,}\n/;
 
   // get panel styling from beginning of panel if it exists
-  const panelStyles = parsePanelStyling(contents);
+  const [panelStyling, panelContents] = parsePanelStyling(contents);
   // first retrieve cards
-  const cards = contents.split(panelDelimiterRegex);
+  const cards = panelContents.split(panelDelimiterRegex);
   const splitCards = [];
 
   // retrieve header and footer for each card if exists
@@ -47,11 +47,13 @@ export function parsePanelStyling(contents: string) {
   // TO ASK: This regex was a PITA. 
   // Is there a way to get it to do this without having to split contents by newline?
   const panelStylingRegex = /:[a-z]+:\s[a-z\s\-0-9]+/i;
+  let panelContentLine;
   let matchingLines: MystPanelStyling = ({} as any) as MystPanelStyling;
   // panel styling is only at the beginning of the panels
   for (let i = 0; i < contentLines.length; i++) {
     // stop processing lines once individual cards declared
     if (!contentLines[i].startsWith(":")) {
+      panelContentLine = i
       break
     } else {
       const valueMatch = contentLines[i].match(panelStylingRegex)
@@ -69,7 +71,12 @@ export function parsePanelStyling(contents: string) {
       }
     }
   }
-  return matchingLines
+
+  // reconstitute panelContent
+  const panelContents = contentLines.slice(panelContentLine).join("\n")  
+  console.log(typeof (panelContents))
+  const returnPanel: [MystPanelStyling, string] = [matchingLines, panelContents]
+  return returnPanel
 }
 
 export function parseCardStyling() {
