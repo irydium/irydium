@@ -50,6 +50,22 @@ export interface MystCard {
   footer?: string;
 }
 
+export interface MystPanelStyling {
+  container?: string,
+  column?: string,
+  card?: string,
+  body?: string,
+  header?: string,
+  footer?: string
+}
+
+export interface MystCardStyling {
+  column?: string,
+  body?: string,
+  header?: string,
+  footer?: string
+}
+
 export interface SvelteComponentDefinition {
   code: string;
   map: string;
