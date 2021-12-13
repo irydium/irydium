@@ -1,8 +1,8 @@
 import type { YieldExpression } from "@babel/types";
 import e from "express";
-import type { MystCard, MystPanelStyling, MystCardStyling } from "./types";
+import type { MystCard, MystPanelStyling, MystCardStyling, MystPanel } from "./types";
 
-export function parsePanel(contents: string): Array<MystCard> {
+export function parsePanel(contents: string): MystPanel {
   const panelDelimiterRegex = /\n-{3,}\n/;
   const headerDelimiterRegex = /\n\^{3,}\n/;
   const footerDelimiterRegex = /\n\+{3,}\n/;
@@ -11,7 +11,7 @@ export function parsePanel(contents: string): Array<MystCard> {
   const [panelStyling, panelContents] = parsePanelStyling(contents);
   // first retrieve cards
   const cards = panelContents.split(panelDelimiterRegex);
-  const splitCards = [];
+  const splitCards: Array<MystCard> = [];
 
   // retrieve header and footer for each card if exists
   for (const card of cards) {
@@ -39,7 +39,12 @@ export function parsePanel(contents: string): Array<MystCard> {
     parsedCard.body = body;
     splitCards.push(parsedCard);
   }
-  return splitCards;
+
+  let myPanel: MystPanel = {cards: splitCards}
+  if (Object.keys(panelStyling).length !== 0) {
+    myPanel = {...myPanel, style: panelStyling}
+  }
+  return myPanel
 }
 
 export function parsePanelStyling(contents: string) {
@@ -48,7 +53,7 @@ export function parsePanelStyling(contents: string) {
   // Is there a way to get it to do this without having to split contents by newline?
   const panelStylingRegex = /:[a-z]+:\s[a-z\s\-0-9]+/i;
   let panelContentLine;
-  let matchingLines: MystPanelStyling = ({} as any) as MystPanelStyling;
+  let styles: MystPanelStyling = {} as MystPanelStyling;
   // panel styling is only at the beginning of the panels
   for (let i = 0; i < contentLines.length; i++) {
     // stop processing lines once individual cards declared
@@ -63,7 +68,9 @@ export function parsePanelStyling(contents: string) {
           const elementType: string = splitValues[0].substring(1) // remove first :
           const addtClasses: string = splitValues[1]
           // NOTE: This prop assignment does *not* enforce typing...
-          matchingLines = {...matchingLines, [elementType]: addtClasses}
+          // How can you dynamically set a prop only if it's a valid prop according to type?
+          styles = {...styles, [elementType]: addtClasses}
+          //styles[elementType] = addtClasses; // This will not compile and does not enforce valid props either
         // NOTE: not able to reach this else statement currently?
         } else {
           throw new Error(`Invalid syntax for MyST panel styling`)
@@ -74,8 +81,7 @@ export function parsePanelStyling(contents: string) {
 
   // reconstitute panelContent
   const panelContents = contentLines.slice(panelContentLine).join("\n")  
-  console.log(typeof (panelContents))
-  const returnPanel: [MystPanelStyling, string] = [matchingLines, panelContents]
+  const returnPanel: [MystPanelStyling, string] = [styles, panelContents]
   return returnPanel
 }
 

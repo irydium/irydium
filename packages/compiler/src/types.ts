@@ -50,6 +50,11 @@ export interface MystCard {
   footer?: string;
 }
 
+export interface MystPanel {
+  style?: MystPanelStyling;
+  cards: Array<MystCard>;
+}
+
 export interface MystPanelStyling {
   container?: string,
   column?: string,

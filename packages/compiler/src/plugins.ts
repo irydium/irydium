@@ -80,8 +80,8 @@ export const processMyst = () => {
           (parent as Parent).children[index] = newNode;
           return index;
         } else if (mystType === "panels") {
-          const mdCards = parsePanel(value);
-          const htmlCards = mdCards.map((card: MystCard) => {
+          const panel = parsePanel(value);
+          const htmlCards = panel.cards.map((card: MystCard) => {
             let k: keyof MystCard;
             for (k in card) {
               card[k] = micromark(card[k]);
@@ -89,14 +89,14 @@ export const processMyst = () => {
             return card;
           });
           // create dummy object to access array properties with mustache
-          const cards = { cards: htmlCards };
+          const cards = { cards: htmlCards, styles: panel.style };
           // parse each card
           const newNode = {
             type: "html",
             value: mustache.render(
               `<Panels>
                {{#cards}}
-               <Card>
+               <Card class="{{#class}}{{styles.card}}{{/class}}">
                {{#header}}
                <div slot="header">
                {{{header}}}
