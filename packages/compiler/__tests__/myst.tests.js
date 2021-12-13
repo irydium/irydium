@@ -27,13 +27,13 @@ function createCard(cardObj) {
 describe("create different panel types successfully", () => {
   it("should create a panel with a single header card", async () => {
     expect(
-      await parsePanel(createPanel([{ body: "body", header: "header" }]))
+      await parsePanel(createPanel([{ body: "body", header: "header" }])).cards
     ).toEqual([{ header: "header", body: "body" }]);
   });
 
   it("should create a panel with a header card", async () => {
     expect(
-      await parsePanel(createPanel([{ body: "body", footer: "footer" }]))
+      await parsePanel(createPanel([{ body: "body", footer: "footer" }])).cards
     ).toEqual([{ footer: "footer", body: "body" }]);
   });
 
@@ -41,12 +41,12 @@ describe("create different panel types successfully", () => {
     expect(
       await parsePanel(
         createPanel([{ body: "body", header: "header", footer: "footer" }])
-      )
+      ).cards
     ).toEqual([{ header: "header", body: "body", footer: "footer" }]);
   });
 
   it("should create a panel with a body card", async () => {
-    expect(await parsePanel(createPanel([{ body: "body" }]))).toEqual([
+    expect(await parsePanel(createPanel([{ body: "body" }])).cards).toEqual([
       { body: "body" },
     ]);
   });
@@ -58,7 +58,7 @@ describe("create different panel types successfully", () => {
           { body: "body", header: "header", footer: "footer" },
           { body: "body" },
         ])
-      )
+      ).cards
     ).toEqual([
       { header: "header", body: "body", footer: "footer" },
       { body: "body" },
