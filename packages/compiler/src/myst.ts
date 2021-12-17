@@ -84,7 +84,3 @@ export function parsePanelStyling(contents: string) {
   const returnPanel: [MystPanelStyling, string] = [styles, panelContents]
   return returnPanel
 }
-
-export function parseCardStyling() {
-
-}
