@@ -1,6 +1,6 @@
 import type { YieldExpression } from "@babel/types";
 import e from "express";
-import type { MystCard, MystPanelStyling, MystCardStyling, MystPanel } from "./types";
+import type { MystCard, MystPanel } from "./types";
 
 export function parsePanel(contents: string): MystPanel {
   const panelDelimiterRegex = /\n-{3,}\n/;
@@ -8,7 +8,7 @@ export function parsePanel(contents: string): MystPanel {
   const footerDelimiterRegex = /\n\+{3,}\n/;
 
   // get panel styling from beginning of panel if it exists
-  const [panelStyling, panelContents] = parsePanelStyling(contents);
+  const [yamlBlock, panelContents] = parseStyling(contents);
   // first retrieve cards
   const cards = panelContents.split(panelDelimiterRegex);
   const splitCards: Array<MystCard> = [];
@@ -16,8 +16,11 @@ export function parsePanel(contents: string): MystPanel {
   // retrieve header and footer for each card if exists
   for (const card of cards) {
     let header, footer;
-    let body = card;
+    let [bodyYaml, body] = parseStyling(card);
     const parsedCard = { body: body } as MystCard;
+    if (bodyYaml.length !== 0) {
+      parsedCard.style = bodyYaml;
+    }
     if (headerDelimiterRegex.test(body)) {
       const contents = body.split(headerDelimiterRegex);
       if (contents.length == 2) {
@@ -41,46 +44,33 @@ export function parsePanel(contents: string): MystPanel {
   }
 
   let myPanel: MystPanel = {cards: splitCards}
-  if (Object.keys(panelStyling).length !== 0) {
-    myPanel = {...myPanel, style: panelStyling}
+  if (yamlBlock.length !== 0) {
+    myPanel = {...myPanel, style: yamlBlock}
   }
   return myPanel
 }
 
-export function parsePanelStyling(contents: string) {
-  const contentLines = contents.split("\n")
-  // TO ASK: This regex was a PITA. 
-  // Is there a way to get it to do this without having to split contents by newline?
-  const panelStylingRegex = /:[a-z]+:\s[a-z\s\-0-9]+/i;
-  let panelContentLine;
-  let styles: MystPanelStyling = {} as MystPanelStyling;
-  // panel styling is only at the beginning of the panels
-  for (let i = 0; i < contentLines.length; i++) {
-    // stop processing lines once individual cards declared
-    if (!contentLines[i].startsWith(":")) {
-      panelContentLine = i
-      break
-    } else {
-      const valueMatch = contentLines[i].match(panelStylingRegex)
-      if (valueMatch !== null && valueMatch.length === 1) {
-        const splitValues: Array<string> = valueMatch[0].split(": ")
-        if (splitValues.length === 2) {
-          const elementType: string = splitValues[0].substring(1) // remove first :
-          const addtClasses: string = splitValues[1]
-          // NOTE: This prop assignment does *not* enforce typing...
-          // How can you dynamically set a prop only if it's a valid prop according to type?
-          styles = {...styles, [elementType]: addtClasses}
-          //styles[elementType] = addtClasses; // This will not compile and does not enforce valid props either
-        // NOTE: not able to reach this else statement currently?
-        } else {
-          throw new Error(`Invalid syntax for MyST panel styling`)
-        }
+export function parseStyling(contents: string) {
+  let yamlBlock = '';
+  let returnContents = '';
+  let contentLines = contents.split("\n") 
+  if (contents.startsWith(":")) {
+    let yamlLines: Array<string> = []
+    while (contentLines) {
+      if (!ltrim(contentLines[0]).startsWith(":")) {
+        break
+      } else {
+        yamlLines.push(ltrim(contentLines.shift()!).substring(1))
       }
     }
+    yamlBlock = yamlLines.join("\n")
   }
 
-  // reconstitute panelContent
-  const panelContents = contentLines.slice(panelContentLine).join("\n")  
-  const returnPanel: [MystPanelStyling, string] = [styles, panelContents]
+  returnContents = contentLines.join("\n")  
+  const returnPanel: [string, string] = [yamlBlock, returnContents]
   return returnPanel
+}
+
+function ltrim(rawString: string) {
+  return rawString.replace(/^\s+/gm,'');
 }

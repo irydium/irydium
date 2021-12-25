@@ -45,30 +45,15 @@ export interface ParsedDocument {
 }
 
 export interface MystCard {
+  style?: string;
   header?: string;
   body: string;
   footer?: string;
 }
 
 export interface MystPanel {
-  style?: MystPanelStyling;
+  style?: string;
   cards: Array<MystCard>;
-}
-
-export interface MystPanelStyling {
-  container?: string,
-  column?: string,
-  card?: string,
-  body?: string,
-  header?: string,
-  footer?: string
-}
-
-export interface MystCardStyling {
-  column?: string,
-  body?: string,
-  header?: string,
-  footer?: string
 }
 
 export interface SvelteComponentDefinition {
