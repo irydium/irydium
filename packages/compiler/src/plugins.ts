@@ -88,15 +88,17 @@ export const processMyst = () => {
             }
             return card;
           });
-          // create dummy object to access array properties with mustache
-          const cards = { cards: htmlCards, styles: panel.style };
           // parse each card
           const newNode = {
             type: "html",
             value: mustache.render(
-              `<Panels>
+              `<Panels panelStyle=\"{{{styles.container}}}\">
                {{#cards}}
-               <Card class="{{#class}}{{styles.card}}{{/class}}">
+               <Card cardStyle=\"{{{styles.column}}}\"
+                     headerStyle=\"{{{styles.header}}}\"
+                     bodyStyle=\"{{{styles.body}}}\"
+                     footerStyle=\"{{{styles.footer}}}\"
+                     >
                {{#header}}
                <div slot="header">
                {{{header}}}
@@ -113,7 +115,7 @@ export const processMyst = () => {
                </Card>
                {{/cards}}
                </Panels>`,
-              cards
+              {cards: htmlCards, styles: panel.style}
             ),
           };
           (parent as Parent).children[index] = newNode;

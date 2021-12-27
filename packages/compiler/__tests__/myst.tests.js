@@ -1,6 +1,6 @@
 import { parsePanel } from "../src/myst.ts";
 
-function createPanel(cardArray) {
+function createPanel(cardArray, style) {
   let panel = ``;
   for (const card of cardArray) {
     const createdCard = createCard(card);
@@ -8,6 +8,9 @@ function createPanel(cardArray) {
     if (cardArray.indexOf(card) !== cardArray.length - 1) {
       panel = panel.concat("\n---\n");
     }
+  }
+  if (style) {
+    panel = {...panel, style: style}
   }
   return panel;
 }
@@ -65,6 +68,14 @@ describe("create different panel types successfully", () => {
     ]);
   });
 });
+
+describe("style panels with Bootstrap default styling", () => {
+  it("should create a panel with classes for bootstrap styling", async () => {
+    expect(await parsePanel(":container: text-center bg-success\n:body: bg-info\n---\nbody").style).toEqual(
+      {container: "text-center bg-success", body: "bg-info"}
+    )
+  })
+})
 
 describe("create panel with malformed duplicate panel properties", () => {
   it("should raise an error for a panel with a malformed double header", () => {
