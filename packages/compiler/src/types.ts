@@ -45,6 +45,7 @@ export interface ParsedDocument {
 }
 
 export interface MystCard {
+  style?: MystStyling;
   header?: string;
   body: string;
   footer?: string;

@@ -19,8 +19,13 @@ export function parsePanel(contents: string): MystPanel {
     const bodyYaml = cardComponents[0];
     let body = cardComponents[1]
     const parsedCard = { body: body } as MystCard;
+    if (panelStyle) {
+      parsedCard.style = panelStyle
+    }
+    // card style will override panel style currently for same prop
     if (bodyYaml.length !== 0) {
-      //parsedCard.style = parseYamlBlock(bodyYaml)
+      const cardStyle = parseYamlBlock(bodyYaml)
+      parsedCard.style = {...parsedCard.style, ...cardStyle}
     }
     if (headerDelimiterRegex.test(body)) {
       const contents = body.split(headerDelimiterRegex);

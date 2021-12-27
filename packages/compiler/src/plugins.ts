@@ -82,11 +82,18 @@ export const processMyst = () => {
         } else if (mystType === "panels") {
           const panel = parsePanel(value);
           const htmlCards = panel.cards.map((card: MystCard) => {
+            //console.log(card.style)
             let k: keyof MystCard;
+            let micromarkCard = {} as MystCard;
             for (k in card) {
-              card[k] = micromark(card[k]);
+              if (k !== "style") {
+                micromarkCard[k] = micromark(card[k]);
+              }
             }
-            return card;
+            if (card.style) {
+              micromarkCard = {...micromarkCard, style: card.style}
+            }
+            return micromarkCard;
           });
           // parse each card
           const newNode = {
@@ -94,11 +101,11 @@ export const processMyst = () => {
             value: mustache.render(
               `<Panels panelStyle="{{{styles.container}}}">
                {{#cards}}
-               <Card columnStyle="{{{styles.column}}}"
-                     cardStyle="{{{styles.card}}}"
-                     headerStyle="{{{styles.header}}}"
-                     bodyStyle="{{{styles.body}}}"
-                     footerStyle="{{{styles.footer}}}"
+               <Card columnStyle="{{{style.column}}}"
+                     cardStyle="{{{style.card}}}"
+                     headerStyle="{{{style.header}}}}"
+                     bodyStyle="{{{style.body}}}"
+                     footerStyle="{{{style.footer}}}"
                      >
                {{#header}}
                <div slot="header">
