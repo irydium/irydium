@@ -36,7 +36,7 @@ export function parsePanel(contents: string): MystPanel {
     // card style merges with panel style
     if (bodyYaml.length !== 0) {
       const cardStyle = parseYamlBlock(bodyYaml);
-      parsedCard.style = mergeStyles(parsedCard.style!, cardStyle);
+      parsedCard.style = mergeStyles(parsedCard.style, cardStyle);
     }
     if (headerDelimiterRegex.test(body)) {
       const contents = body.split(headerDelimiterRegex);
