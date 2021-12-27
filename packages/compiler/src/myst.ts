@@ -7,7 +7,10 @@ export function parsePanel(contents: string): MystPanel {
 
   // get panel styling from beginning of panel if it exists
   const [yamlBlock, panelContents] = parseStyling(contents);
-  const panelStyle = parseYamlBlock(yamlBlock);
+  let panelStyle;
+  if (yamlBlock.length !== 0) {
+    panelStyle = parseYamlBlock(yamlBlock);
+  }
   // first retrieve cards
   const cards = panelContents.split(panelDelimiterRegex);
   const splitCards: Array<MystCard> = [];
@@ -50,7 +53,7 @@ export function parsePanel(contents: string): MystPanel {
   }
 
   let myPanel: MystPanel = {cards: splitCards}
-  if (yamlBlock.length !== 0) {
+  if (panelStyle) {
     myPanel = {...myPanel, style: panelStyle}
   }
   return myPanel
