@@ -92,12 +92,13 @@ export const processMyst = () => {
           const newNode = {
             type: "html",
             value: mustache.render(
-              `<Panels panelStyle=\"{{{styles.container}}}\">
+              `<Panels panelStyle="{{{styles.container}}}">
                {{#cards}}
-               <Card cardStyle=\"{{{styles.column}}}\"
-                     headerStyle=\"{{{styles.header}}}\"
-                     bodyStyle=\"{{{styles.body}}}\"
-                     footerStyle=\"{{{styles.footer}}}\"
+               <Card columnStyle="{{{styles.column}}}"
+                     cardStyle="{{{styles.card}}}"
+                     headerStyle="{{{styles.header}}}"
+                     bodyStyle="{{{styles.body}}}"
+                     footerStyle="{{{styles.footer}}}"
                      >
                {{#header}}
                <div slot="header">

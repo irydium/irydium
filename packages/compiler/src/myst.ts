@@ -1,5 +1,3 @@
-import type { YieldExpression } from "@babel/types";
-import e from "express";
 import type { MystCard, MystPanel } from "./types";
 
 export function parsePanel(contents: string): MystPanel {
@@ -17,7 +15,9 @@ export function parsePanel(contents: string): MystPanel {
   // retrieve header and footer for each card if exists
   for (const card of cards) {
     let header, footer;
-    let [bodyYaml, body] = parseStyling(card);
+    const cardComponents = parseStyling(card);
+    const bodyYaml = cardComponents[0];
+    let body = cardComponents[1]
     const parsedCard = { body: body } as MystCard;
     if (bodyYaml.length !== 0) {
       //parsedCard.style = parseYamlBlock(bodyYaml)
@@ -51,17 +51,17 @@ export function parsePanel(contents: string): MystPanel {
   return myPanel
 }
 
-export function parseStyling(contents: string) {
+export function parseStyling(contents: string): [string, string] {
   let yamlBlock = '';
   let returnContents = '';
-  let contentLines = contents.split("\n") 
+  const contentLines = contents.split("\n") 
   if (contents.startsWith(":")) {
-    let yamlLines: Array<string> = []
+    const yamlLines: Array<string> = []
     while (contentLines) {
       if (!ltrim(contentLines[0]).startsWith(":")) {
         break
       } else {
-        yamlLines.push(ltrim(contentLines.shift()!))
+        yamlLines.push(ltrim(contentLines.shift()!)) // TODO: Find way to fix non-null assertion warning
       }
     }
     yamlBlock = yamlLines.join("\n")
@@ -72,8 +72,8 @@ export function parseStyling(contents: string) {
   return returnPanel
 }
 
-export function parseYamlBlock(yamlBlock: string) {
-  let styleContents = yamlBlock.split("\n")
+export function parseYamlBlock(yamlBlock: string) : Record<string, unknown> {
+  const styleContents = yamlBlock.split("\n")
   const stylingRegex = /^:([a-z0-9]+):\s*([a-z\s\-0-9]+)/i;
   // return object with key value pairs
   let styles = {}

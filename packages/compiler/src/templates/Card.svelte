@@ -1,13 +1,13 @@
 <script>
-  export let cardStyle = ''; // blank string as default
+  export let columnStyle = ''; // blank string as default
   export let headerStyle = ''
   export let bodyStyle = ''
   export let footerStyle = ''
-  let fullStyle = "d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2 " + cardStyle
+  export let cardStyle = ''
 </script>
 
-<div class={fullStyle}>
-  <div class="card w-100">
+<div class={"d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2 " + columnStyle}>
+  <div class={"card w-100 " + cardStyle}>
     {#if $$slots.header}
       <div class={"card-header " + headerStyle}>
         <slot name="header" />
