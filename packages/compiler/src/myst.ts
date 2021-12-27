@@ -1,4 +1,4 @@
-import type { MystCard, MystPanel } from "./types";
+import type { MystCard, MystPanel, MystStyling } from "./types";
 
 export function parsePanel(contents: string): MystPanel {
   const panelDelimiterRegex = /\n-{3,}\n/;
@@ -15,6 +15,13 @@ export function parsePanel(contents: string): MystPanel {
   const cards = panelContents.split(panelDelimiterRegex);
   const splitCards: Array<MystCard> = [];
 
+  const defaultCardStyle = {column: "d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2",
+                            card: "card w-100",
+                            header: "card-header",
+                            body: "card-body",
+                            footer: "card-footer"
+                            } as MystStyling
+
   // retrieve header and footer for each card if exists
   for (const card of cards) {
     let header, footer;
@@ -22,13 +29,14 @@ export function parsePanel(contents: string): MystPanel {
     const bodyYaml = cardComponents[0];
     let body = cardComponents[1]
     const parsedCard = { body: body } as MystCard;
+    parsedCard.style = defaultCardStyle;
     if (panelStyle) {
-      parsedCard.style = panelStyle
+      parsedCard.style = mergeStyles(panelStyle, defaultCardStyle)
     }
-    // card style will override panel style currently for same prop
+    // card style merges with panel style
     if (bodyYaml.length !== 0) {
       const cardStyle = parseYamlBlock(bodyYaml)
-      parsedCard.style = {...parsedCard.style, ...cardStyle}
+      parsedCard.style = mergeStyles(parsedCard.style!, cardStyle)
     }
     if (headerDelimiterRegex.test(body)) {
       const contents = body.split(headerDelimiterRegex);
@@ -56,6 +64,7 @@ export function parsePanel(contents: string): MystPanel {
   if (panelStyle) {
     myPanel = {...myPanel, style: panelStyle}
   }
+  console.log(panelStyle)
   return myPanel
 }
 
@@ -69,7 +78,8 @@ export function parseStyling(contents: string): [string, string] {
       if (!ltrim(contentLines[0]).startsWith(":")) {
         break
       } else {
-        yamlLines.push(ltrim(contentLines.shift()!)) // TODO: Find way to fix non-null assertion warning
+        // TODO: Find way to fix non-null assertion warning
+        yamlLines.push(ltrim(contentLines.shift()!)) 
       }
     }
     yamlBlock = yamlLines.join("\n")
@@ -98,4 +108,38 @@ export function parseYamlBlock(yamlBlock: string) : Record<string, unknown> {
 
 function ltrim(rawString: string) {
   return rawString.replace(/^\s+/gm,'');
+}
+
+export function mergeStyles(panelStyle: MystStyling, cardStyle: MystStyling) : MystStyling {
+  let k: keyof MystStyling;
+  for (k in cardStyle) {
+    if (k in panelStyle) {
+      const panelPropDict = classesStringToKeyValues(panelStyle[k]!)
+      const cardPropDict = classesStringToKeyValues(cardStyle[k]!)
+      // merge Dicts
+      const mergedProps = {...panelPropDict, ...cardPropDict}
+      cardStyle[k] = propDictToString(mergedProps)
+    }
+  }
+  return cardStyle
+}
+
+export function classesStringToKeyValues(classesString: string) : Record<string, string> {
+  const htmlClasses = classesString.split(/\s+/)
+  let classDictionary = {}
+  for (const htmlClass of htmlClasses) {
+    const classArray = htmlClass.split('-')
+    const value = classArray.pop()
+    const key = classArray.join('-')
+    classDictionary = {...classDictionary, [key]: value}
+  }
+  return classDictionary
+}
+
+function propDictToString(classObject: Record<string, string>) : string {
+  let returnString = ''
+  for (const key in classObject) {
+    returnString = returnString + " " + [key, classObject[key]].join("-");
+  }
+  return ltrim(returnString)
 }
