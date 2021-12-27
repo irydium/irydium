@@ -1,4 +1,5 @@
 <script>
+  // Note: These have to be explicit props as mustache.render cannot pass an object to Svelte
   export let columnStyle = ''; // blank string as default
   export let headerStyle = ''
   export let bodyStyle = ''
