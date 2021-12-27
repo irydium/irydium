@@ -16,10 +16,7 @@ export function parsePanel(contents: string): MystPanel {
   const splitCards: Array<MystCard> = [];
 
   const defaultCardStyle = {column: "d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2",
-                            card: "card w-100",
-                            header: "card-header",
-                            body: "card-body",
-                            footer: "card-footer"
+                            card: "w-100",
                             } as MystStyling
 
   // retrieve header and footer for each card if exists
@@ -64,7 +61,6 @@ export function parsePanel(contents: string): MystPanel {
   if (panelStyle) {
     myPanel = {...myPanel, style: panelStyle}
   }
-  console.log(panelStyle)
   return myPanel
 }
 
@@ -112,13 +108,15 @@ function ltrim(rawString: string) {
 
 export function mergeStyles(panelStyle: MystStyling, cardStyle: MystStyling) : MystStyling {
   let k: keyof MystStyling;
-  for (k in cardStyle) {
-    if (k in panelStyle) {
+  for (k in panelStyle) {
+    if (k in cardStyle) {
       const panelPropDict = classesStringToKeyValues(panelStyle[k]!)
       const cardPropDict = classesStringToKeyValues(cardStyle[k]!)
       // merge Dicts
       const mergedProps = {...panelPropDict, ...cardPropDict}
       cardStyle[k] = propDictToString(mergedProps)
+    } else {
+      cardStyle[k] = panelStyle[k]
     }
   }
   return cardStyle
@@ -129,8 +127,16 @@ export function classesStringToKeyValues(classesString: string) : Record<string,
   let classDictionary = {}
   for (const htmlClass of htmlClasses) {
     const classArray = htmlClass.split('-')
-    const value = classArray.pop()
-    const key = classArray.join('-')
+    let key, value
+    // deal with single prop like "shadow"
+    if (classArray.length === 1) {
+      key = classArray[0]
+      value = '';
+    } 
+    else {
+      value = classArray.pop()
+      key = classArray.join('-')
+    }
     classDictionary = {...classDictionary, [key]: value}
   }
   return classDictionary
@@ -139,7 +145,13 @@ export function classesStringToKeyValues(classesString: string) : Record<string,
 function propDictToString(classObject: Record<string, string>) : string {
   let returnString = ''
   for (const key in classObject) {
-    returnString = returnString + " " + [key, classObject[key]].join("-");
+    let concatValue;
+    if (classObject[key] === '') {
+      concatValue = key
+    } else {
+      concatValue = [key, classObject[key]].join("-")
+    }
+    returnString = returnString + " " + concatValue;
   }
   return ltrim(returnString)
 }

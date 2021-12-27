@@ -8,17 +8,17 @@
 </script>
 
 <div class={columnStyle}>
-  <div class={cardStyle}>
+  <div class={"card " + cardStyle}>
     {#if $$slots.header}
-      <div class={headerStyle}>
+      <div class={"card-header " + headerStyle}>
         <slot name="header" />
       </div>
     {/if}
-    <div class={bodyStyle}>
+    <div class={"card-body " + bodyStyle}>
       <slot name="body" />
     </div>
     {#if $$slots.footer}
-      <div class={footerStyle}>
+      <div class={"card-footer " + footerStyle}>
         <slot name="footer" />
       </div>
     {/if}
