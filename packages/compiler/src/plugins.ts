@@ -103,7 +103,7 @@ export const processMyst = () => {
                {{#cards}}
                <Card columnStyle="{{{style.column}}}"
                      cardStyle="{{{style.card}}}"
-                     headerStyle="{{{style.header}}}}"
+                     headerStyle="{{{style.header}}}"
                      bodyStyle="{{{style.body}}}"
                      footerStyle="{{{style.footer}}}"
                      >
