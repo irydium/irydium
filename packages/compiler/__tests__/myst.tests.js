@@ -27,30 +27,32 @@ function createCard(cardObj) {
   }
 }
 
+const defaultStyle = {column: "d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2", card: "w-100"}
+
 describe("create different panel types successfully", () => {
   it("should create a panel with a single header card", async () => {
     expect(
-      await parsePanel(createPanel([{ body: "body", header: "header" }])).cards
-    ).toEqual([{ header: "header", body: "body" }]);
+      await parsePanel(createPanel([{ body: "body", header: "header", style: defaultStyle}])).cards
+    ).toEqual([{ header: "header", body: "body", style: defaultStyle}]);
   });
 
   it("should create a panel with a header card", async () => {
     expect(
-      await parsePanel(createPanel([{ body: "body", footer: "footer" }])).cards
-    ).toEqual([{ footer: "footer", body: "body" }]);
+      await parsePanel(createPanel([{ body: "body", footer: "footer", style: defaultStyle}])).cards
+    ).toEqual([{ footer: "footer", body: "body", style: defaultStyle }]);
   });
 
   it("should create a panel with a header card", async () => {
     expect(
       await parsePanel(
-        createPanel([{ body: "body", header: "header", footer: "footer" }])
+        createPanel([{ body: "body", header: "header", footer: "footer", style: defaultStyle }])
       ).cards
-    ).toEqual([{ header: "header", body: "body", footer: "footer" }]);
+    ).toEqual([{ header: "header", body: "body", footer: "footer", style: defaultStyle}]);
   });
 
   it("should create a panel with a body card", async () => {
-    expect(await parsePanel(createPanel([{ body: "body" }])).cards).toEqual([
-      { body: "body" },
+    expect(await parsePanel(createPanel([{ body: "body", style: defaultStyle}])).cards).toEqual([
+      { body: "body", style: defaultStyle },
     ]);
   });
 
@@ -58,24 +60,16 @@ describe("create different panel types successfully", () => {
     expect(
       await parsePanel(
         createPanel([
-          { body: "body", header: "header", footer: "footer" },
-          { body: "body" },
+          { body: "body", header: "header", footer: "footer", style: defaultStyle },
+          { body: "body", style: defaultStyle },
         ])
       ).cards
     ).toEqual([
-      { header: "header", body: "body", footer: "footer" },
-      { body: "body" },
+      { header: "header", body: "body", footer: "footer", style: defaultStyle },
+      { body: "body", style: defaultStyle },
     ]);
   });
 });
-
-describe("style panels with Bootstrap default styling", () => {
-  it("should create a panel with classes for bootstrap styling", async () => {
-    expect(await parsePanel(":container: text-center bg-success\n:body: bg-info\n---\nbody").style).toEqual(
-      {container: "text-center bg-success", body: "bg-info"}
-    )
-  })
-})
 
 describe("create panel with malformed duplicate panel properties", () => {
   it("should raise an error for a panel with a malformed double header", () => {
