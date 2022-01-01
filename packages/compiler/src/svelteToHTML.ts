@@ -134,7 +134,6 @@ export async function svelteToHTML(
     ...svelteComponents,
   ]);
   const svelteJs = await createSvelteBundle(files);
-  console.log(mdSvelte);
   return {
     html: mustache.render(bundleIndexSource, {
       ...options,

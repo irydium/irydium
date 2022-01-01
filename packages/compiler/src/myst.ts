@@ -31,7 +31,7 @@ export function parsePanel(contents: string): MystPanel {
     const parsedCard = { body: body } as MystCard;
     parsedCard.style = defaultCardStyle;
     if (panelStyle) {
-      parsedCard.style = mergeStyles(panelStyle, defaultCardStyle);
+      parsedCard.style = mergeStyles(defaultCardStyle, panelStyle);
     }
     // card style merges with panel style
     if (bodyYaml.length !== 0) {
@@ -84,7 +84,7 @@ export function parseStyling(contents: string): [string, string] {
     yamlBlock = yamlLines.join("\n");
   }
 
-  returnContents = contentLines.join("\n");
+  returnContents = contentLines.join("\n").trim();
   const returnPanel: [string, string] = [yamlBlock, returnContents];
   return returnPanel;
 }

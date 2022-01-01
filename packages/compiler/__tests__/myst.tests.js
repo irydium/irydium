@@ -10,7 +10,7 @@ function createPanel(cardArray, style) {
     }
   }
   if (style) {
-    panel = {...panel, style: style}
+    panel = { ...panel, style: style };
   }
   return panel;
 }
@@ -27,40 +27,62 @@ function createCard(cardObj) {
   }
 }
 
-const defaultStyle = {column: "d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2", card: "w-100"}
+const defaultStyle = {
+  column: "d-flex col-lg-6 col-md-6 col-sm-6 col-xs-12 p-2",
+  card: "w-100",
+};
 
 describe("create different panel types successfully", () => {
   it("should create a panel with a single header card", async () => {
     expect(
-      await parsePanel(createPanel([{ body: "body", header: "header", style: defaultStyle}])).cards
-    ).toEqual([{ header: "header", body: "body", style: defaultStyle}]);
+      await parsePanel(
+        createPanel([{ body: "body", header: "header", style: defaultStyle }])
+      ).cards
+    ).toEqual([{ header: "header", body: "body", style: defaultStyle }]);
   });
 
   it("should create a panel with a header card", async () => {
     expect(
-      await parsePanel(createPanel([{ body: "body", footer: "footer", style: defaultStyle}])).cards
+      await parsePanel(
+        createPanel([{ body: "body", footer: "footer", style: defaultStyle }])
+      ).cards
     ).toEqual([{ footer: "footer", body: "body", style: defaultStyle }]);
   });
 
   it("should create a panel with a header card", async () => {
     expect(
       await parsePanel(
-        createPanel([{ body: "body", header: "header", footer: "footer", style: defaultStyle }])
+        createPanel([
+          {
+            body: "body",
+            header: "header",
+            footer: "footer",
+            style: defaultStyle,
+          },
+        ])
       ).cards
-    ).toEqual([{ header: "header", body: "body", footer: "footer", style: defaultStyle}]);
+    ).toEqual([
+      { header: "header", body: "body", footer: "footer", style: defaultStyle },
+    ]);
   });
 
   it("should create a panel with a body card", async () => {
-    expect(await parsePanel(createPanel([{ body: "body", style: defaultStyle}])).cards).toEqual([
-      { body: "body", style: defaultStyle },
-    ]);
+    expect(
+      await parsePanel(createPanel([{ body: "body", style: defaultStyle }]))
+        .cards
+    ).toEqual([{ body: "body", style: defaultStyle }]);
   });
 
   it("should create a panel with two cards", async () => {
     expect(
       await parsePanel(
         createPanel([
-          { body: "body", header: "header", footer: "footer", style: defaultStyle },
+          {
+            body: "body",
+            header: "header",
+            footer: "footer",
+            style: defaultStyle,
+          },
           { body: "body", style: defaultStyle },
         ])
       ).cards
@@ -81,5 +103,44 @@ describe("create panel with malformed duplicate panel properties", () => {
     expect(() => {
       parsePanel("body\n+++\nfooter\n+++\nfooter2");
     }).toThrow(`Invalid syntax for MyST panel card footer.`);
+  });
+});
+
+describe("create panels with custom Bootstrap styling", () => {
+  it("should create a panel with two cards with the same Bootstrap styles", async () => {
+    expect(
+      await parsePanel(
+        ":body: text-center bg-info\n---\nbody text\n---\nbody 2 text"
+      ).style
+    ).toEqual({
+      ...defaultStyle,
+      body: "text-center bg-info",
+    });
+  });
+  it("should create a panel with two cards with different Bootstrap styles", async () => {
+    expect(
+      await parsePanel(
+        ":body: text-center bg-success\n---\n:body: text-justify bg-info\nbody text\n---\nbody text 2"
+      ).cards.map((card) => card.style)
+    ).toEqual([
+      { ...defaultStyle, body: "text-justify bg-info" },
+      { ...defaultStyle, body: "text-center bg-success" },
+    ]);
+  });
+  it("should create a panel with two cards with overriding column Bootstrap styles", async () => {
+    expect(
+      await parsePanel(
+        ":column: col-lg-4\n---\nbody text\n---\n:column: col-lg-3\nbody text 2"
+      ).cards.map((card) => card.style)
+    ).toEqual([
+      {
+        column: "d-flex col-lg-4 col-md-6 col-sm-6 col-xs-12 p-2",
+        card: "w-100",
+      },
+      {
+        column: "d-flex col-lg-3 col-md-6 col-sm-6 col-xs-12 p-2",
+        card: "w-100",
+      },
+    ]);
   });
 });
