@@ -47,11 +47,11 @@ This is a footer
 :header: bg-info p-4
 :body: text-justify
 :footer: text-center
-This is a header styled based on panel styling.
+This is a header styled based on card styling.
 ^^^
 This is a card and body styled based on card styling.
 +++
-This is a footer styled per card.
+This is a footer styled based on card styling.
 ---
 :body: text-danger
 This is a header styled based on panel styling.
