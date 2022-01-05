@@ -9,9 +9,6 @@ function createPanel(cardArray, style) {
       panel = panel.concat("\n---\n");
     }
   }
-  if (style) {
-    panel = { ...panel, style: style };
-  }
   return panel;
 }
 
