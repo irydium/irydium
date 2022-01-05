@@ -1,24 +1,20 @@
 <script>
-  // Note: These have to be explicit props as mustache.render cannot pass an object to Svelte
-  export let columnStyle = ''; // blank string as default
-  export let headerStyle = '';
-  export let bodyStyle = '';
-  export let footerStyle = '';
-  export let cardStyle = '';
+  export let style = {};
+  
 </script>
 
-<div class={columnStyle}>
-  <div class={"card " + cardStyle}>
+<div class={style.column}>
+  <div class={"card " + style.card}>
     {#if $$slots.header}
-      <div class={"card-header " + headerStyle}>
+      <div class={"card-header " + style.header}>
         <slot name="header" />
       </div>
     {/if}
-    <div class={"card-body " + bodyStyle}>
+    <div class={"card-body " + style.body}>
       <slot name="body" />
     </div>
     {#if $$slots.footer}
-      <div class={"card-footer " + footerStyle}>
+      <div class={"card-footer " + style.footer}>
         <slot name="footer" />
       </div>
     {/if}

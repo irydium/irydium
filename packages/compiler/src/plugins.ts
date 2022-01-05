@@ -83,14 +83,14 @@ export const processMyst = () => {
           const panel = parsePanel(value);
           const htmlCards = panel.cards.map((card: MystCard) => {
             let k: keyof MystCard;
-            let micromarkCard = {} as MystCard;
+            let micromarkCard = {} as Record<string, string>;
             for (k in card) {
               if (k !== "style") {
                 micromarkCard[k] = micromark(card[k]);
               }
             }
             if (card.style) {
-              micromarkCard = {...micromarkCard, style: card.style}
+              micromarkCard = {...micromarkCard, style: "{" + JSON.stringify(card.style) + "}"}
             }
             return micromarkCard;
           });
@@ -98,14 +98,9 @@ export const processMyst = () => {
           const newNode = {
             type: "html",
             value: mustache.render(
-              `<Panels panelStyle="{{{styles.container}}}">
+              `<Panels style="{{{styles.container}}}">
                {{#cards}}
-               <Card columnStyle="{{{style.column}}}"
-                     cardStyle="{{{style.card}}}"
-                     headerStyle="{{{style.header}}}"
-                     bodyStyle="{{{style.body}}}"
-                     footerStyle="{{{style.footer}}}"
-                     >
+               <Card style={{{style}}}>
                {{#header}}
                <div slot="header">
                {{{header}}}

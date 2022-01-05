@@ -1,8 +1,8 @@
 <script>
-  export let panelStyle = ''; // blank string as default
+  export let style = ''; // blank string as default
 </script>
 
-<div class={"container " + panelStyle}>
+<div class={"container " + style}>
   <div class="row">
     <slot />
   </div>
