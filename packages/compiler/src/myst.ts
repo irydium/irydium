@@ -76,9 +76,9 @@ export function parseStyling(contents: string): [string, string] {
     while (contentLines) {
       if (!ltrim(contentLines[0]).startsWith(":")) {
         break;
-      } else {
+      } else if (contentLines.length > 0) {
         // TODO: Find way to fix non-null assertion warning
-        yamlLines.push(ltrim(contentLines.shift()!));
+        yamlLines.push(ltrim(contentLines.shift()));
       }
     }
     yamlBlock = yamlLines.join("\n");
@@ -110,22 +110,22 @@ function ltrim(rawString: string) {
 }
 
 export function mergeStyles(
-  panelStyle: MystStyling,
-  cardStyle: MystStyling
+  initialStyle: MystStyling,
+  overridingStyle: MystStyling
 ): MystStyling {
   let k: keyof MystStyling;
-  for (k in panelStyle) {
-    if (k in cardStyle) {
-      const panelPropDict = classesStringToKeyValues(panelStyle[k]!);
-      const cardPropDict = classesStringToKeyValues(cardStyle[k]!);
+  for (k in initialStyle) {
+    if (k in overridingStyle && initialStyle[k] !== undefined && overridingStyle[k] !== undefined) {
+      const initialPropDict = classesStringToKeyValues(initialStyle[k]);
+      const overridingPropDict = classesStringToKeyValues(overridingStyle[k]);
       // merge Dicts
-      const mergedProps = { ...panelPropDict, ...cardPropDict };
-      cardStyle[k] = propDictToString(mergedProps);
+      const mergedProps = { ...initialPropDict, ...overridingPropDict };
+      overridingStyle[k] = propDictToString(mergedProps);
     } else {
-      cardStyle[k] = panelStyle[k];
+      overridingStyle[k] = initialStyle[k];
     }
   }
-  return cardStyle;
+  return overridingStyle;
 }
 
 export function classesStringToKeyValues(
@@ -135,30 +135,19 @@ export function classesStringToKeyValues(
   let classDictionary = {};
   for (const htmlClass of htmlClasses) {
     const classArray = htmlClass.split("-");
-    let key, value;
-    // deal with single prop like "shadow"
-    if (classArray.length === 1) {
-      key = classArray[0];
-      value = "";
-    } else {
-      value = classArray.pop();
-      key = classArray.join("-");
-    }
+    const [value, key] = [classArray.length === 1 ? "" : classArray.pop(), classArray.join("-")]
     classDictionary = { ...classDictionary, [key]: value };
   }
   return classDictionary;
 }
 
 function propDictToString(classObject: Record<string, string>): string {
-  let returnString = "";
-  for (const key in classObject) {
-    let concatValue;
-    if (classObject[key] === "") {
-      concatValue = key;
+  const returnArray = Object.keys(classObject).map((key) => {
+    if (classObject[key] === ""){
+      return key
     } else {
-      concatValue = [key, classObject[key]].join("-");
+      return [key, classObject[key]].join("-")
     }
-    returnString = returnString + " " + concatValue;
-  }
-  return ltrim(returnString);
+  })
+  return ltrim(returnArray.join(" "));
 }
