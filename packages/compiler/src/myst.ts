@@ -6,10 +6,10 @@ export function parsePanel(contents: string): MystPanel {
   const footerDelimiterRegex = /\n\+{3,}\n/;
 
   // get panel styling from beginning of panel if it exists
-  const [yamlBlock, panelContents] = parseStyling(contents);
+  const [rawBlock, panelContents] = splitDirective(contents);
   let panelStyle;
-  if (yamlBlock.length !== 0) {
-    panelStyle = parseYamlBlock(yamlBlock);
+  if (rawBlock.length !== 0) {
+    panelStyle = parseDirectiveProperties(rawBlock);
   }
   // first retrieve cards
   const cards = panelContents.startsWith("---\n")
@@ -25,8 +25,8 @@ export function parsePanel(contents: string): MystPanel {
   // retrieve header and footer for each card if exists
   for (const card of cards) {
     let header, footer;
-    const cardComponents = parseStyling(card);
-    const bodyYaml = cardComponents[0];
+    const cardComponents = splitDirective(card);
+    const rawBlock = cardComponents[0];
     let body = cardComponents[1];
     const parsedCard = { body: body } as MystCard;
     parsedCard.style = defaultCardStyle;
@@ -34,8 +34,8 @@ export function parsePanel(contents: string): MystPanel {
       parsedCard.style = mergeStyles(defaultCardStyle, panelStyle);
     }
     // card style merges with panel style
-    if (bodyYaml.length !== 0) {
-      const cardStyle = parseYamlBlock(bodyYaml);
+    if (rawBlock.length !== 0) {
+      const cardStyle = parseDirectiveProperties(rawBlock);
       parsedCard.style = mergeStyles(parsedCard.style, cardStyle);
     }
     if (headerDelimiterRegex.test(body)) {
@@ -67,30 +67,33 @@ export function parsePanel(contents: string): MystPanel {
   return myPanel;
 }
 
-export function parseStyling(contents: string): [string, string] {
-  let yamlBlock = "";
+export function splitDirective(contents: string): [string, string] {
+  // Takes raw string and extracts block of directive text (demarcated by beginning with ':')
+  // and returns directive separated from content
+  // see: https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html
+  let block = "";
   let returnContents = "";
   const contentLines = contents.split("\n");
   if (contents.startsWith(":")) {
-    const yamlLines: Array<string> = [];
+    const blockLines: Array<string> = [];
     while (contentLines) {
-      if (!ltrim(contentLines[0]).startsWith(":")) {
+      if (!contentLines[0].trimStart().startsWith(":")) {
         break;
       } else if (contentLines.length > 0) {
-        // TODO: Find way to fix non-null assertion warning
-        yamlLines.push(ltrim(contentLines.shift()));
+        blockLines.push(contentLines.shift().trimStart());
       }
     }
-    yamlBlock = yamlLines.join("\n");
+    block = blockLines.join("\n");
   }
 
   returnContents = contentLines.join("\n").trim();
-  const returnPanel: [string, string] = [yamlBlock, returnContents];
-  return returnPanel;
+  return [block, returnContents];
 }
 
-export function parseYamlBlock(yamlBlock: string): Record<string, unknown> {
-  const styleContents = yamlBlock.split("\n");
+export function parseDirectiveProperties(
+  block: string
+): Record<string, unknown> {
+  const styleContents = block.split("\n");
   const stylingRegex = /^:([a-z0-9]+):\s*([a-z\s\-0-9]+)/i;
   // return object with key value pairs
   let styles = {};
@@ -105,37 +108,43 @@ export function parseYamlBlock(yamlBlock: string): Record<string, unknown> {
   return styles;
 }
 
-function ltrim(rawString: string) {
-  return rawString.replace(/^\s+/gm, "");
-}
-
 export function mergeStyles(
   initialStyle: MystStyling,
   overridingStyle: MystStyling
 ): MystStyling {
-  let k: keyof MystStyling;
-  for (k in initialStyle) {
-    if (k in overridingStyle && initialStyle[k] !== undefined && overridingStyle[k] !== undefined) {
+  let finalStyle = {} as MystStyling;
+  const allProps = new Set(
+    Object.keys(overridingStyle).concat(Object.keys(initialStyle))
+  );
+  for (let k of Array.from(allProps)) {
+    // Common keys: overridingStyle per key merged over initialStyle
+    if (initialStyle[k] !== undefined && overridingStyle[k] !== undefined) {
       const initialPropDict = classesStringToKeyValues(initialStyle[k]);
       const overridingPropDict = classesStringToKeyValues(overridingStyle[k]);
       // merge Dicts
       const mergedProps = { ...initialPropDict, ...overridingPropDict };
-      overridingStyle[k] = propDictToString(mergedProps);
-    } else {
-      overridingStyle[k] = initialStyle[k];
+      finalStyle = { ...finalStyle, [k]: propDictToString(mergedProps) };
+    } else if (initialStyle[k] !== undefined) {
+      // key unique to initialStyle (added to finalStyle as is)
+      finalStyle = { ...finalStyle, [k]: initialStyle[k] };
+    } else if (overridingStyle[k] !== undefined) {
+      // key unique to overridingStyle (added to finalStyle as is)
+      finalStyle = { ...finalStyle, [k]: overridingStyle[k] };
     }
   }
-  return overridingStyle;
+  return finalStyle;
 }
 
 export function classesStringToKeyValues(
   classesString: string
 ): Record<string, string> {
-  const htmlClasses = classesString.split(/\s+/);
   let classDictionary = {};
-  for (const htmlClass of htmlClasses) {
+  for (const htmlClass of classesString.split(/\s+/)) {
     const classArray = htmlClass.split("-");
-    const [value, key] = [classArray.length === 1 ? "" : classArray.pop(), classArray.join("-")]
+    const [value, key] = [
+      classArray.length === 1 ? "" : classArray.pop(),
+      classArray.join("-"),
+    ];
     classDictionary = { ...classDictionary, [key]: value };
   }
   return classDictionary;
@@ -143,11 +152,11 @@ export function classesStringToKeyValues(
 
 function propDictToString(classObject: Record<string, string>): string {
   const returnArray = Object.keys(classObject).map((key) => {
-    if (classObject[key] === ""){
-      return key
+    if (classObject[key] === "") {
+      return key;
     } else {
-      return [key, classObject[key]].join("-")
+      return [key, classObject[key]].join("-");
     }
-  })
-  return ltrim(returnArray.join(" "));
+  });
+  return returnArray.join(" ").trimStart();
 }

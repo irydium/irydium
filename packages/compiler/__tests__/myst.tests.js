@@ -1,6 +1,6 @@
 import { parsePanel } from "../src/myst.ts";
 
-function createPanel(cardArray, style) {
+function createPanel(cardArray) {
   let panel = ``;
   for (const card of cardArray) {
     const createdCard = createCard(card);
@@ -104,13 +104,12 @@ describe("create panel with malformed duplicate panel properties", () => {
 });
 
 describe("create panels with custom Bootstrap styling", () => {
-  it("should create a panel with two cards with the same Bootstrap styles", async () => {
+  it("should create a panel with two cards with the same Bootstrap styles for the panel", async () => {
     expect(
       await parsePanel(
         ":body: text-center bg-info\n---\nbody text\n---\nbody 2 text"
       ).style
     ).toEqual({
-      ...defaultStyle,
       body: "text-center bg-info",
     });
   });

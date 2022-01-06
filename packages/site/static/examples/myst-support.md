@@ -61,10 +61,6 @@ This is a body styled based on card styling.
 This is a body styled based on panel styling.
 ```
 
-
-
-
-
 [myst markdown format]: https://myst-parser.readthedocs.io/en/latest/index.html
 [irydium/irydium#123]: https://github.com/irydium/irydium/issues/123
 [panels]: https://jupyterbook.org/content/content-blocks.html#panels
