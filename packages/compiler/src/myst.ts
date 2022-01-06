@@ -116,7 +116,8 @@ export function mergeStyles(
   const allProps = new Set(
     Object.keys(overridingStyle).concat(Object.keys(initialStyle))
   );
-  for (let k of Array.from(allProps)) {
+  let k: keyof MystStyling
+  for (k of Array.from(allProps)) {
     // Common keys: overridingStyle per key merged over initialStyle
     if (initialStyle[k] !== undefined && overridingStyle[k] !== undefined) {
       const initialPropDict = classesStringToKeyValues(initialStyle[k]);
