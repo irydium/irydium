@@ -8,7 +8,7 @@ data:
   - os_data_raw: https://data.firefox.com/datasets/desktop/hardware/default/osName/index.json
 ---
 
-# {title}
+# {glue:}`title`
 
 This example attempts to reproduce a subset of the [Firefox Public Data Report].
 We use [arquero] to transform the data and [plotly.js] to plot the results.

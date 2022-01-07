@@ -16,7 +16,6 @@ const EXTERNALS = [
   "js-yaml",
   "lodash",
   "mustache",
-  "mdsvex",
 ];
 
 const TEMPLATE_PLUGIN = replace({

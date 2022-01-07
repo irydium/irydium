@@ -5,7 +5,13 @@ import { visit } from "unist-util-visit";
 import fetch from "cross-fetch";
 
 import defaultLanguagePlugins from "./langPluginRegistry";
-import type { CodeCell, CodeCellAttributes, CodeNode, FrontMatter, ParsedDocument } from "./types";
+import type {
+  CodeCell,
+  CodeCellAttributes,
+  CodeNode,
+  FrontMatter,
+  ParsedDocument,
+} from "./types";
 
 function getCodeCells(
   cells: Array<CodeCell>,
@@ -76,20 +82,27 @@ export async function extractCode(
       if (mystType === "code-cell") {
         // FIXME: assumption that language is the only metadata
         // (should also validate)
-        const lang = node.meta;
+        const lang = node.meta as string;
 
         const nodeContent = fm(node.value);
         const attributes = nodeContent.attributes as CodeCellAttributes;
 
         // svelte cells are parsed kind of specially
         if (lang === "svelte" && attributes.name === "mdsvelte") {
-            throw new Error(
-              `The mdsvelte name is reserved (line: ${node.position.start.line})`
-            );
+          throw new Error(
+            `The mdsvelte name is reserved (line: ${node.position.start.line})`
+          );
         }
 
         // cells without an identifier get rendered directly in the document
-        codeCells.push({ lang, ...nodeContent, attributes: { ...attributes, id: attributes.id || `__cell${unlabeledIdCounter++}` } });
+        codeCells.push({
+          lang,
+          ...nodeContent,
+          attributes: {
+            ...attributes,
+            id: attributes.id || `__cell${unlabeledIdCounter++}`,
+          },
+        });
       }
     }
   });

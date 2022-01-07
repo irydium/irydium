@@ -2,7 +2,7 @@
 title: Plotly.js
 ---
 
-# {title}
+# {glue:}`title`
 
 As an alternative to [Vega-lite](https://vega.github.io/vega-lite/), you can also use [Plotly.js](https://plotly.com/javascript/) to add interactive visualizations to your documents by importing this page (see the "Introduction") and embedding a `<Plotly />` component.
 
@@ -12,6 +12,7 @@ Here's the definition of a component:
 ---
 id: Plotly
 scripts: https://cdn.plot.ly/plotly-latest.min.js
+inline: true
 ---
 <script>
   import { onMount } from 'svelte';

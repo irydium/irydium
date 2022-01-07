@@ -8,10 +8,18 @@ export interface CodeCellAttributes {
   type: string;
 }
 
+export interface SvelteCodeCellAttributes extends CodeCellAttributes {
+  id: string;
+}
+
 export interface CodeCell {
   lang: string;
   attributes: CodeCellAttributes;
   body: string;
+}
+
+export interface SvelteCodeCell extends CodeCell {
+  attributes: SvelteCodeCellAttributes;
 }
 
 export interface CodeNode extends Node {

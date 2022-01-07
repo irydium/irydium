@@ -14,6 +14,7 @@ import type {
   ScriptNode,
   MystCard,
 } from "./types";
+import type { Code, HTML, Text } from "mdast";
 
 // remark plugin: extracts `{code-cell}` and other MyST chunks, removing them from the
 // markdown unless they are inline code chunks (actual processing of code chunks is handled
@@ -29,8 +30,8 @@ export const processMyst = () => {
       };
     };
 
-    visit(tree, ["code"], (node, _index, parent) => {
-      const { lang, meta, value } = node as CodeNode;
+    visit<Code>(tree, ["code"], (node, _index, parent) => {
+      const { lang, meta, value } = node;
       const index = _index as number;
 
       if (lang && lang.startsWith("{") && lang.endsWith("}")) {
@@ -78,22 +79,10 @@ export const processMyst = () => {
             )}</Admonition>`,
           };
           (parent as Parent).children[index] = newNode;
+
           return index;
         } else if (mystType === "panels") {
           const panel = parsePanel(value);
-          const htmlCards = panel.cards.map((card: MystCard) => {
-            let k: keyof MystCard;
-            let micromarkCard = {} as Record<string, string>;
-            for (k in card) {
-              if (k !== "style") {
-                micromarkCard[k] = micromark(card[k]);
-              }
-            }
-            if (card.style) {
-              micromarkCard = {...micromarkCard, style: "{" + JSON.stringify(card.style) + "}"}
-            }
-            return micromarkCard;
-          });
           // parse each card
           const newNode = {
             type: "html",
@@ -117,7 +106,13 @@ export const processMyst = () => {
                </Card>
                {{/cards}}
                </Panels>`,
-              {cards: htmlCards, styles: panel.style}
+              {cards: panel.cards.map((card) => {
+                return { ...Object.fromEntries(
+                  Object.entries(card).filter(([k]) => k !== "style").map(([k, v]) => {
+                    return [k, micromark(v)];
+                  })), ...card.style ? { style: `{${JSON.stringify(card.style)}}`} : {}
+                };
+              }), styles: panel.style}
             ),
           };
           (parent as Parent).children[index] = newNode;
@@ -131,6 +126,84 @@ export const processMyst = () => {
           (node as CodeNode).lang = undefined;
         }
       }
+    });
+
+    visit<Text>(tree, ["text"], (node, index, parent) => {
+      if (/{glue:[^}]*}$/.exec(node.value)) {
+        if (
+          parent === null ||
+          index === null ||
+          parent.children.length < index + 2 ||
+          parent.children[index + 1].type !== "inlineCode"
+        ) {
+          const lineNumber =
+            (node.position && node.position.start.line) || "unknown";
+          throw new Error(
+            `glue directive must be followed by a valid variable name (line: ${lineNumber})`
+          );
+        }
+        const variableName = (parent.children[index + 1] as Text).value;
+        parent.children[index] = {
+          type: "text",
+          value: node.value.replace(/{glue:[^}]*}/, ""),
+        } as Text;
+        (parent.children[index + 1] as HTML) = {
+          type: "html",
+          value: `<Glue variable={${variableName}} />`,
+        };
+      }
+    });
+  };
+};
+
+// escape curlies, backtick, \t, \r, \n to avoid breaking output of {@html `here`} in .svelte
+// taken from mdsvex
+export const escapeSvelty = (str: string): string =>
+  str
+    .replace(
+      /[{}`]/g,
+      //@ts-ignore
+      (c) => ({ "{": "&#123;", "}": "&#125;", "`": "&#96;" }[c])
+    )
+    .replace(/\\([trn])/g, "&#92;$1");
+
+// escapes code chunks (remark plugin)
+// this is a simplified version of the implementation in mdsvex (without code highlighting)
+// https://github.com/pngwn/MDsveX/blob/cb0d0d00c00008fbf37698a08ededd05fbe9a413/packages/mdsvex/src/transformers/index.ts#L533
+export function escapeCode() {
+  return (tree: Node): void => {
+    visit<Code>(tree, "code", (node, index, parent) => {
+      if (parent === null || node === null || index === null) return;
+      const normalizedLang = (node.lang || "text").toLowerCase();
+      // escape svelte characters, as well as the `<` character (to avoid script tags being incorrectly identified)
+      const escapedCode = escapeSvelty(node.value).replace(/</g, "&lt;");
+
+      parent.children[index] = {
+        type: "html",
+        value: `<pre>{@html \`<code class="language-${normalizedLang}">${escapedCode}</code>\`}</pre>`,
+      } as Node;
+    });
+  };
+}
+
+// escapes text chunks (rehype plugin)
+export const escapeText = () => {
+  return (tree: Node): void => {
+    visit<Text>(tree, "text", (node, index, parent) => {
+      if (index === null) return;
+      let { value } = node;
+      // escape any `{` characters for svelte that are *not* part of a glue sequences
+      // (glue sequences are processed earlier)
+      value = value.replace(/({|})/g, '{"$1"}');
+      // except for code blocks, escape any special characters
+      value = value
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      (parent as Parent).children[index] = {
+        value,
+        type: "raw",
+      } as Node;
     });
   };
 };
@@ -146,8 +219,7 @@ function createJSTask(id: string, code: string, inputs: Array<string> = []) {
 }
 
 // rehype plugin: reconstitutes `{code-cell}` chunks, inserting them inside
-// the script block that mdsvex generates (or creating one, in the case
-// of a document without one)
+// a script block
 export const augmentSvx = ({
   codeCells,
   scripts,
@@ -293,7 +365,11 @@ export const augmentSvx = ({
         'import Panels from "./Panels.svelte";\n' +
         'import Card from "./Card.svelte";\n' +
         'import CellResults from "./CellResults.svelte";\n' +
+        'import Glue from "./Glue.svelte";\n' +
         mustache.render(taskScriptSource, {
+          frontMatter: Object.entries(frontMatter).map(([key, value]) => {
+            return { key, value: JSON.stringify(value) };
+          }),
           taskVariables: tasks
             .map((task) => task.id)
             .filter(

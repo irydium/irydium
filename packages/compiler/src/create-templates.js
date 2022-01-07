@@ -10,6 +10,7 @@ export function createTemplates(baseDir) {
     "templates/Panels.svelte",
     "templates/Card.svelte",
     "templates/CellResults.svelte",
+    "templates/Glue.svelte",
     "templates/index.html",
     "templates/tasks.js",
     "taskrunner.js",

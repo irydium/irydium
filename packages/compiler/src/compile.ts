@@ -8,7 +8,7 @@ export function compile(
 ): Promise<CompilerOutput> {
   return mdToSvelte(input).then(
     ({ rootComponent, subComponents, frontMatter }) => {
-      return options.mode === "mdsvex"
+      return options.mode === "svelte"
         ? { html: rootComponent.code, frontMatter }
         : svelteToHTML(rootComponent, subComponents, frontMatter, options);
     }

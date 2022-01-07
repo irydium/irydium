@@ -8,8 +8,9 @@ describe("mdToSvelte tests", () => {
       "subComponents",
       "frontMatter",
     ]);
+    // even simple documents use a script tag
     expect(output.rootComponent.code).toEqual(
-      expect.stringContaining("<h1>Hello, world</h1>")
+      expect.stringMatching(/<script>.*<\/script>.*<h1>Hello, world<\/h1>/s)
     );
   });
 
@@ -48,6 +49,22 @@ describe("mdToSvelte tests", () => {
     });
   });
 
+  it("handles inline code chunks", async () => {
+    const cellContents = "---\ninline: true\n---\nreturn {}\n";
+    const getCodeChunk = (type) => {
+      return `\`\`\`${type}\n${cellContents}\`\`\`\n`;
+    };
+    ["js", "{code-cell} js"].forEach(async (type) => {
+      const doc = getCodeChunk(type);
+      const output = await mdToSvelte(doc);
+      expect(output.rootComponent.code).toEqual(
+        expect.stringContaining(
+          `<pre>{@html \`<code class="language-js">---\ninline: true\n---\nreturn &#123;&#125;</code>\`}</pre>`
+        )
+      );
+    });
+  });
+
   it("handles subcomponents", async () => {
     const output = await mdToSvelte(
       "# Hello, world\n\n```{code-cell} svelte\n---\nid: MyComponent\n---\n<h1>Hello subcomponent</h1>\n```"
@@ -62,6 +79,20 @@ describe("mdToSvelte tests", () => {
       ],
     ]);
   });
+
+  it("escapes HTML reserved characters", async () => {
+    const output = await mdToSvelte("# Hello, world &<>\n");
+    expect(output.rootComponent.code).toEqual(
+      expect.stringContaining("<h1>Hello, world &amp;&lt;&gt;</h1>")
+    );
+  });
+
+  it("escapes svelte reserved characters", async () => {
+    const output = await mdToSvelte("# Hello, world {lol}\n");
+    expect(output.rootComponent.code).toEqual(
+      expect.stringContaining(`<h1>Hello, world {"{"}lol{"}"}</h1>`)
+    );
+  });
 });
 
 describe("edge cases for input", () => {
@@ -72,9 +103,38 @@ describe("edge cases for input", () => {
       const output = await mdToSvelte(codeChunk);
       expect(output.rootComponent.code).toEqual(
         expect.stringContaining(
-          '<pre class="language-undefined">{@html `<code class="language-undefined"></code>`}</pre>'
+          '<pre>{@html `<code class="language-text"></code>`}</pre>'
         )
       );
     });
+  });
+});
+
+describe("mdToSvelte (myst: notes and admonitions)", () => {
+  it("handles notes and admonitions as expected", async () => {
+    const output = await mdToSvelte(
+      "```{note}\nThis is an exciting note!\n```"
+    );
+    expect(output.rootComponent.code).toEqual(
+      expect.stringContaining(
+        `<Admonition type={"note"}><p>This is an exciting note!</p></Admonition>`
+      )
+    );
+  });
+});
+
+describe("mdToSvelte (myst: glue directives)", () => {
+  it("processes a glue directive as expected", async () => {
+    const output = await mdToSvelte("{glue:}`foo`");
+    expect(output.rootComponent.code).toEqual(
+      expect.stringContaining(`<Glue variable={foo} />`)
+    );
+  });
+
+  it("processes a quoted glue directive as expected", async () => {
+    const output = await mdToSvelte("`` {glue:}`foo` ``");
+    expect(output.rootComponent.code).toEqual(
+      expect.stringContaining('<code>{"{"}glue:{"}"}`foo`</code>')
+    );
   });
 });

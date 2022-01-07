@@ -4,7 +4,7 @@ imports:
   - /components/plotlyjs.md#Plotly
 ---
 
-# {title}
+# {glue:}`title`
 
 Irydium supports running python cells, through [pyodide](https://pyodide.org)!
 This feature is preliminary: we are still working on getting the ergonomics right.

@@ -148,4 +148,3 @@ Putting these two concepts together, we now have a basic reactive visualization 
 [project readme]: https://github.com/irydium/irydium/blob/main/README.md
 [vega-embed]: https://github.com/vega/vega-embed
 [d3-dsv]: https://github.com/d3/d3-dsv
-[mdsvex]: https://mdsvex.com/
