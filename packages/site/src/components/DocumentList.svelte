@@ -70,7 +70,7 @@
   }
 
   section {
-    height: calc(100vh - var(--nav-h));
+    height: calc(100vh - var(--nav-h) - var(--nav-h-border));
   }
 
   .document-list ul {
