@@ -2,7 +2,7 @@
 title: Vega-Lite
 ---
 
-# {title}
+# {glue:}`title`
 
 You can use [Vega-lite](https://vega.github.io/vega-lite/) to add interactive visualizations to your documents by importing this page (see the "Introduction") and embedding a `<VegaEmbed />` component.
 

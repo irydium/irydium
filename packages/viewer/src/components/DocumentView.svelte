@@ -23,7 +23,7 @@
     <select bind:value={mode}>
       <option value="html">Rendered</option>
       <option value="rawhtml">Raw HTML</option>
-      <option value="mdsvex">mdsvex output</option>
+      <option value="svelte">Svelte</option>
     </select>
   </div>
 </div>

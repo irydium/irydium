@@ -79,7 +79,7 @@ export function splitDirective(contents: string): [string, string] {
     while (contentLines) {
       if (!contentLines[0].trimStart().startsWith(":")) {
         break;
-      } else if (contentLines.length > 0) {
+      } else if (contentLines && contentLines.length > 0) {
         blockLines.push(contentLines.shift().trimStart());
       }
     }

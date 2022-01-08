@@ -9,6 +9,7 @@ import {
   panelsSource,
   cardSource,
   cellResultsSource,
+  glueSource,
   bundleIndexSource,
   taskRunnerSource,
 } from "./templates";
@@ -121,8 +122,9 @@ export async function svelteToHTML(
   const files = new Map([
     ["./mdsvelte.svelte", mdSvelte],
     ["./Admonition.svelte", { code: admonitionSource, map: "" }],
-    ["./Panels.svelte", {code: panelsSource, map: ""}],
-    ["./Card.svelte", {code: cardSource, map: ""}],
+    ["./Panels.svelte", { code: panelsSource, map: "" }],
+    ["./Card.svelte", { code: cardSource, map: "" }],
+    ["./Glue.svelte", { code: glueSource, map: "" }],
     ["./CellResults.svelte", { code: cellResultsSource, map: "" }],
     [
       "./taskrunner",

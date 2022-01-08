@@ -1,5 +1,9 @@
-// This should get inserted into the mdsvex component's script chunk at compile time
+// This should get inserted into an irydium document's top-level component's script chunk at compile time
 import { TASK_STATE, runTasks, updateTask } from "./taskrunner";
+
+{{#frontMatter}}
+let {{{key}}} = {{{value}}};
+{{/frontMatter}}
 
 {{#taskVariables}}
 let {{.}};

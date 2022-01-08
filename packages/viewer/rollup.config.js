@@ -83,7 +83,6 @@ export default [
       "cross-fetch",
       "cross-fetch/polyfill",
       "mustache",
-      "mdsvex",
       "toml",
       "fs",
       "fsevents",

@@ -49,7 +49,7 @@ import math
 math.pi
 ```
 
-{pi}
+{glue:}`pi`
 
 And here's a somewhat more involved example which creates a sine wave and renders it via plotly:
 

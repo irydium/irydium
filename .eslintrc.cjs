@@ -7,10 +7,6 @@ module.exports = {
     "*.cjs",
     "**/dist/*.js",
     "packages/viewer/build/*.js",
-    // mdsvex as an esm module is hard to lint properly
-    // (and we're probably going to move away from using
-    // mdsvex in the client)
-    "packages/compiler/src/mdToSvelte.ts",
     // rollup is complicated for similar reasons
     "packages/compiler/src/svelteToHTML.ts",
     // not a lintable file (it's a mustache template)

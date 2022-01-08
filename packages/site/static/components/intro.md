@@ -30,9 +30,11 @@ inline: true
 return myFunction(5)
 ```
 
-We can then display the value (validating that this function works as expected) by referencing `{value}`:
+We can then display the value (validating that this function works as expected) by referencing the value via the [MyST glue directive] syntax (`` {glue:}`value` ``):
 
-{value}
+{glue:}`value`
+
+[myst glue directive]: https://myst-nb.readthedocs.io/en/latest/use/glue.html
 
 ## Use it in another document
 

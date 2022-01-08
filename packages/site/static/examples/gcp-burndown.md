@@ -11,7 +11,7 @@ data:
   - data_migration_gcp_spark: https://bugzilla.mozilla.org/rest/bug?blocks=1570610&include_fields=id,last_change_time,status,creation_time
 ---
 
-# {title}
+# {glue:}`title`
 
 ```{note}
 This is a reproduction of an [Iodide notebook](https://alpha.iodide.io/notebooks/3593/)

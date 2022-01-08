@@ -29,14 +29,20 @@ like [Jupyter](https://jupyter.org/), but has some key differences.
 
 To make this work, Irydium uses some of great building blocks:
 
-- [Svelte](https://svelte.dev): A next-generation JavaScript-based web framework
-- [mdsvex](https://mdsvex.com): An efficient means of transforming a markdown document into a Svelte component
-- [Rollup](https://rollupjs.org/): An efficient bundler for JavaScript-based web components
-- [pyodide](https://github.com/iodide-project/pyodide): A port of Python to WebAssembly
+- [Svelte]: A next-generation JavaScript-based web framework
+- [Rollup]: An efficient bundler for JavaScript-based web components
+- [pyodide]: A port of Python to WebAssembly
+
+Although it doesn't use it directly, Irydium's design was highly inspired by [mdsvex], a transformer of markdown files into Svelte components.
 
 You can see a very early version of Irydium in action on the demonstration site:
 
 https://irydium.dev/
+
+[svelte]: https://svelte.dev
+[rollup]: https://rollupjs.org/
+[pyodide]: https://github.com/pyodide/pyodide
+[mdsvex]: https://mdsvex.com
 
 ## Getting started with Irydium
 
