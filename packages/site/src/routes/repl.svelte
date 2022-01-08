@@ -123,6 +123,7 @@
   }
 
   section {
-    height: calc(100vh - var(--nav-h));
+    /* 40px == repl-outer height above */
+    height: calc(100vh - var(--nav-h) - var(--nav-h-border) - 40px);
   }
 </style>

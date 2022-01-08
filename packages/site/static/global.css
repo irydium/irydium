@@ -7,10 +7,6 @@ html {
   border-collapse: collapse;
 }
 
-html {
-  height: 100%;
-}
-
 body {
   margin: 0;
   font-family: Roboto, -apple-system, BlinkMacSystemFont, Segoe UI, Oxygen,
@@ -20,7 +16,8 @@ body {
   color: #333;
 
   --font-mono: "Fira Mono", monospace;
-  --nav-h: 56px;
+  --nav-h: 58px;
+  --nav-h-border: 1px;
 }
 
 /*      theme vars */
