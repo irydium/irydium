@@ -11,8 +11,17 @@ const production = !process.env.ROLLUP_WATCH;
 function serve() {
   let server;
 
-  async function toExit() {
-    if (server) server.kill(0);
+  function killServer() {
+    if (server) {
+      /* On linux, server.kill() only kills the parent shell (sh) process but not the child sirv instance
+		   See https://nodejs.org/docs/latest-v14.x/api/child_process.html#child_process_subprocess_kill_signal
+		   Passing the negation of PID of a detached process to 'kill' stops all its children */
+      try {
+        spawn("kill", ["--", `-${server.pid}`], { shell: true });
+      } catch (_) {
+        server.kill();
+      }
+    }
   }
 
   return {
@@ -23,22 +32,24 @@ function serve() {
           ["run", "start", "--", `../../${process.argv.slice(4)}`],
           {
             stdio: ["ignore", "inherit", "inherit"],
-            shell: true,
+            detached: true,
           }
         );
       }
-
-      // if server has already started, kill it and wait a short while
+      // if server has already started, kill it and restart
       if (server) {
         server.on("exit", startServer);
-        server.kill();
+        killServer();
       } else {
         startServer();
       }
 
-      process.on("SIGTERM", toExit);
-      process.on("exit", toExit);
+      process.on("SIGTERM", killServer);
+      process.on("exit", killServer);
     },
+    /* Rollup restarts on detecting changes to this config file.
+		   This hook makes sure the previously started instance is stopped before starting a new one */
+    closeWatcher: killServer,
   };
 }
 
@@ -91,5 +102,9 @@ export default [
     output: [
       { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },
     ],
+    watch: {
+      clearScreen: false,
+      buildDelay: 100,
+    },
   },
 ];
