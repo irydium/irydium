@@ -1,4 +1,4 @@
-/* global _ */
+/* global _, globalThis */
 
 export const TASK_TYPE = {
   LOAD_SCRIPTS: 0,
@@ -60,10 +60,10 @@ function getCachedData(task) {
   const cacheKey = getCacheKey(task);
   if (
     cacheKey !== undefined &&
-    window.sessionStorage &&
+    globalThis.sessionStorage !== undefined &&
     window.sessionStorage.getItem(cacheKey)
   ) {
-    return JSON.parse(window.sessionStorage.getItem(cacheKey));
+    return JSON.parse(sessionStorage.getItem(cacheKey));
   }
   return undefined;
 }
@@ -72,12 +72,12 @@ function setCachedData(task, value) {
   const cacheKey = getCacheKey(task);
   if (
     cacheKey !== undefined &&
-    window.sessionStorage &&
+    globalThis.sessionStorage &&
     isSerializable(value)
   ) {
     const stringified = JSON.stringify(value);
     if (stringified.length <= MAX_SERIALIZABLE_LENGTH) {
-      window.sessionStorage.setItem(cacheKey, stringified);
+      sessionStorage.setItem(cacheKey, stringified);
     }
   }
 }
