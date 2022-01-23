@@ -16,6 +16,9 @@ const __tasks = [
     type: {{type}},
     payload: {{{payload}}},
     state: {{state}},
+    {{#hash}}
+    hash: {{{hash}}},
+    {{/hash}}
     inputs: {{{inputs}}}
   },
   {{/tasks}}

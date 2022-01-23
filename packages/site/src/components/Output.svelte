@@ -6,7 +6,7 @@
   export let title = "Untitled Document";
   let srcdoc = "Loading...";
 
-  const updateDoc = throttle(async (md) => {
+  const updateDoc = throttle(async (md: string) => {
     try {
       const output = await compile(md);
       srcdoc = output.html;

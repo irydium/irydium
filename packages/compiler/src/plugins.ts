@@ -6,13 +6,13 @@ import { Node, Parent, visit } from "unist-util-visit";
 import { parse as svelteParse } from "svelte/compiler";
 
 import { parsePanel } from "./myst";
+import { stringHash } from "./stringHash";
 import { taskScriptSource } from "./templates";
 import type {
   CodeNode,
   CodeNodeAttributes,
   ParsedDocument,
   ScriptNode,
-  MystCard,
 } from "./types";
 import type { Code, HTML, Text } from "mdast";
 
@@ -375,7 +375,7 @@ export const augmentSvx = ({
             .filter(
               (taskVariable) => !Object.keys(frontMatter).includes(taskVariable)
             ),
-          tasks,
+          tasks: tasks.map(task => ({...task, hash: stringHash(task.payload)})),
         });
 
       visit(tree, "root", (node: Parent) => {
