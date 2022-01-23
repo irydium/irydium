@@ -1,7 +1,4 @@
-// structure:
-// [
-// { incomingEdges: [...], type: <type>, payload: [...]}
-// ]
+/* global _ */
 
 export const TASK_TYPE = {
   LOAD_SCRIPTS: 0,
@@ -15,6 +12,8 @@ export const TASK_STATE = {
   EXECUTING: 1,
   COMPLETE: 2,
 };
+
+const MAX_SERIALIZABLE_LENGTH = 100000;
 
 function loadScript(url) {
   return new Promise((resolve, reject) => {
@@ -33,43 +32,106 @@ function getDependencies(task, tasks) {
   return tasks.filter((task2) => task.inputs.includes(task2.id));
 }
 
+export function isSerializable(obj) {
+  const nestedSerializable = (ob) =>
+    (_.isPlainObject(ob) || _.isArray(ob)) && _.every(ob, isSerializable);
+
+  return _.overSome([
+    _.isUndefined,
+    _.isNull,
+    _.isBoolean,
+    _.isNumber,
+    _.isString,
+    nestedSerializable,
+  ])(obj);
+}
+
+function getCacheKey(task) {
+  if (task.type === TASK_TYPE.JS && task.hash !== undefined) {
+    return `${task.id}-${task.hash}`;
+  } else if (task.type === TASK_TYPE.DOWNLOAD) {
+    return `${task.id}-${task.payload}`;
+  }
+  // no cache key for other types
+  return undefined;
+}
+
+function getCachedData(task) {
+  const cacheKey = getCacheKey(task);
+  if (
+    cacheKey !== undefined &&
+    window.sessionStorage &&
+    window.sessionStorage.getItem(cacheKey)
+  ) {
+    return JSON.parse(window.sessionStorage.getItem(cacheKey));
+  }
+  return undefined;
+}
+
+function setCachedData(task, value) {
+  const cacheKey = getCacheKey(task);
+  if (
+    cacheKey !== undefined &&
+    window.sessionStorage &&
+    isSerializable(value)
+  ) {
+    const stringified = JSON.stringify(value);
+    if (stringified.length <= MAX_SERIALIZABLE_LENGTH) {
+      window.sessionStorage.setItem(cacheKey, stringified);
+    }
+  }
+}
+
 async function runTask(tasks, task) {
   task.state = TASK_STATE.EXECUTING;
   console.log(`Running: ${task.id}`);
-  switch (task.type) {
-    case TASK_TYPE.LOAD_SCRIPTS:
-      for (const script of task.payload) {
-        // FIXME: we should load them in parallel, but evaluate them synchronously
-        console.log(`Loading ${script}`);
-        await loadScript(script);
+
+  if (getCachedData(task) !== undefined) {
+    console.log(`Using cached data for ${task.id}`);
+    task.value = getCachedData(task);
+  } else {
+    switch (task.type) {
+      case TASK_TYPE.LOAD_SCRIPTS:
+        for (const script of task.payload) {
+          // FIXME: we should load them in parallel, but evaluate them synchronously
+          console.log(`Loading ${script}`);
+          await loadScript(script);
+        }
+        break;
+      case TASK_TYPE.DOWNLOAD: {
+        task.value = await fetch(task.payload).then(async (r) => {
+          const mimeType = r.headers.get("Content-Type").split(";")[0];
+          // FIXME: should probably also allow to specify that something is json in header
+          // and use that here as a hint
+          if (mimeType === "application/json") {
+            const value = await r.json();
+            setCachedData(task, value);
+            return value;
+          }
+          return r.blob();
+        });
+        break;
       }
-      break;
-    case TASK_TYPE.DOWNLOAD:
-      task.value = await fetch(task.payload).then((r) => {
-        const mimeType = r.headers.get("Content-Type").split(";")[0];
-        // FIXME: should probably also allow to specify that something is json in header
-        // and use that here as a hint
-        if (mimeType === "application/json") return r.json();
-        return r.blob();
-      });
-      break;
-    case TASK_TYPE.JS: {
-      // create a map of task ids->input values to preserve expected ordering
-      const inputValues = getDependencies(task, tasks).reduce((acc, task) => {
-        acc[task.id] = task.value;
-        return acc;
-      }, {});
-      task.value = await task.payload.apply(
-        null,
-        task.inputs.map((inputId) => inputValues[inputId])
-      );
-      break;
+      case TASK_TYPE.JS: {
+        // create a map of task ids->input values to preserve expected ordering
+        const inputValues = getDependencies(task, tasks).reduce((acc, task) => {
+          acc[task.id] = task.value;
+          return acc;
+        }, {});
+        task.value = await task.payload.apply(
+          null,
+          task.inputs.map((inputId) => inputValues[inputId])
+        );
+
+        setCachedData(task, task.value);
+        break;
+      }
+      case TASK_TYPE.VARIABLE:
+        // variables don't actually do anything, they're just there to indicate
+        // that dependencies should be re-evaluated
+        task.value = task.payload;
+        break;
     }
-    case TASK_TYPE.VARIABLE:
-      // variables don't actually do anything, they're just there to indicate
-      // that dependencies should be re-evaluated
-      task.value = task.payload;
-      break;
   }
   console.log(`Done: ${task.id}`);
 
