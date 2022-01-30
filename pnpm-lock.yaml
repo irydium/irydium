@@ -10,6 +10,7 @@ importers:
       '@babel/preset-env': ^7.15.4
       '@babel/preset-typescript': ^7.15.0
       '@babel/runtime': ^7.15.4
+      '@changesets/changelog-github': ^0.4.2
       '@changesets/cli': ^2.20.0
       '@fortawesome/free-brands-svg-icons': ^5.15.4
       '@fortawesome/free-regular-svg-icons': ^5.15.4
@@ -78,6 +79,7 @@ importers:
       '@babel/preset-env': 7.15.6_@babel+core@7.15.5
       '@babel/preset-typescript': 7.15.0_@babel+core@7.15.5
       '@babel/runtime': 7.15.4
+      '@changesets/changelog-github': 0.4.2
       '@changesets/cli': 2.20.0
       '@fortawesome/free-brands-svg-icons': 5.15.4
       '@fortawesome/free-regular-svg-icons': 5.15.4
@@ -181,7 +183,7 @@ importers:
 
   packages/site:
     specifiers:
-      '@irydium/compiler': workspace:^0.0.13
+      '@irydium/compiler': workspace:^0.0.14
       '@wlach/sapper': ^0.29.2-a4
       body-parser: ^1.19.0
       compression: ^1.7.1
@@ -197,7 +199,7 @@ importers:
 
   packages/viewer:
     specifiers:
-      '@irydium/compiler': workspace:^0.0.13
+      '@irydium/compiler': workspace:^0.0.14
       livereload: ^0.9.1
       polka: next
     dependencies:
@@ -1458,6 +1460,14 @@ packages:
       semver: 5.7.1
     dev: true
 
+  /@changesets/changelog-github/0.4.2:
+    resolution: {integrity: sha512-qq8lJcq91ki7UT0fIfIcn5Yy7GJj19TmkLmGZ24/wEfxcD/nHHoTNRoi6nPt+Htf7qEudKxXLzQLi41B7Mt2vg==}
+    dependencies:
+      '@changesets/get-github-info': 0.5.0
+      '@changesets/types': 4.0.2
+      dotenv: 8.6.0
+    dev: true
+
   /@changesets/cli/2.20.0:
     resolution: {integrity: sha512-IUYSgZKtS+wXPD5hxfnCfZ1JWCbBI0CRrhxpkgVKcXDwpxiRU8stCwuSuVj14kiYlThuH2zL0/ZuGvhF4r28Gg==}
     hasBin: true
@@ -1520,6 +1530,13 @@ packages:
       chalk: 2.4.2
       fs-extra: 7.0.1
       semver: 5.7.1
+    dev: true
+
+  /@changesets/get-github-info/0.5.0:
+    resolution: {integrity: sha512-vm5VgHwrxkMkUjFyn3UVNKLbDp9YMHd3vMf1IyJoa/7B+6VpqmtAaXyDS0zBLfN5bhzVCHrRnj4GcZXXcqrFTw==}
+    dependencies:
+      dataloader: 1.4.0
+      node-fetch: 2.6.1
     dev: true
 
   /@changesets/get-release-plan/3.0.5:
@@ -3377,6 +3394,10 @@ packages:
       whatwg-url: 8.7.0
     dev: true
 
+  /dataloader/1.4.0:
+    resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
+    dev: true
+
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
     dependencies:
@@ -3518,6 +3539,11 @@ packages:
 
   /dotenv/10.0.0:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
+    engines: {node: '>=10'}
+    dev: true
+
+  /dotenv/8.6.0:
+    resolution: {integrity: sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==}
     engines: {node: '>=10'}
     dev: true
 

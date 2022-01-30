@@ -17,7 +17,8 @@
     "lint": "eslint './packages/**/src/**/*.{js,ts,svelte}'",
     "test": "jest",
     "format": "prettier --plugin-search-dir=. --write .",
-    "format:check": "prettier --plugin-search-dir=. --check ."
+    "format:check": "prettier --plugin-search-dir=. --check .",
+		"release": "pnpm -r build && changeset publish"
   },
   "devDependencies": {
     "@babel/core": "^7.15.5",
@@ -26,6 +27,7 @@
     "@babel/preset-env": "^7.15.4",
     "@babel/preset-typescript": "^7.15.0",
     "@babel/runtime": "^7.15.4",
+    "@changesets/changelog-github": "^0.4.2",
     "@changesets/cli": "^2.20.0",
     "@fortawesome/free-brands-svg-icons": "^5.15.4",
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
