@@ -12,7 +12,6 @@ importers:
       '@babel/runtime': ^7.15.4
       '@fortawesome/free-brands-svg-icons': ^5.15.4
       '@fortawesome/free-regular-svg-icons': ^5.15.4
-      '@irydium/compiler': link:packages/compiler
       '@rollup/plugin-babel': ^5.3.0
       '@rollup/plugin-commonjs': ^20.0.0
       '@rollup/plugin-json': ^4.1.0
@@ -44,7 +43,6 @@ importers:
       eslint-plugin-prettier: ^3.4.1
       eslint-plugin-svelte3: ^3.2.0
       front-matter: ^4.0.2
-      irydium-site: link:packages/site
       jest: ^27.1.0
       jest-fetch-mock: ^3.0.3
       js-yaml: ^4.1.0
@@ -72,9 +70,6 @@ importers:
       unified: ^10.1.0
       unist-util-visit: ^3.1.0
       vfile-message: ^3.0.2
-    dependencies:
-      '@irydium/compiler': link:packages/compiler
-      irydium-site: link:packages/site
     devDependencies:
       '@babel/core': 7.15.5
       '@babel/plugin-syntax-dynamic-import': 7.8.3_@babel+core@7.15.5
@@ -195,7 +190,7 @@ importers:
       '@wlach/sapper': 0.29.2-a4_svelte@3.43.0
       body-parser: 1.19.0
       compression: 1.7.4
-      polka: 1.0.0-next.20
+      polka: 1.0.0-next.22
       sirv: 1.0.14
 
   packages/viewer:
@@ -206,7 +201,7 @@ importers:
     dependencies:
       '@irydium/compiler': link:../compiler
       livereload: 0.9.3
-      polka: 1.0.0-next.20
+      polka: 1.0.0-next.22
 
 packages:
 
@@ -1720,6 +1715,11 @@ packages:
 
   /@polka/url/1.0.0-next.20:
     resolution: {integrity: sha512-88p7+M0QGxKpmnkfXjS4V26AnoC/eiqZutE8GLdaI5X12NY75bXSdTY9NkmYb2Xyk1O+MmkuO6Frmsj84V6I8Q==}
+    dev: true
+
+  /@polka/url/1.0.0-next.21:
+    resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
+    dev: false
 
   /@rollup/plugin-babel/5.3.0_@babel+core@7.15.5+rollup@2.57.0:
     resolution: {integrity: sha512-9uIC8HZOnVLrLHxayq/PTzw+uS25E14KPUBh5ktF+18Mjo5yK0ToMMx6epY0uEgkjwJw0aBW4x2horYXh8juWw==}
@@ -2232,7 +2232,7 @@ packages:
     dev: true
 
   /@wlach/sapper/0.29.2-a4_svelte@3.43.0:
-    resolution: {integrity: sha512-7jQfnUSgVmnSo2ufqnpCZO3Ouoem7G5qhPWxLpdY1mloeCSAHVdMar1MyIAwdDiAIN38tVDDsEcm47iRcMs8dg==, tarball: '@wlach/sapper/-/sapper-0.29.2-a4.tgz'}
+    resolution: {integrity: sha512-7jQfnUSgVmnSo2ufqnpCZO3Ouoem7G5qhPWxLpdY1mloeCSAHVdMar1MyIAwdDiAIN38tVDDsEcm47iRcMs8dg==}
     hasBin: true
     peerDependencies:
       svelte: ^3.17.3
@@ -5817,6 +5817,15 @@ packages:
     dependencies:
       '@polka/url': 1.0.0-next.20
       trouter: 3.2.0
+    dev: true
+
+  /polka/1.0.0-next.22:
+    resolution: {integrity: sha512-a7tsZy5gFbJr0aUltZS97xCkbPglXuD67AMvTyZX7BTDBH384FWf0ZQF6rPvdutSxnO1vUlXM2zSLf5tCKk5RA==}
+    engines: {node: '>=8'}
+    dependencies:
+      '@polka/url': 1.0.0-next.21
+      trouter: 3.2.0
+    dev: false
 
   /prelude-ls/1.1.2:
     resolution: {integrity: sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=}

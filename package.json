@@ -96,9 +96,5 @@
   "bugs": {
     "url": "https://github.com/irydium/irydium/issues"
   },
-  "homepage": "https://github.com/irydium/irydium#readme",
-  "dependencies": {
-    "@irydium/compiler": "link:packages/compiler",
-    "irydium-site": "link:packages/site"
-  }
+  "homepage": "https://github.com/irydium/irydium#readme"
 }
