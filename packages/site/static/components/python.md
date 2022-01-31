@@ -17,10 +17,10 @@ However, if you wish to override the plugin in your own document (e.g. to test a
 ---
 id: python
 type: language-plugin
-scripts: https://cdn.jsdelivr.net/pyodide/v0.18.0/full/pyodide.js
+scripts: https://cdn.jsdelivr.net/pyodide/v0.19.0/full/pyodide.js
 ---
 const pyodide = await loadPyodide({
-  indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.0/full/",
+  indexURL: "https://cdn.jsdelivr.net/pyodide/v0.19.0/full/",
 });
 
 return async (inputs, code) => {
