@@ -75,9 +75,13 @@ function setCachedData(task, value) {
     globalThis.sessionStorage &&
     isSerializable(value)
   ) {
-    const stringified = JSON.stringify(value);
-    if (stringified.length <= MAX_SERIALIZABLE_LENGTH) {
-      sessionStorage.setItem(cacheKey, stringified);
+    if (value === undefined) {
+      sessionStorage.removeItem(cacheKey);
+    } else {
+      const stringified = JSON.stringify(value);
+      if (stringified.length <= MAX_SERIALIZABLE_LENGTH) {
+        sessionStorage.setItem(cacheKey, stringified);
+      }
     }
   }
 }
@@ -176,7 +180,9 @@ export function updateTask(tasks, taskId, payload = undefined) {
     if (payload) {
       task.payload = payload;
     }
+    // delete value, clear cache
     delete task.value;
+    setCachedData(task, undefined);
     task.state = TASK_STATE.PENDING;
     // also need to invalidate any downstream tasks that they are no longer valid
     tasks
