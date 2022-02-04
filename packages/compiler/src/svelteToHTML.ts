@@ -21,10 +21,42 @@ import type {
   SvelteComponentVFile,
 } from "./types";
 
-const CDN_URL = "https://cdn.jsdelivr.net/npm";
+// heavily inspired by the svelte repl bundler: https://github.com/sveltejs/sites/blob/69937f8e13f59c35576500f844b80c26d6f3f459/packages/repl/src/lib/workers/bundler/index.js
+// as well as https://github.com/pngwn/REPLicant
 
-async function fetch_package(url: string): Promise<string> {
-  return (await fetch(url)).text();
+const CDN_URL = "https://unpkg.com";
+const svelteUrl = `${CDN_URL}/svelte`;
+const packagesUrl = CDN_URL;
+
+const fetch_cache = new Map();
+async function fetch_if_uncached(url: string) {
+	if (fetch_cache.has(url)) {
+		return fetch_cache.get(url);
+	}
+
+	const promise = fetch(url)
+		.then(async (r) => {
+			if (r.ok) {
+				return {
+					url: r.url,
+					body: await r.text()
+				};
+			}
+
+			throw new Error(await r.text());
+		})
+		.catch((err) => {
+			fetch_cache.delete(url);
+			throw err;
+		});
+
+	fetch_cache.set(url, promise);
+	return promise;
+}
+
+async function follow_redirects(url: string) {
+	const res = await fetch_if_uncached(url);
+	return res.url;
 }
 
 async function createSvelteBundle(
@@ -36,61 +68,63 @@ async function createSvelteBundle(
       {
         name: "repl-plugin",
         resolveId: async (importee: string, importer: string) => {
-          // handle imports from 'svelte'
-
-          // import x from 'svelte'
-          if (importee === "svelte") return `${CDN_URL}/svelte/index.mjs`;
-
-          // FIXME: horrible hack to allow us to import Y.js
-          if (importee.startsWith("lib0/")) {
-            return `${CDN_URL}/${importee}.js`;
+          // importing from Svelte
+          if (importee === `svelte`) return `${svelteUrl}/index.mjs`;
+          if (importee.startsWith(`svelte/`)) {
+            return `${svelteUrl}/${importee.slice(7)}/index.mjs`;
           }
 
-          // import x from 'svelte/somewhere'
-          if (importee.startsWith("svelte/")) {
-            return `${CDN_URL}/svelte/${importee.slice(7)}/index.mjs`;
-          }
-
-          // import x from './file.js' (via a 'svelte' or 'svelte/x' package)
-          if (importer && importer.startsWith(`${CDN_URL}/svelte`)) {
+          // importing one Svelte runtime module from another
+          if (importer && importer.startsWith(svelteUrl)) {
             const resolved = new URL(importee, importer).href;
-            if (resolved.endsWith(".mjs")) return resolved;
+            if (resolved.endsWith('.mjs')) return resolved;
             return `${resolved}/index.mjs`;
           }
 
-          // local repl components
-          if (files.has(importee)) return importee;
+          // importing from another file in REPL
+          if (files.has(importee) && (!importer || files.has(importer))) return importee;
+          if (files.has(importee + '.js')) return importee + '.js';
+          if (files.has(importee + '.json')) return importee + '.json';
 
-          // relative imports from a remote package
-          if (importee.startsWith(".")) return new URL(importee, importer).href;
+          // remove trailing slash
+          if (importee.endsWith('/')) importee = importee.slice(0, -1);
 
-          // bare named module imports (importing an npm package)
+          // importing from a URL
+          if (importee.startsWith('http:') || importee.startsWith('https:')) return importee;
 
-          // get the package.json and load it into memory
-          const pkg_url = `${CDN_URL}/${importee}/package.json`;
-          try {
-            const pkg = JSON.parse(await fetch_package(pkg_url));
-            // get an entry point from the pkg.json - first try svelte, then modules, then main
-            if (pkg.svelte || pkg.module || pkg.main) {
-              // use the above url minus `/package.json` to resolve the URL
-              const url = pkg_url.replace(/\/package\.json$/, "");
-              return new URL(pkg.svelte || pkg.module || pkg.main, `${url}/`)
-                .href;
+          // importing from (probably) unpkg
+          if (importee.startsWith('.')) {
+            const url = new URL(importee, importer).href;
+
+            return await follow_redirects(url);
+          } else {
+            // fetch from cdn
+            try {
+              const pkg_url = await follow_redirects(`${packagesUrl}/${importee}/package.json`);
+              const pkg_json = (await fetch_if_uncached(pkg_url)).body;
+              const pkg = JSON.parse(pkg_json);
+
+              if (pkg.svelte || pkg.module || pkg.main) {
+                const url = pkg_url.replace(/\/package\.json$/, '');
+                return new URL(pkg.svelte || pkg.module || pkg.main, `${url}/`).href;
+              }
+            } catch (err) {
+              // ignore
             }
-          } catch (e) {
-            // ignore: not great but we can't really do anything about it
-          }
 
-          // we probably missed stuff, pass it along as is
-          return importee;
+            return await follow_redirects(`${packagesUrl}/${importee}`);
+          }
         },
         load: async (id: string): Promise<string> => {
           // local repl components are stored in memory
           // this is our virtual filesystem
-          if (files.has(id)) return files.get(id).code;
-
+          if (files.has(id)) {
+            const file = files.get(id);
+            return (file && file.code) || "";
+          }
           // everything else comes from a cdn
-          return await fetch_package(id);
+          const res = await fetch_if_uncached(id);
+          return res.body;
         },
         transform: async (code: string, id: string): Promise<string> => {
           // our only transform is to compile svelte components
