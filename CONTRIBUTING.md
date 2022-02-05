@@ -60,3 +60,17 @@ Make sure that the pull request passes continuous integration (including linter
 errors) and that there are no merge conflicts before asking for review. If you
 want some feedback on a work-in-progress (where these conditions are not yet
 met), mark your pull request as a draft.
+
+## Adding changesets
+
+Pull requests that make changes to the irydium compiler or viewer should
+include a [changeset] (as the site is not distributed on npm, we don't both
+versioning it, same with documentation updates).
+After making a change, summarize the changes by running `npx changeset`.
+As far as changeset content is concerned, you should just copy the commit message above in most cases.
+
+As far as versioning is concerned, irydium is currently considered _highly unstable_
+so you can just use a micro version bump for whatever package your change affects:
+either the irydium compiler, viewer, or both.
+
+[changeset]: https://github.com/changesets/changesets

@@ -3,9 +3,12 @@
 [![Build Status](https://github.com/irydium/irydium/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/irydium/irydium/actions?query=workflow%3Abuild-and-test)
 [![Join the chat at https://gitter.im/irydium/community](https://badges.gitter.im/irydium/community.svg)](https://gitter.im/irydium/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+_note: this project is in very early alpha, and as such is subject to API
+changes and restructuring without notice._
+
 Irydium is a set of tooling designed to allow people to create interactive documents
 using web technologies. It will feel familiar to those coming from environments
-like [Jupyter](https://jupyter.org/), but has some key differences.
+like [Jupyter](https://jupyter.org/), but has some key differences:
 
 - The input process is a markdown document (using the [MyST](https://jupyterbook.org/content/myst.html)
   flavour of Markdown).
@@ -33,7 +36,7 @@ To make this work, Irydium uses some of great building blocks:
 - [Rollup]: An efficient bundler for JavaScript-based web components
 - [pyodide]: A port of Python to WebAssembly
 
-Although it doesn't use it directly, Irydium's design was highly inspired by [mdsvex], a transformer of markdown files into Svelte components.
+Although it doesn't use it directly, Irydium's design was heavily influenced by [mdsvex], a transformer of markdown files into Svelte components.
 
 You can see a very early version of Irydium in action on the demonstration site:
 
@@ -195,3 +198,15 @@ create policy "Users can update their own documents."
 ```
 
 [supabase]: https://supabase.io
+
+## Making releases
+
+We use [pnpm's changeset integration] to make releases. At the moment, we are using the
+manual process. In short, run the following (copied verbatim from the documentation):
+
+- Run `pnpm changeset version`. This will bump the versions of the packages previously specified with pnpm changeset (and any dependents of those) and update the changelog files.
+- Run `pnpm install`. This will update the lockfile and rebuild packages.
+- Commit the changes.
+- Run `pnpm publish -r`. This command will publish all packages that have bumped versions not yet present in the registry.
+
+[pnpm's changeset integration]: https://pnpm.io/using-changesets
