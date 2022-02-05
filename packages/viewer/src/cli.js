@@ -100,5 +100,5 @@ polka()
   })
   .listen(3000, (err) => {
     if (err) throw err;
-    console.log(`> Running on localhost:3000`);
+    console.log(`> Running on http://localhost:3000`);
   });
