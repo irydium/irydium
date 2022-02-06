@@ -9,6 +9,7 @@ import type {
   CodeCell,
   CodeCellAttributes,
   CodeNode,
+  CompileOptions,
   FrontMatter,
   ParsedDocument,
 } from "./types";
@@ -34,9 +35,10 @@ function getCodeCells(
 
 async function importCode(
   doc: string,
-  referenceId: string
+  referenceId: string,
+  options: CompileOptions,
 ): Promise<ParsedDocument> {
-  const imported = await extractCode(doc, false);
+  const imported = await extractCode(doc, options, false);
   return {
     frontMatter: {},
     codeCells: getCodeCells(imported.codeCells, referenceId),
@@ -46,11 +48,13 @@ async function importCode(
 
 export async function extractCode(
   input: string,
+  options: CompileOptions = {},
   topLevel = true
 ): Promise<ParsedDocument> {
   const frontMatter = fm(input).attributes as FrontMatter;
   let scripts: string[] = frontMatter.scripts || [];
   let codeCells: CodeCell[] = [];
+  const server = options.server || "";
 
   // go through any imports and extract code cells and scripts that they depend on
   // FIXME: this only goes one level deep, i.e. we can't chase dependencies of dependencies.
@@ -60,9 +64,15 @@ export async function extractCode(
       if (!referenceId) {
         throw new Error(`Import with no referenced element: ${importedRef}`);
       }
-      const importedDoc = await (await fetch(importedRef)).text();
+      // if URL is relative *and* we have a server passed in, prepend the server URL
+      // (this doesn't make a difference on irydium.dev, but is handy for the viewer,
+      // where compilation happens in nodejs land and doesn't have a concept of a root
+      // domain)
+      // FIXME: for the latter case, we should also allow loading resources from the filesystem
+      const ref = (importedRef.indexOf("https://") !== 0 || importedRef.indexOf("http://") !== 0) ? `${server}${importedRef}` : importedRef;
+      const importedDoc = await (await fetch(ref)).text();
       const { codeCells: extractedCells, scripts: extractedScripts } =
-        await importCode(importedDoc, referenceId);
+        await importCode(importedDoc, referenceId, options);
 
       codeCells = [...codeCells, ...extractedCells];
       scripts = [...scripts, ...extractedScripts];
@@ -135,7 +145,8 @@ export async function extractCode(
         const { codeCells: extractedCells, scripts: extractedScripts } =
           await importCode(
             defaultLanguagePlugins[requiredLanguage],
-            requiredLanguage
+            requiredLanguage,
+            options
           );
 
         codeCells = [...codeCells, ...extractedCells];

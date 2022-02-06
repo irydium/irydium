@@ -6,14 +6,15 @@ import extract_frontmatter from "remark-frontmatter";
 import { processMyst, escapeCode, escapeText, augmentSvx } from "./plugins";
 import { extractCode } from "./parseMd";
 import type {
+  CompileOptions,
   ProcessedDocument,
   SvelteCodeCell,
   SvelteComponentDefinition,
   SvelteComponentVFile,
 } from "./types";
 
-export async function mdToSvelte(input: string): Promise<ProcessedDocument> {
-  const { frontMatter, scripts, codeCells } = await extractCode(input);
+export async function mdToSvelte(input: string, options: CompileOptions): Promise<ProcessedDocument> {
+  const { frontMatter, scripts, codeCells } = await extractCode(input, options || {});
   // heavily inspired by mdsvex
   const parser = unified()
     .use(remarkParse)
