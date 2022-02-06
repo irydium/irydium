@@ -87,6 +87,7 @@ export interface ProcessedDocument {
 
 export interface CompileOptions {
   mode?: string;
+  server?: string;
 }
 
 export interface CompilerOutput {

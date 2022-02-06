@@ -6,7 +6,7 @@ export function compile(
   input: string,
   options: CompileOptions = {}
 ): Promise<CompilerOutput> {
-  return mdToSvelte(input).then(
+  return mdToSvelte(input, options).then(
     ({ rootComponent, subComponents, frontMatter }) => {
       return options.mode === "svelte"
         ? { html: rootComponent.code, frontMatter }

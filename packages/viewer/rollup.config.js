@@ -29,7 +29,14 @@ function serve() {
       function startServer() {
         server = spawn(
           "npm",
-          ["run", "start", "--", `../../${process.argv.slice(4)}`],
+          [
+            "run",
+            "start",
+            "--",
+            "--static",
+            "../site/static",
+            `../../${process.argv.slice(4)}`,
+          ],
           {
             stdio: ["ignore", "inherit", "inherit"],
             detached: true,
@@ -89,15 +96,12 @@ export default [
     ],
     input: "src/cli.js",
     external: [
-      "svelte/compiler",
-      "rollup",
-      "cross-fetch",
-      "cross-fetch/polyfill",
+      "@irydium/compiler",
+      "commander",
       "mustache",
-      "toml",
-      "fs",
-      "fsevents",
-      "crypto",
+      "polka",
+      "sirv",
+      "svelte/compiler",
     ],
     output: [
       { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },
