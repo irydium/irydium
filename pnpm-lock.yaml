@@ -179,7 +179,7 @@ importers:
 
   packages/site:
     specifiers:
-      '@irydium/compiler': workspace:^0.0.16
+      '@irydium/compiler': workspace:^0.0.17
       '@wlach/sapper': ^0.29.2-a4
       body-parser: ^1.19.0
       compression: ^1.7.1
@@ -195,7 +195,7 @@ importers:
 
   packages/viewer:
     specifiers:
-      '@irydium/compiler': workspace:^0.0.16
+      '@irydium/compiler': workspace:^0.0.17
       chokidar: ^3.5.2
       commander: ^9.0.0
       livereload: ^0.9.1
