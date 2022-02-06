@@ -1,5 +1,11 @@
 # @irydium/compiler
 
+## 0.0.16
+
+### Patch Changes
+
+- Empty changeset to force a release
+
 ## 0.0.15
 
 ### Patch Changes

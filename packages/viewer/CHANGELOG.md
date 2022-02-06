@@ -1,5 +1,14 @@
 # @irydium/viewer
 
+## 0.0.16
+
+### Patch Changes
+
+- Empty changeset to force a release
+
+- Updated dependencies []:
+  - @irydium/compiler@0.0.16
+
 ## 0.0.15
 
 ### Patch Changes
