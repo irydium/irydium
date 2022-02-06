@@ -1,5 +1,11 @@
 # @irydium/compiler
 
+## 0.0.18
+
+### Patch Changes
+
+- [#239](https://github.com/irydium/irydium/pull/239) [`998c059`](https://github.com/irydium/irydium/commit/998c0592150bebc3299a1c9b6c9f642578c9573e) Thanks [@wlach](https://github.com/wlach)! - Another forced version bump
+
 ## 0.0.17
 
 ### Patch Changes

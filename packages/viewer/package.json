@@ -1,6 +1,6 @@
 {
   "name": "@irydium/viewer",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Live viewer for Irydium",
   "author": "William Lachance <wlach@protonmail.com>",
   "homepage": "https://github.com/irydium/irydium/tree/master/packages/viewer#readme",
@@ -29,7 +29,7 @@
     "url": "https://github.com/irydium/irydium/issues"
   },
   "dependencies": {
-    "@irydium/compiler": "workspace:^0.0.17",
+    "@irydium/compiler": "workspace:^0.0.18",
     "chokidar": "^3.5.2",
     "commander": "^9.0.0",
     "livereload": "^0.9.1",
