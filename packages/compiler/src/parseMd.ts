@@ -69,7 +69,7 @@ export async function extractCode(
       // where compilation happens in nodejs land and doesn't have a concept of a root
       // domain)
       // FIXME: for the latter case, we should also allow loading resources from the filesystem
-      const ref = (importedRef.indexOf("https://") !== 0 || importedRef.indexOf("http://") !== 0) ? `${server}${importedRef}` : importedRef;
+      const ref = (importedRef.search(/https?:\/\//) === 0) ? importedRef : `${server}${importedRef}`;
       const importedDoc = await (await fetch(ref)).text();
       const { codeCells: extractedCells, scripts: extractedScripts } =
         await importCode(importedDoc, referenceId, options);
