@@ -1,9 +1,15 @@
 # @irydium/site
 
-## 0.0.14
+## 0.0.15
+
 ### Patch Changes
 
+- Updated dependencies [[`d794175`](https://github.com/irydium/irydium/commit/d794175e17d2a17df31b5d5ff7e8a397972d58d7), [`bff5731`](https://github.com/irydium/irydium/commit/bff5731914908a064e1a535ee91bb2018b8db495), [`42c5c3e`](https://github.com/irydium/irydium/commit/42c5c3e18ff1c39d1deeed4aa4a7cc91d96e6424), [`e5929ec`](https://github.com/irydium/irydium/commit/e5929ec9565a371f7d80b09c57f34832c1a9ba80)]:
+  - @irydium/compiler@0.0.15
 
+## 0.0.14
+
+### Patch Changes
 
 - [#224](https://github.com/irydium/irydium/pull/224) [`8ea5bc0`](https://github.com/irydium/irydium/commit/8ea5bc0e29b8151aa5aad1514b400a347320d9a3) Thanks [@wlach](https://github.com/wlach)! - Initial changeset
 
