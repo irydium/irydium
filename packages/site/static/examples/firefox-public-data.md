@@ -60,12 +60,13 @@ const transformed = Object.entries(os_data_raw.data.populations).map(([name, val
 }).flat();
 
 // add a function to truncate the operating system down to what we'd expect
-aq.addFunction('truncate_os', d=>d.split(/-| /)[0], { override: true });
+aq.addFunction('truncate_and_normalize_os', d=>d.replace('Darwin', 'macOS').split(/-| /)[0], { override: true });
 const df = aq.from(transformed);
 const summed = df
-  .dedupe()
+  .orderby('date')
+  .dedupe(['date', 'name']) // double entry in August 2021
   .derive({
-    name: d=>op.truncate_os(d.name)}
+    name: d=>op.truncate_and_normalize_os(d.name)}
   )
   .groupby(['date', 'name'])
   .rollup({total: d=> op.sum(d.value)}).objects();
