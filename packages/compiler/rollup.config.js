@@ -8,14 +8,20 @@ import { createTemplates } from "./src/create-templates";
 import pkg from "./package.json";
 
 const EXTERNALS = [
-  "front-matter",
-  "svelte/compiler",
-  "rollup",
   "cross-fetch",
   "cross-fetch/polyfill",
+  "front-matter",
   "js-yaml",
   "lodash",
   "mustache",
+  "rollup",
+  "svelte/compiler",
+  // FIXME: Uncomment below when we stop compiling to CJS
+  // https://github.com/irydium/irydium/issues/244
+  //"micromark",
+  //"remark-parse",
+  //"unified",
+  //"unist-util-visit",
 ];
 
 const TEMPLATE_PLUGIN = replace({
