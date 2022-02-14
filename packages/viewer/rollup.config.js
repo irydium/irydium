@@ -92,6 +92,13 @@ export default [
       svelte(),
       resolve({ preferBuiltins: true }),
       commonjs(),
+      // via: https://stackoverflow.com/a/63548394
+      {
+        name: "watch-compiler",
+        buildStart() {
+          this.addWatchFile("../compiler/dist/main.cjs.js");
+        },
+      },
       !production && serve(),
     ],
     input: "src/cli.js",
