@@ -141,8 +141,10 @@ importers:
   packages/compiler:
     specifiers:
       '@types/mustache': ^4.1.2
+      acorn: ^8.7.0
       compiler: ^0.1.2
       cross-fetch: ^3.0.6
+      estree-walker: ^3.0.1
       front-matter: ^4.0.2
       js-yaml: ^4.0.0
       lodash: ^4.17.21
@@ -158,6 +160,7 @@ importers:
       unist-util-visit: ^3.1.0
       vfile-message: ^3.0.1
     dependencies:
+      acorn: 8.7.0
       cross-fetch: 3.1.4
       front-matter: 4.0.2
       js-yaml: 4.1.0
@@ -169,6 +172,7 @@ importers:
     devDependencies:
       '@types/mustache': 4.1.2
       compiler: 0.1.2
+      estree-walker: 3.0.1
       rehype-stringify: 9.0.2
       remark-frontmatter: 4.0.1
       remark-parse: 10.0.0
@@ -2525,6 +2529,12 @@ packages:
     hasBin: true
     dev: true
 
+  /acorn/8.7.0:
+    resolution: {integrity: sha512-V/LGr1APy+PXIwKebEWrkZPwoeoF+w1jiOBUmuxuiUIaOHtob8Qc9BTrYo7VuI5fR8tqsy+buA2WFooR5olqvQ==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: false
+
   /agent-base/6.0.2:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
@@ -3939,6 +3949,10 @@ packages:
 
   /estree-walker/2.0.2:
     resolution: {integrity: sha512-Rfkk/Mp/DL7JVje3u18FxFujQlTNR2q6QfMSMB7AvCBx91NGj/ba3kCfza0f6dVDbw7YlRf/nDrn7pQrCCyQ/w==}
+    dev: true
+
+  /estree-walker/3.0.1:
+    resolution: {integrity: sha512-woY0RUD87WzMBUiZLx8NsYr23N5BKsOMZHhu2hoNRVh6NXGfoiT1KOL8G3UHlJAnEDGmfa5ubNA/AacfG+Kb0g==}
     dev: true
 
   /esutils/2.0.3:

@@ -8,6 +8,7 @@ import { createTemplates } from "./src/create-templates";
 import pkg from "./package.json";
 
 const EXTERNALS = [
+  "acorn",
   "cross-fetch",
   "cross-fetch/polyfill",
   "front-matter",
@@ -18,6 +19,7 @@ const EXTERNALS = [
   "svelte/compiler",
   // FIXME: Uncomment below when we stop compiling to CJS
   // https://github.com/irydium/irydium/issues/244
+  //"estree-walker",
   //"micromark",
   //"remark-parse",
   //"unified",
