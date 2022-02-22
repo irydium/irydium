@@ -4,6 +4,7 @@ import mustache from "mustache";
 import * as rollup from "rollup/dist/es/rollup.browser.js";
 import fetch from "cross-fetch";
 
+import commonjs from './rollup-plugins/commonjs.js';
 import {
   admonitionSource,
   panelsSource,
@@ -141,6 +142,7 @@ async function createSvelteBundle(
           return code;
         },
       },
+      commonjs
     ],
   });
 
