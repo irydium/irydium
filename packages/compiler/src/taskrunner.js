@@ -28,8 +28,16 @@ function loadScript(url) {
   });
 }
 
-function getDependencies(task, tasks) {
-  return tasks.filter((task2) => task.inputs.includes(task2.id));
+// get all tasks that this task depends on (first order, non-recursive)
+export function getDependencies(task, tasks) {
+  return tasks.filter((task2) => task.inputs && task.inputs.includes(task2.id));
+}
+
+// get all tasks depending on this task (first order, non-recursive)
+export function getDependents(task, tasks) {
+  return tasks.filter(
+    (task2) => task2.inputs && task2.inputs.includes(task.id)
+  );
 }
 
 export function isSerializable(obj) {
@@ -94,6 +102,11 @@ async function runTask(tasks, task) {
     console.log(`Using cached data for ${task.id}`);
     task.value = getCachedData(task);
   } else {
+    // we are updating this task, which automatically invalidates any dependents
+    getDependents(task, tasks).forEach((t) => {
+      setCachedData(t, undefined);
+    });
+
     switch (task.type) {
       case TASK_TYPE.LOAD_SCRIPTS:
         for (const script of task.payload) {
