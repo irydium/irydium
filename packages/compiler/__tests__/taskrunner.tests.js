@@ -1,4 +1,11 @@
-import { TASK_TYPE, TASK_STATE, runTasks, updateTask } from "../src/taskrunner";
+import {
+  TASK_TYPE,
+  TASK_STATE,
+  getDependencies,
+  getDependents,
+  runTasks,
+  updateTask,
+} from "../src/taskrunner";
 
 global.fetch = jest.fn(() =>
   Promise.resolve({
@@ -6,6 +13,32 @@ global.fetch = jest.fn(() =>
     json: () => Promise.resolve(42),
   })
 );
+
+describe("getDependencies", () => {
+  it("can get the dependencies of a task", () => {
+    const tasks = [
+      { id: "a", type: TASK_TYPE.JS },
+      { id: "b", type: TASK_TYPE.JS, inputs: ["a"] },
+      { id: "c", type: TASK_TYPE.JS },
+    ];
+    expect(getDependencies(tasks[0], tasks)).toEqual([]);
+    expect(getDependencies(tasks[1], tasks)).toEqual([tasks[0]]);
+    expect(getDependencies(tasks[2], tasks)).toEqual([]);
+  });
+});
+
+describe("getDependents", () => {
+  it("can get the dependents of a task", () => {
+    const tasks = [
+      { id: "a", type: TASK_TYPE.JS },
+      { id: "b", type: TASK_TYPE.JS, inputs: ["a"] },
+      { id: "c", type: TASK_TYPE.JS },
+    ];
+    expect(getDependents(tasks[0], tasks)).toEqual([tasks[1]]);
+    expect(getDependents(tasks[1], tasks)).toEqual([]);
+    expect(getDependents(tasks[2], tasks)).toEqual([]);
+  });
+});
 
 describe("basic tests for runTasks", () => {
   it("can handle one fetch operation", async () => {
