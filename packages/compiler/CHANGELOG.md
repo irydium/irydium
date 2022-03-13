@@ -1,5 +1,15 @@
 # @irydium/compiler
 
+## 0.0.19
+
+### Patch Changes
+
+- [#247](https://github.com/irydium/irydium/pull/247) [`05f4ead`](https://github.com/irydium/irydium/commit/05f4ead3a5ae270997aab7d36e08760370c5208d) Thanks [@wlach](https://github.com/wlach)! - Add a commonjs plugin from the svelte repl
+
+* [#241](https://github.com/irydium/irydium/pull/241) [`8db054e`](https://github.com/irydium/irydium/commit/8db054e6960c78b946439e9e7664b30fc5670711) Thanks [@wlach](https://github.com/wlach)! - Set default charset in irydium HTML
+
+- [#250](https://github.com/irydium/irydium/pull/250) [`426a07e`](https://github.com/irydium/irydium/commit/426a07ebd313343f0501101aa16080f8d9a051c5) Thanks [@wlach](https://github.com/wlach)! - Invalidate dependent tasks as required
+
 ## 0.0.18
 
 ### Patch Changes
