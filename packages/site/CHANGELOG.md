@@ -1,5 +1,12 @@
 # @irydium/site
 
+## 0.0.19
+
+### Patch Changes
+
+- Updated dependencies [[`05f4ead`](https://github.com/irydium/irydium/commit/05f4ead3a5ae270997aab7d36e08760370c5208d), [`8db054e`](https://github.com/irydium/irydium/commit/8db054e6960c78b946439e9e7664b30fc5670711), [`426a07e`](https://github.com/irydium/irydium/commit/426a07ebd313343f0501101aa16080f8d9a051c5)]:
+  - @irydium/compiler@0.0.19
+
 ## 0.0.18
 
 ### Patch Changes
