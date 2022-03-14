@@ -101,7 +101,7 @@ export async function extractCode(
         // we pre-process js cells to make sure the syntax is valid
         if (lang === "js") {
           try {
-            acornParser.parse(nodeContent.body, {ecmaVersion: 2021, allowReturnOutsideFunction: true});
+            acornParser.parse(nodeContent.body, {ecmaVersion: 2021, allowReturnOutsideFunction: true, allowAwaitOutsideFunction: true});
           } catch (e) {
             if (e instanceof SyntaxError) {
               // Renumber syntax error, since the code we're parsing is part of a much larger document
