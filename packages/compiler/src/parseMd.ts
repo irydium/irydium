@@ -1,3 +1,4 @@
+import {Parser as acornParser} from "acorn"
 import fm from "front-matter";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
@@ -96,6 +97,21 @@ export async function extractCode(
 
         const nodeContent = fm(node.value);
         const attributes = nodeContent.attributes as CodeCellAttributes;
+
+        // we pre-process js cells to make sure the syntax is valid
+        if (lang === "js") {
+          try {
+            acornParser.parse(nodeContent.body, {ecmaVersion: 2021, allowReturnOutsideFunction: true});
+          } catch (e) {
+            if (e instanceof SyntaxError) {
+              // Renumber syntax error, since the code we're parsing is part of a much larger document
+              const revisedMessage = e.message.replace(/\ \([0-9]+:[0-9]+\)$/, '') + ` (line: ${node.position.start.line + nodeContent.bodyBegin + e.loc.line - 1})`;
+              throw new Error(`Syntax error in js cell: ${revisedMessage}`);
+            }
+            // unknown error, shouldn't happen, just rethrow I guess
+            throw e;
+          }
+        }
 
         // svelte cells are parsed kind of specially
         if (lang === "svelte" && attributes.name === "mdsvelte") {

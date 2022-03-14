@@ -26,6 +26,14 @@ describe("extractCode basics", () => {
       ],
     });
   });
+
+  it("should handle a syntax error as expected", async () => {
+    await expect(async () => {
+      await extractCode(createCodeCell("js", "base", undefined, "!x = 5"));
+    }).rejects.toThrow(
+      new Error("Syntax error in js cell: Assigning to rvalue (line: 5)")
+    );
+  });
 });
 
 describe("extractCode imports", () => {
