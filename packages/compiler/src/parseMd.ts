@@ -105,7 +105,12 @@ export async function extractCode(
           } catch (e) {
             if (e instanceof SyntaxError) {
               // Renumber syntax error, since the code we're parsing is part of a much larger document
-              const line = parseInt(e.loc.line); // @ts-ignore
+
+              // Acorn overrides the SyntaxError class, but TS/Eslint doesn't know about the `loc` property.
+              // Let's just assume it exists.
+              // @ts-ignore
+              const line = parseInt(e.loc.line); // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+
               const actualLine = node.position ? (node.position.start.line + nodeContent.bodyBegin + line - 1) : "unknown";
               const revisedMessage = e.message.replace(/ \(\d+:\d+\)$/, '') + ` (line: ${actualLine})`;
               throw new Error(`Syntax error in js cell: ${revisedMessage}`);n
