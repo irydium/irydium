@@ -27,6 +27,33 @@ describe("extractCode basics", () => {
     });
   });
 
+  it("should allow top-level await", async () => {
+    expect(
+      await extractCode(
+        createCodeCell(
+          "js",
+          "base",
+          undefined,
+          "return await fetch('http://google.com')"
+        )
+      )
+    ).toEqual({
+      frontMatter: {},
+      scripts: [],
+      codeCells: [
+        {
+          attributes: {
+            id: "base",
+          },
+          body: "return await fetch('http://google.com')",
+          bodyBegin: 4,
+          frontmatter: "id: base",
+          lang: "js",
+        },
+      ],
+    });
+  });
+
   it("should handle a syntax error as expected", async () => {
     await expect(async () => {
       await extractCode(createCodeCell("js", "base", undefined, "!x = 5"));
