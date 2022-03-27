@@ -1,5 +1,7 @@
 ---
 title: Python Language Plugin
+variables:
+  - sin_multiple: 2
 imports:
   - /components/plotlyjs.md#Plotly
 ---
@@ -17,19 +19,18 @@ However, if you wish to override the plugin in your own document (e.g. to test a
 ---
 id: python
 type: language-plugin
-scripts: https://cdn.jsdelivr.net/pyodide/v0.19.0/full/pyodide.js
+scripts: https://cdn.jsdelivr.net/pyodide/v0.20.0a1/full/pyodide.js
+inline: true
 ---
 const pyodide = await loadPyodide({
-  indexURL: "https://cdn.jsdelivr.net/pyodide/v0.19.0/full/",
+  indexURL: "https://cdn.jsdelivr.net/pyodide/v0.20.0a1/full/",
 });
 
 return async (inputs, code) => {
-  const preamble = (inputs || [])
-            .map((i) => `from js import ${i}`)
-            .join("\n");
-	await pyodide.loadPackagesFromImports(`${preamble}${code}`);
-  const result = await pyodide.runPythonAsync(`${preamble}${code}`);
-  // if result has type conversion code, then use that
+	await pyodide.loadPackagesFromImports(code);
+  const result = await pyodide.runPythonAsync(code, { globals: pyodide.toPy(inputs) });
+  // if result has type conversion code, then use that (eventually may want to pass things
+  // directly if two python cells are chained to each other)
   if (result && result.toJs) {
     return result.toJs({dict_converter : Object.fromEntries});
   }
@@ -51,20 +52,35 @@ math.pi
 
 {glue:}`pi`
 
-And here's a somewhat more involved example which creates a sine wave and renders it via plotly:
+And here's a somewhat more involved example which creates a sine wave and renders it via plotly.
+To make things interesting, we'll use a variable as an input parameter.
 
 ```{code-cell} python
 ---
 id: sinwave
 inline: true
+inputs: [sin_multiple]
 ---
 import numpy as np
-x = np.linspace(0, 2.0 * np.pi, 100)
+x = np.linspace(0, sin_multiple * np.pi, 100)
 y = np.sin(x)
 [{'x': x, 'y': y}]
 ```
 
-And here's its output in a Plotly graph:
+And here's its output in a Plotly graph.
+Try toggling the value in the dropdown to see how the result changes.
+
+<select bind:value={sin_multiple}>
+  <option value={2}>
+    2
+  </option>
+  <option value={4}>
+    4
+  </option>
+  <option value={8}>
+    8
+  </option>
+</select>
 
 <Plotly data={sinwave} />
 

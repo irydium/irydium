@@ -342,9 +342,9 @@ export const augmentSvx = ({
                 const langPluginId = langPlugin.attributes.id as string;
                 return createJSTask(
                   id,
-                  `return ${langPluginId}([${(cn.attributes.inputs || []).join(
+                  `return ${langPluginId}({${(cn.attributes.inputs || []).join(
                     ", "
-                  )}], \`${cn.body}\`)`,
+                  )}} , \`${cn.body}\`)`,
                   [...(cn.attributes.inputs || []), langPluginId]
                 );
               });
