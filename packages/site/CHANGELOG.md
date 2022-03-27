@@ -1,5 +1,16 @@
 # @irydium/site
 
+## 0.0.20
+
+### Patch Changes
+
+- [#260](https://github.com/irydium/irydium/pull/260) [`f4036cd`](https://github.com/irydium/irydium/commit/f4036cd70da71984b4aac82a061b330cf5bfbe3f) Thanks [@wlach](https://github.com/wlach)! - Update plotly graphs when underlying data changes
+
+* [#259](https://github.com/irydium/irydium/pull/259) [`4c3e1e2`](https://github.com/irydium/irydium/commit/4c3e1e212b17cfbd2a69f75048dc62a2be8e2053) Thanks [@wlach](https://github.com/wlach)! - Allow language plugins to take parameters and take advantage of this in the python/pyodide plugin
+
+* Updated dependencies [[`f3cb084`](https://github.com/irydium/irydium/commit/f3cb0845aa5456f4c6d730410ef9faa5cafdf0ff), [`4c3e1e2`](https://github.com/irydium/irydium/commit/4c3e1e212b17cfbd2a69f75048dc62a2be8e2053)]:
+  - @irydium/compiler@0.0.20
+
 ## 0.0.19
 
 ### Patch Changes

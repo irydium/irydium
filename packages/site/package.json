@@ -1,7 +1,7 @@
 {
   "name": "@irydium/site",
   "description": "Irydium Demo Site",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "engines": {
     "node": ">=14"
   },
@@ -15,7 +15,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@irydium/compiler": "workspace:^0.0.19",
+    "@irydium/compiler": "workspace:^0.0.20",
     "@wlach/sapper": "^0.29.2-a4",
     "body-parser": "^1.19.0",
     "compression": "^1.7.1",
