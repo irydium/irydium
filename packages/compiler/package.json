@@ -33,6 +33,7 @@
     "svelte": "^3.30.0"
   },
   "devDependencies": {
+    "@types/acorn": "^4.0.6",
     "@types/mustache": "^4.1.2",
     "compiler": "^0.1.2",
     "estree-walker": "^3.0.1",
