@@ -1,5 +1,12 @@
 # @irydium/viewer
 
+## 0.0.20
+
+### Patch Changes
+
+- Updated dependencies [[`f3cb084`](https://github.com/irydium/irydium/commit/f3cb0845aa5456f4c6d730410ef9faa5cafdf0ff), [`4c3e1e2`](https://github.com/irydium/irydium/commit/4c3e1e212b17cfbd2a69f75048dc62a2be8e2053)]:
+  - @irydium/compiler@0.0.20
+
 ## 0.0.19
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @irydium/compiler
 
+## 0.0.20
+
+### Patch Changes
+
+- [#256](https://github.com/irydium/irydium/pull/256) [`f3cb084`](https://github.com/irydium/irydium/commit/f3cb0845aa5456f4c6d730410ef9faa5cafdf0ff) Thanks [@wlach](https://github.com/wlach)! - Basic syntax checking of js code chunks
+
+* [#259](https://github.com/irydium/irydium/pull/259) [`4c3e1e2`](https://github.com/irydium/irydium/commit/4c3e1e212b17cfbd2a69f75048dc62a2be8e2053) Thanks [@wlach](https://github.com/wlach)! - Allow language plugins to take parameters and take advantage of this in the python/pyodide plugin
+
 ## 0.0.19
 
 ### Patch Changes
