@@ -23,6 +23,10 @@ inline: true
   onMount(() => {
     Plotly.newPlot(dom_node, data);
   });
+
+  $: {
+    dom_node && Plotly.react(dom_node, data)
+  }
 </script>
 
 <div bind:this={dom_node}></div>
