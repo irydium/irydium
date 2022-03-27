@@ -201,13 +201,7 @@ create policy "Users can update their own documents."
 
 ## Making releases
 
-We use [pnpm's changeset integration] to make releases. At the moment, we are using the
-manual process. In short, run the following (mostly copied verbatim from the documentation):
-
-- Run `pnpm changeset version`. This will bump the versions of the packages previously specified with pnpm changeset (and any dependents of those) and update the changelog files.
-- Run `pnpm install`. This will update the lockfile and rebuild packages.
-- Commit the changes.
-- Run `pnpm -r build` to rebuild everything.
-- Run `pnpm publish -r`. This command will publish all packages that have bumped versions not yet present in the registry.
+We rely on [pnpm's changeset integration] to make releases.
+Specifically, Irydium uses their GitHub-based workflow, which uses GitHub actions to open a special pull request which, upon merge, will automatically cause the right packages to be uploaded to npm and releases to be made inside this project.
 
 [pnpm's changeset integration]: https://pnpm.io/using-changesets
