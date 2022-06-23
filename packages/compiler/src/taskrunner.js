@@ -1,5 +1,18 @@
 /* global _, globalThis */
 
+// would be better not to depend on lodash here as it considerably bloats up the resulting bundle
+import {
+  every,
+  isPlainObject,
+  isUndefined,
+  isNull,
+  isArray,
+  isBoolean,
+  isNumber,
+  isString,
+  overSome,
+} from "lodash-es";
+
 export const TASK_TYPE = {
   LOAD_SCRIPTS: 0,
   DOWNLOAD: 1,
@@ -42,14 +55,14 @@ export function getDependents(task, tasks) {
 
 export function isSerializable(obj) {
   const nestedSerializable = (ob) =>
-    (_.isPlainObject(ob) || _.isArray(ob)) && _.every(ob, isSerializable);
+    (isPlainObject(ob) || isArray(ob)) && every(ob, isSerializable);
 
-  return _.overSome([
-    _.isUndefined,
-    _.isNull,
-    _.isBoolean,
-    _.isNumber,
-    _.isString,
+  return overSome([
+    isUndefined,
+    isNull,
+    isBoolean,
+    isNumber,
+    isString,
     nestedSerializable,
   ])(obj);
 }

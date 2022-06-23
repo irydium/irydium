@@ -13,7 +13,6 @@ const EXTERNALS = [
   "cross-fetch/polyfill",
   "front-matter",
   "js-yaml",
-  "lodash",
   "mustache",
   "rollup",
   "svelte/compiler",

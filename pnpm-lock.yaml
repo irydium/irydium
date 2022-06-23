@@ -147,7 +147,7 @@ importers:
       estree-walker: ^3.0.1
       front-matter: ^4.0.2
       js-yaml: ^4.0.0
-      lodash: ^4.17.21
+      lodash-es: ^4.17.21
       micromark: ^3.0.5
       mustache: ^4.0.1
       rehype-stringify: ^9.0.2
@@ -164,7 +164,6 @@ importers:
       cross-fetch: 3.1.4
       front-matter: 4.0.2
       js-yaml: 4.1.0
-      lodash: 4.17.21
       micromark: 3.0.5
       mustache: 4.2.0
       rollup: 2.56.2
@@ -173,6 +172,7 @@ importers:
       '@types/mustache': 4.1.2
       compiler: 0.1.2
       estree-walker: 3.0.1
+      lodash-es: 4.17.21
       rehype-stringify: 9.0.2
       remark-frontmatter: 4.0.1
       remark-parse: 10.0.0
@@ -5571,6 +5571,10 @@ packages:
       p-locate: 5.0.0
     dev: true
 
+  /lodash-es/4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: true
+
   /lodash.clonedeep/4.5.0:
     resolution: {integrity: sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=}
     dev: true
@@ -5593,6 +5597,7 @@ packages:
 
   /lodash/4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: true
 
   /lower-case/1.1.4:
     resolution: {integrity: sha1-miyr0bno4K6ZOkv31YdcOcQujqw=}
