@@ -5,6 +5,7 @@ const ESM_IMPORTS = [
   "ccount",
   "character-entities",
   "comma-separated-tokens",
+  "decode-named-character-reference",
   "fault",
   "hast-util-is-element",
   "hast-util-to-html",

@@ -88,6 +88,7 @@ export default [
       }),
       replace({
         __PRODUCTION__: production,
+        preventAssignment: true,
       }),
       svelte(),
       resolve({ preferBuiltins: true }),

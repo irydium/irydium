@@ -46,6 +46,7 @@ export default {
           SUPABASE_URL: process.env.SUPABASE_URL,
           SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
         }),
+        preventAssignment: true,
       }),
       json(),
       svelte({
@@ -65,30 +66,6 @@ export default {
       }),
       commonjs(),
       typescript({ sourceMap: dev }),
-
-      legacy &&
-        babel({
-          extensions: [".js", ".mjs", ".html", ".svelte"],
-          babelHelpers: "runtime",
-          exclude: ["node_modules/@babel/**"],
-          presets: [
-            [
-              "@babel/preset-env",
-              {
-                targets: "> 0.25%, not dead",
-              },
-            ],
-          ],
-          plugins: [
-            "@babel/plugin-syntax-dynamic-import",
-            [
-              "@babel/plugin-transform-runtime",
-              {
-                useESModules: true,
-              },
-            ],
-          ],
-        }),
 
       !dev &&
         terser({
@@ -112,6 +89,7 @@ export default {
           SUPABASE_URL: process.env.SUPABASE_URL,
           SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
         }),
+        preventAssignment: true,
       }),
       string({
         include: ["./static/**/*.md"],
@@ -153,6 +131,7 @@ export default {
       replace({
         "process.browser": true,
         "process.env.NODE_ENV": JSON.stringify(mode),
+        preventAssignment: true,
       }),
       commonjs(),
       typescript({ sourceMap: dev }),
