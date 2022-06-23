@@ -4,5 +4,6 @@
     "lib": ["DOM", "ES2019", "WebWorker"],
     "strict": true
   },
-  "allowSyntheticDefaultImports": true
+  "allowSyntheticDefaultImports": true,
+  "isolatedModules": false,
 }

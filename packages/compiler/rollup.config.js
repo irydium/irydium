@@ -2,7 +2,7 @@ import json from "@rollup/plugin-json";
 import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import typescript from "@rollup/plugin-typescript";
+import sucrase from "@rollup/plugin-sucrase";
 
 import { createTemplates } from "./src/create-templates";
 import pkg from "./package.json";
@@ -30,6 +30,7 @@ const TEMPLATE_PLUGIN = replace({
   "__TEMPLATES = {}":
     "__TEMPLATES = " + JSON.stringify(createTemplates("./src")),
   delimiters: ["", ""],
+  preventAssignment: true,
 });
 
 export default [
@@ -41,13 +42,13 @@ export default [
       // unified has an implicit dependency on @rollup/plugin-json
       json(),
       commonjs(),
-      typescript(),
+      sucrase({ transforms: ["typescript"] }),
     ],
     input: "src/main.ts",
     external: EXTERNALS,
     output: [
-      { file: pkg.module, format: "es", sourcemap: false },
-      { file: pkg.main, format: "cjs", sourcemap: false },
+      { file: pkg.module, format: "es", sourcemap: true },
+      { file: pkg.main, format: "cjs", sourcemap: true },
     ],
   },
   {
@@ -58,12 +59,12 @@ export default [
       // unified has an implicit dependency on @rollup/plugin-json
       json(),
       commonjs(),
-      typescript(),
+      sucrase({ transforms: ["typescript"] }),
     ],
     input: "src/cli.ts",
     external: EXTERNALS,
     output: [
-      { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: false },
+      { file: "dist/cli.js", format: "cjs", interop: false, sourcemap: true },
     ],
   },
 ];
