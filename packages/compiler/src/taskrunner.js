@@ -1,5 +1,8 @@
 /* global _, globalThis */
 
+// FIXME: would be better not to depend on lodash here as it considerably bloats up the resulting bundle
+import _ from "lodash";
+
 export const TASK_TYPE = {
   LOAD_SCRIPTS: 0,
   DOWNLOAD: 1,
