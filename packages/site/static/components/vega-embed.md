@@ -4,50 +4,37 @@ title: Vega-Lite
 
 # {glue:}`title`
 
-You can use [Vega-lite](https://vega.github.io/vega-lite/) to add interactive visualizations to your documents by importing this page (see the "Introduction") and embedding a `<VegaEmbed />` component.
+You can use [Vega-lite](https://vega.github.io/vega-lite/) to add interactive visualizations to your documents by importing this page (see the "Introduction") and creating a `vegalite` code-cell.
 
 Here's the definition of a component:
 
-```{code-cell} svelte
+```{code-cell} js
 ---
-id: VegaEmbed
+id: vegalite
+type: language-plugin
 scripts:
   - https://cdn.jsdelivr.net/npm/vega@5
   - https://cdn.jsdelivr.net/npm/vega-lite@5
   - https://cdn.jsdelivr.net/npm/vega-embed/build/vega-embed.js
 inline: true
 ---
-<script>
-  import { onMount } from 'svelte';
-
-  export let spec = undefined;
-  let dom_node;
-
-  onMount(() => {
-    vegaEmbed(dom_node, spec)    	// result.view provides access to the Vega View API
-      .then(result => console.log(result))
-      .catch(console.warn);
-  });
-
-  $: {
-    dom_node && vegaEmbed(dom_node, spec)
-  }
-</script>
-
-<!-- Weird CSS issue with vegaEmbed, it seems to want height to be 100% -->
-<div style="height: 320px">
-  <div bind:this={dom_node}></div>
-</div>
+return async (inputs, code) => {
+  const dom_node = document.createElement('div');
+  const stringifiedInputs = Object.fromEntries(Object.entries(inputs).map(([k,v]) => [k, JSON.stringify(v)]));
+  await vegaEmbed(dom_node, JSON.parse(_.template(code)(stringifiedInputs)))
+    .then(result => console.log(result))
+    .catch(console.warn);
+  return dom_node;
+}
 ```
 
-And here's a basic spec, taken from a [vega example](https://vega.github.io/vega-lite/examples/bar.html):
+Here's a simple example, lifted from [vega itself](https://vega.github.io/vega-lite/examples/bar.html):
 
-```{code-cell} js
+```{code-cell} vegalite
 ---
-id: basicSpec
 inline: true
 ---
-return {
+{
   "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "A simple bar chart with embedded data.",
   "data": {
@@ -65,6 +52,41 @@ return {
 }
 ```
 
-And the result looks like this:
+You can pass arguments to a vega spec using [underscore template encoding] and it will process them.
+This templating format is admittedly bit obscure, but easy to learn.
+For simple use cases, just put variables you would like to see in a `<%= %>` clause
+(Irydium will automatically JSON-escape them).
 
-<VegaEmbed spec={basicSpec} />
+[underscore template encoding]: https://2ality.com/2012/06/underscore-templates.html
+
+For example, let's define a code cell which randomly generates values for the bar chart above:
+
+```{code-cell} js
+---
+id: vals
+inline: true
+---
+
+return ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'].map(v => ({a: v, b: Math.random()}));
+```
+
+Then we can add it as a dependency, and insert the results into a "values" clause below:
+
+```{code-cell} vegalite
+---
+inline: true
+inputs: [vals]
+---
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "description": "A simple bar chart with embedded data.",
+  "data": {
+    "values": <%= vals %>
+  },
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "a", "type": "nominal", "axis": {"labelAngle": 0}},
+    "y": {"field": "b", "type": "quantitative"}
+  }
+}
+```
