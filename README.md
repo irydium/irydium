@@ -3,6 +3,9 @@
 [![Build Status](https://github.com/irydium/irydium/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/irydium/irydium/actions?query=workflow%3Abuild-and-test)
 [![Join the chat at https://gitter.im/irydium/community](https://badges.gitter.im/irydium/community.svg)](https://gitter.im/irydium/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
+> [!NOTE]
+> This project was an experiment in 2021 in client-side notebooks. There's been lots of evolution in this space since then. For modern takes on (some of) the concepts here, see [evidence.dev](https://evidence.dev) and [Observable Framework](https://github.com/observablehq/framework)
+
 _note: this project is in very early alpha, and as such is subject to API
 changes and restructuring without notice._
 
@@ -205,3 +208,16 @@ We rely on [pnpm's changeset integration] to make releases.
 Specifically, Irydium uses their GitHub-based workflow, which uses GitHub actions to open a special pull request which, upon merge, will automatically cause the right packages to be uploaded to npm and releases to be made inside this project.
 
 [pnpm's changeset integration]: https://pnpm.io/using-changesets
+
+```svelte
+<script>
+  var x = 5;
+</script>
+
+LOL
+
+<style>
+.blah {
+  color: #fff;
+}
+```
